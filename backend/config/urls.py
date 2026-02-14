@@ -31,4 +31,5 @@ urlpatterns = [
 
     # Users API
     path('api/', include('apps.users.urls')),
+    path('api/', include('apps.reciclaje.urls')),
 ]
