@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'apps.users',
     'apps.reciclaje',
     'rest_framework',
+    'django_extensions',
+
 ]
 
 MIDDLEWARE = [
@@ -132,6 +134,8 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
 }
+
+
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
