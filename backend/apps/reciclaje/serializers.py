@@ -18,3 +18,4 @@ class DepositoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Deposito
         fields = '__all__'
+        read_only_fields = ['operador']
