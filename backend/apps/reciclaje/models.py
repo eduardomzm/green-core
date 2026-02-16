@@ -59,3 +59,12 @@ class Deposito(models.Model):
 
     def __str__(self):
         return f"{self.alumno} - {self.material} ({self.cantidad})"
+
+
+class MetaSistema(models.Model):
+    nombre = models.CharField(max_length=100)
+    cantidad_meta = models.PositiveIntegerField()
+    activa = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.nombre} - {self.cantidad_meta}"

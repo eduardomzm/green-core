@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from .models import Deposito, Grupo, Material
+from .models import Deposito, Grupo, Material, MetaSistema
 from .serializers import GrupoSerializer, MaterialSerializer, DepositoSerializer
 from .permissions import IsAdmin, CanCreateDeposito
 from django.db.models import Sum, Count
@@ -136,3 +136,115 @@ class EstadisticasMaterialView(APIView):
         ]
 
         return Response(data)
+
+
+class ProgresoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+
+    def get(self, request):
+        user = request.user
+
+        meta_obj = MetaSistema.objects.filter(activa=True).first()
+        meta = meta_obj.cantidad_meta if meta_obj else 100
+
+        if user.role == 'ADMIN':
+            depositos = Deposito.objects.all()
+
+        elif user.role == 'OPERADOR':
+            depositos = Deposito.objects.filter(operador=user)
+
+        elif user.role == 'ALUMNO':
+            depositos = Deposito.objects.filter(alumno=user)
+
+        elif user.role == 'TUTOR':
+            depositos = Deposito.objects.filter(
+                alumno__alumnogrupo__grupo__tutor=user
+            )
+
+        else:
+            depositos = Deposito.objects.none()
+
+        total_piezas = depositos.aggregate(
+            total=Sum('cantidad')
+        )['total'] or 0
+
+        porcentaje = min(
+            round((total_piezas / meta) * 100, 2),
+            100
+        )
+
+        return Response({
+            "meta": meta,
+            "actual": total_piezas,
+            "porcentaje": porcentaje
+        })
+
+
+class DashboardView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    meta = 100
+
+    def get(self, request):
+        user = request.user
+
+        # Filtrado por rol
+        if user.role == 'ADMIN':
+            depositos = Deposito.objects.all()
+
+        elif user.role == 'OPERADOR':
+            depositos = Deposito.objects.filter(operador=user)
+
+        elif user.role == 'ALUMNO':
+            depositos = Deposito.objects.filter(alumno=user)
+
+        elif user.role == 'TUTOR':
+            depositos = Deposito.objects.filter(
+                alumno__alumnogrupo__grupo__tutor=user
+            )
+
+        else:
+            depositos = Deposito.objects.none()
+
+        # Estadísticas generales
+        total_piezas = depositos.aggregate(
+            total=Sum('cantidad')
+        )['total'] or 0
+
+        total_depositos = depositos.count()
+
+        # Progreso
+        porcentaje = min(
+            round((total_piezas / self.meta) * 100, 2),
+            100
+        )
+
+        # Estadísticas por material
+        estadisticas_material = (
+            depositos
+            .values('material__nombre')
+            .annotate(total_piezas=Sum('cantidad'))
+            .order_by('-total_piezas')
+        )
+
+        por_material = [
+            {
+                "material": item['material__nombre'],
+                "total_piezas": item['total_piezas']
+            }
+            for item in estadisticas_material
+        ]
+
+        return Response({
+            "estadisticas": {
+                "total_piezas": total_piezas,
+                "total_depositos": total_depositos
+            },
+            "progreso": {
+                "meta": self.meta,
+                "actual": total_piezas,
+                "porcentaje": porcentaje
+            },
+            "por_material": por_material
+        })

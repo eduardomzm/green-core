@@ -33,3 +33,14 @@ class AlumnoGrupoSerializer(serializers.ModelSerializer):
     class Meta:
         model = AlumnoGrupo
         fields = '__all__'
+
+
+class UserSimpleSerializer(serializers.ModelSerializer):
+    nombre_completo = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'nombre_completo']
+
+    def get_nombre_completo(self, obj):
+        return f"{obj.first_name} {obj.primer_apellido} {obj.segundo_apellido}".strip()

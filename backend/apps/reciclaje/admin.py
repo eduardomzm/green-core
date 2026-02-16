@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Grupo, Material, Deposito
-
+from .models import Grupo, Material, Deposito, MetaSistema
 
 @admin.register(Grupo)
 class GrupoAdmin(admin.ModelAdmin):
@@ -17,3 +16,6 @@ class MaterialAdmin(admin.ModelAdmin):
 class DepositoAdmin(admin.ModelAdmin):
     list_display = ('alumno', 'material', 'cantidad', 'fecha')
     list_filter = ('material', 'fecha')
+
+
+admin.site.register(MetaSistema)
