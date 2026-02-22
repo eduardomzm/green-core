@@ -1,10 +1,10 @@
-import React from "react";
+import MainLayout from "../components/layout/MainLayout";
 
-const Dashboard: React.FC = () => {
+const Dashboard = () => {
   return (
-    <div>
-      <h1>Dashboard</h1>
-    </div>
+    <MainLayout>
+      <h1 className="text-2xl font-bold">Dashboard</h1>
+    </MainLayout>
   );
 };
 

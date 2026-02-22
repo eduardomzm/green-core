@@ -4,32 +4,22 @@ import type { AuthContextType } from "../types/auth.types";
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-
-const [token, setToken] = useState<string | null>(null);
-const [loading, setLoading] = useState(true);
-
-useEffect(() => {
-  const storedToken = localStorage.getItem("token");
-
-  if (storedToken) {
-    setToken(storedToken);
-  }
-
-  setLoading(false);
-}, []);
-
 interface Props {
   children: ReactNode;
 }
 
 export const AuthProvider = ({ children }: Props) => {
   const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
+
     if (storedToken) {
       setToken(storedToken);
     }
+
+    setLoading(false);
   }, []);
 
   const login = (newToken: string) => {
@@ -55,7 +45,4 @@ export const AuthProvider = ({ children }: Props) => {
       {children}
     </AuthContext.Provider>
   );
-
-
-  
 };
