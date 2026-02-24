@@ -1,34 +1,47 @@
-import { createContext, useState, useEffect } from "react";
-import type { ReactNode } from "react";
-import type { AuthContextType } from "../types/auth.types";
+import{ createContext, useState, useEffect } from "react";
+import type{ ReactNode } from "react";
+interface AuthContextType {
+  token: string | null;
+  isAuthenticated: boolean;
+  login: (token: string) => void;
+  logout: () => void;
+}
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);
 
 interface Props {
   children: ReactNode;
 }
 
 export const AuthProvider = ({ children }: Props) => {
-  const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem("access")
+  );
+
+  const isAuthenticated = !!token;
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-
-    if (storedToken) {
+    const handleStorageChange = () => {
+      const storedToken = localStorage.getItem("access");
       setToken(storedToken);
-    }
+    };
 
-    setLoading(false);
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
   const login = (newToken: string) => {
-    localStorage.setItem("token", newToken);
+    localStorage.setItem("access", newToken);
     setToken(newToken);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("access");
     setToken(null);
   };
 
@@ -36,10 +49,9 @@ export const AuthProvider = ({ children }: Props) => {
     <AuthContext.Provider
       value={{
         token,
-        isAuthenticated: !!token,
+        isAuthenticated,
         login,
         logout,
-        loading,
       }}
     >
       {children}
