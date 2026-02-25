@@ -16,6 +16,7 @@ const Login = () => {
 
     try {
       const data = await loginRequest(username, password);
+      console.log(data);
 
       login(data.access); // guardar token en contexto
       navigate("/dashboard");
