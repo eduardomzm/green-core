@@ -1,5 +1,6 @@
 import api from "./api";
-import type{ LoginResponse } from "../types/auth.types";
+
+import type { LoginResponse } from "../types/auth.types";
 
 export const loginRequest = async (
   username: string,
@@ -10,5 +11,10 @@ export const loginRequest = async (
     password,
   });
 
+  return response.data;
+};
+
+export const registerAlumno = async (userData: any) => {
+  const response = await api.post("/users/registro/alumno/", userData);
   return response.data;
 };

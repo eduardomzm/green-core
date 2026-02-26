@@ -12,3 +12,13 @@ export interface AuthContextType {
   login: (token: string) => Promise<void>;
   logout: () => void;
 }
+
+export interface LoginResponse {
+  access: string;
+  refresh: string;
+}
+
+export interface LoginResponse {
+  access: string;
+  refresh: string;
+}
