@@ -63,6 +63,10 @@ class RegistroAlumnoView(APIView):
 
 class UserViewSet(viewsets.ModelViewSet):
    
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+   
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def me(self, request):
         """
