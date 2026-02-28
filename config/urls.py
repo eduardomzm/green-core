@@ -31,7 +31,4 @@ urlpatterns = [
 
     # API general
     path('api/', include('config.api_urls')),
-
-    #API Ranking
-    path('api/', include('apps.reciclaje.urls')),
 ]
