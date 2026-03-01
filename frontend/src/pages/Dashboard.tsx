@@ -22,44 +22,28 @@ const Dashboard = () => {
           getDashboard(),
           getMe(),
         ]);
-
         setData(dashboardData);
         setUser(userData);
       } catch (error) {
-        console.error("Error loading dashboard");
+        console.error(error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
-  if (loading) {
-    return (
-      <MainLayout>
-        <p>Cargando...</p>
-      </MainLayout>
-    );
-  }
-
-  if (!data || !user) {
-    return (
-      <MainLayout>
-        <p>Error cargando información</p>
-      </MainLayout>
-    );
-  }
+  if (loading) return <MainLayout><div className="p-8 text-gray-500">Cargando...</div></MainLayout>;
+  if (!data || !user) return <MainLayout><div className="p-8 text-red-500">Error al cargar datos</div></MainLayout>;
 
   return (
     <MainLayout>
-      <h1>Dashboard</h1>
-      <p>Bienvenido {user.username}</p>
-      <p>Rol: {user.role}</p>
-
+      {/* Eliminamos el paréntesis extra al final de la línea de Alumno */}
       {user.role === "ADMIN" && <AdminDashboard data={data} />}
       {user.role === "OPERADOR" && <OperadorDashboard data={data} />}
-      {user.role === "ALUMNO" && <AlumnoDashboard data={data} />}
+      {user.role === "ALUMNO" && (
+        <AlumnoDashboard data={data} nombreLogin={user.username} />
+      )}
       {user.role === "TUTOR" && <TutorDashboard data={data} />}
     </MainLayout>
   );
