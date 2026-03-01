@@ -70,14 +70,14 @@ export const Environment = () => (
 
     {/* ===== BUSHES ===== */}
     <g className="anim-bushes">
-      <ellipse cx="80" cy="540" rx="28" ry="18" fill="#3d9e6e" />
+      <ellipse cx="60" cy="570" rx="28" ry="18" fill="#3d9e6e" />
       <ellipse cx="190" cy="535" rx="22" ry="14" fill="#4aaa7a" />
       <ellipse cx="1050" cy="538" rx="26" ry="16" fill="#3d9e6e" />
       <ellipse cx="490" cy="536" rx="20" ry="13" fill="#4aaa7a" />
       <ellipse cx="720" cy="534" rx="22" ry="14" fill="#3d9e6e" />
 
       {/* Grass tufts */}
-      {[110, 220, 450, 550, 670, 780, 980, 1130].map((gx, i) => (
+      {[110, 220, 450, 550, 670, 780, 980, 1130, 800,].map((gx, i) => (
         <g key={`tuft-${i}`} opacity="0.5">
           <line x1={gx} y1="540" x2={gx - 4} y2="526" stroke="#2d8a5a" strokeWidth="2" strokeLinecap="round" />
           <line x1={gx + 4} y1="540" x2={gx + 4} y2="524" stroke="#3d9e6e" strokeWidth="2" strokeLinecap="round" />

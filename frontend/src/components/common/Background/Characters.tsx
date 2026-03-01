@@ -25,7 +25,7 @@ export const Characters = () => (
     <g className="anim-fall-bin-3">
       <g transform="translate(580, 480)">
         <ellipse cx="0" cy="58" rx="32" ry="6" fill="#3a8a6a" opacity="0.15" />
-        <path d="M-28,-50 L-24,50 L24,50 L28,-50 Z" fill="#3daa70" />
+        <path d="M-28,-50 L-24,50 L24,50 L28,-50 Z" fill="#9100f9" />
         <rect x="-32" y="-58" width="64" height="12" rx="5" fill="#2d9460" />
         <text x="0" y="36" textAnchor="middle" fontSize="11" fill="white" fontWeight="700" fontFamily="sans-serif">ORG</text>
       </g>

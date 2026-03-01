@@ -1,11 +1,7 @@
-import{ createContext, useState, useEffect } from "react";
-import type{ ReactNode } from "react";
-interface AuthContextType {
-  token: string | null;
-  isAuthenticated: boolean;
-  login: (token: string) => void;
-  logout: () => void;
-}
+import { createContext, useState, useEffect } from "react";
+import type { ReactNode } from "react";
+import type { AuthContextType, User } from "../types/auth.types";
+import api from "../services/api";
 
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined
@@ -20,22 +16,34 @@ export const AuthProvider = ({ children }: Props) => {
     localStorage.getItem("access")
   );
 
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
   const isAuthenticated = !!token;
 
   useEffect(() => {
-    const handleStorageChange = () => {
-      const storedToken = localStorage.getItem("access");
-      setToken(storedToken);
+    const fetchUser = async () => {
+      if (!token) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await api.get("/users/me/");
+        setUser(response.data);
+      } catch (error) {
+        console.error("Token inválido");
+        logout();
+      } finally {
+        setLoading(false);
+      }
     };
 
-    window.addEventListener("storage", handleStorageChange);
+    fetchUser();
+  }, [token]);
 
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
-
-  const login = (newToken: string) => {
+  const login = async (newToken: string) => {
     localStorage.setItem("access", newToken);
     setToken(newToken);
   };
@@ -43,13 +51,16 @@ export const AuthProvider = ({ children }: Props) => {
   const logout = () => {
     localStorage.removeItem("access");
     setToken(null);
+    setUser(null);
   };
 
   return (
     <AuthContext.Provider
       value={{
         token,
+        user,
         isAuthenticated,
+        loading,
         login,
         logout,
       }}

@@ -57,14 +57,7 @@ export const Buildings = () => (
         ))
       )}
 
-      {/* Small house left */}
-      <rect x="160" y="450" width="70" height="70" fill="#f2e4cc" rx="2" />
-      <polygon points="150,450 195,410 240,450" fill="#d49070" />
-      <rect x="185" y="490" width="18" height="30" rx="2" fill="#8b5e3c" />
-      <rect x="165" y="462" width="14" height="14" rx="1.5" fill="#E2F1F4" opacity="0.8" />
-      <line x1="172" y1="462" x2="172" y2="476" stroke="#f2e4cc" strokeWidth="1.5" />
-      <line x1="165" y1="469" x2="179" y2="469" stroke="#f2e4cc" strokeWidth="1.5" />
-    </g>
+     </g>
 
     {/* ===== BUILDINGS RIGHT HALF (slide from right) ===== */}
     <g className="anim-buildings-right">
@@ -122,14 +115,6 @@ export const Buildings = () => (
         ))
       )}
 
-      {/* Small house right */}
-      <rect x="970" y="450" width="75" height="70" fill="#f0e0c8" rx="2" />
-      <polygon points="960,450 1008,408 1055,450" fill="#c88468" />
-      <rect x="998" y="490" width="18" height="30" rx="2" fill="#7a5030" />
-      <rect x="975" y="462" width="14" height="14" rx="1.5" fill="#E2F1F4" opacity="0.8" />
-      <line x1="982" y1="462" x2="982" y2="476" stroke="#f0e0c8" strokeWidth="1.5" />
-      <line x1="975" y1="469" x2="989" y2="469" stroke="#f0e0c8" strokeWidth="1.5" />
-      <rect x="1020" y="462" width="14" height="14" rx="1.5" fill="#E2F1F4" opacity="0.8" />
-    </g>
+     </g>
   </>
 );

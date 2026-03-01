@@ -5,12 +5,18 @@ import Usuarios from "../pages/Usuarios";
 import Reportes from "../pages/Reportes";
 import Estadisticas from "../pages/Estadisticas";
 import ProtectedRoute from "./ProtectedRoute";
+import { Landing } from "../pages/Home";
+import { Registro } from "../pages/Registro"; 
 
 const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
+        
+        <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
+       
+        <Route path="/registro" element={<Registro />} />
 
         <Route
           path="/dashboard"
@@ -48,8 +54,7 @@ const AppRouter = () => {
           }
         />
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
