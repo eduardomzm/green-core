@@ -7,7 +7,7 @@ import { Characters } from "../common/Background/Characters";
 export default function MountainBackground() {
   return (
     <div className="fixed inset-0 w-full h-screen overflow-hidden" style={{ background: "#daf0f4" }}>
-      {/* 1. Estilos CSS */}
+
       <Animations/>
 
       <svg
@@ -17,7 +17,7 @@ export default function MountainBackground() {
         className="absolute inset-0 w-full h-full"
         preserveAspectRatio="xMidYMid slice"
       >
-        {/* 2. Capas del escenario (el orden importa para la profundidad) */}
+      
         <Environment />  {/* Cielo, Nubes, Suelo, Árboles */}
         <Buildings />    {/* Edificios del fondo */}
         <Characters />   {/* Botes, Chica y hojas */}

@@ -1,21 +1,25 @@
-export interface Estadisticas {
-  total_piezas: number;
-  total_depositos: number;
-}
-
-export interface Progreso {
-  actual: number;
-  meta: number;
-  porcentaje: number;
-}
-
-export interface MaterialItem {
-  material: string;
-  total_piezas: number;
+export interface Usuario {
+  nombre: string;
+  matricula: string;
+  carrera: string;
+  semestre: string;
+  correo: string;
+  telefono: string;
 }
 
 export interface DashboardResponse {
-  estadisticas: Estadisticas;
-  progreso: Progreso;
-  por_material: MaterialItem[];
+  usuario: Usuario;
+  estadisticas: {
+    total_piezas: number;
+    total_depositos: number;
+  };
+  progreso: {
+    actual: number;
+    meta: number;
+    porcentaje: number;
+  };
+  por_material: {
+    material: string;
+    total_piezas: number;
+  }[];
 }
