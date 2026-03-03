@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import MainLayout from "../components/layout/MainLayout";
 import { getDashboard } from "../services/dashboardService";
-import { getMe } from "../services/userService";
 import type { DashboardResponse } from "../types/dashboard.types";
-import type { MeResponse } from "../types/user.types";
+import { useAuth } from "../hooks/useAuth";
 
 import AdminDashboard from "../components/dashboard/AdminDashboard";
 import OperadorDashboard from "../components/dashboard/OperadorDashboard";
@@ -11,20 +10,15 @@ import AlumnoDashboard from "../components/dashboard/AlumnoDashboard";
 import TutorDashboard from "../components/dashboard/TutorDashboard";
 
 const Dashboard = () => {
+  const { user, loading: authLoading } = useAuth();
   const [data, setData] = useState<DashboardResponse | null>(null);
-  const [user, setUser] = useState<MeResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDashboard = async () => {
       try {
-        const [dashboardData, userData] = await Promise.all([
-          getDashboard(),
-          getMe(),
-        ]);
-
+        const dashboardData = await getDashboard();
         setData(dashboardData);
-        setUser(userData);
       } catch (error) {
         console.error("Error loading dashboard");
       } finally {
@@ -32,10 +26,11 @@ const Dashboard = () => {
       }
     };
 
-    fetchData();
+    fetchDashboard();
   }, []);
 
-  if (loading) {
+  // Esperar a que AuthContext cargue usuario
+  if (authLoading || loading) {
     return (
       <MainLayout>
         <p>Cargando...</p>
