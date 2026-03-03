@@ -1,15 +1,19 @@
-import Sidebar from "../common/Sidebar";
+import type { ReactNode } from "react";
+import Header from "./Header";
+import Sidebar from "./Sidebar";
 
-const MainLayout = ({ children }: { children: React.ReactNode }) => {
+interface Props {
+  children: ReactNode;
+}
+
+const MainLayout = ({ children }: Props) => {
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
-      <header className="h-16 bg-[#00a859] flex items-center px-8 shadow-md z-20">
-        <h1 className="text-white font-bold text-xl">Green Core</h1>
-      </header>
+    <div className="flex">
+      <Sidebar />
 
-      <div className="flex flex-1">
-        <Sidebar />
-        <main className="flex-1 p-8 overflow-y-auto">
+      <div className="flex-1">
+        <Header />
+        <main className="p-6 bg-gray-100 min-h-screen">
           {children}
         </main>
       </div>

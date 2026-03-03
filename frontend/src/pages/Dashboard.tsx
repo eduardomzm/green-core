@@ -24,7 +24,7 @@ const Dashboard = () => {
 
         setData(dashboardData);
       } catch (error) {
-        console.error(error);
+        console.error("Error loading dashboard");
       } finally {
         setLoading(false);
       }
@@ -51,12 +51,13 @@ const Dashboard = () => {
 
   return (
     <MainLayout>
-      {/* Eliminamos el paréntesis extra al final de la línea de Alumno */}
+      <h1>Dashboard</h1>
+      <p>Bienvenido {user.username}</p>
+      <p>Rol: {user.role}</p>
+
       {user.role === "ADMIN" && <AdminDashboard data={data} />}
       {user.role === "OPERADOR" && <OperadorDashboard data={data} />}
-      {user.role === "ALUMNO" && (
-        <AlumnoDashboard data={data} nombreLogin={user.username} />
-      )}
+      {user.role === "ALUMNO" && <AlumnoDashboard data={data} />}
       {user.role === "TUTOR" && <TutorDashboard data={data} />}
     </MainLayout>
   );
