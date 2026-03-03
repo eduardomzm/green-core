@@ -17,20 +17,23 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const dashboardData = await getDashboard();
+        const [dashboardData, userData] = await Promise.all([
+          getDashboard(),
+          getMe(),
+        ]);
+
         setData(dashboardData);
       } catch (error) {
-        console.error("Error loading dashboard");
+        console.error(error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchDashboard();
+    fetchData();
   }, []);
 
-  // Esperar a que AuthContext cargue usuario
-  if (authLoading || loading) {
+  if (loading) {
     return (
       <MainLayout>
         <p>Cargando...</p>
@@ -48,13 +51,12 @@ const Dashboard = () => {
 
   return (
     <MainLayout>
-      <h1>Dashboard</h1>
-      <p>Bienvenido {user.username}</p>
-      <p>Rol: {user.role}</p>
-
+      {/* Eliminamos el paréntesis extra al final de la línea de Alumno */}
       {user.role === "ADMIN" && <AdminDashboard data={data} />}
       {user.role === "OPERADOR" && <OperadorDashboard data={data} />}
-      {user.role === "ALUMNO" && <AlumnoDashboard data={data} />}
+      {user.role === "ALUMNO" && (
+        <AlumnoDashboard data={data} nombreLogin={user.username} />
+      )}
       {user.role === "TUTOR" && <TutorDashboard data={data} />}
     </MainLayout>
   );
