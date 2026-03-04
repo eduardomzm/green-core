@@ -91,3 +91,37 @@ class RegistroAlumnoSerializer(serializers.Serializer):
             )
             
         return user
+    
+class AdminUserManagementSerializer(serializers.ModelSerializer):
+    """
+    Serializador exclusivo para que el Administrador cree/edite usuarios de cualquier rol.
+    """
+    matricula = serializers.CharField(max_length=30, required=False, allow_blank=True)
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = (
+            'id', 'username', 'email', 'password', 'first_name',
+            'primer_apellido', 'segundo_apellido', 'role', 'activo', 'matricula'
+        )
+
+    def validate(self, data):
+        if data.get('role') == User.Roles.ALUMNO and not data.get('matricula'):
+            raise serializers.ValidationError({"matricula": "La matrícula es obligatoria al crear una cuenta de Alumno."})
+        return data
+
+    def create(self, validated_data):
+        matricula = validated_data.pop('matricula', None)
+        password = validated_data.pop('password')
+
+        with transaction.atomic():
+           
+            user = User(**validated_data)
+            user.set_password(password) 
+            user.save()
+
+            if user.role == User.Roles.ALUMNO and matricula:
+                AlumnoPerfil.objects.create(usuario=user, matricula=matricula)
+
+        return user

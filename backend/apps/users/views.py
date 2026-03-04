@@ -7,7 +7,8 @@ from .serializers import (
     CarreraSerializer,
     AlumnoPerfilSerializer,
     AlumnoGrupoSerializer,
-    RegistroAlumnoSerializer)
+    RegistroAlumnoSerializer,
+    AdminUserManagementSerializer)
 
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -16,6 +17,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from .permissions import IsAdminUserRole
 
 class MeView(APIView):
     permission_classes = [IsAuthenticated]
@@ -75,3 +77,24 @@ class UserViewSet(viewsets.ModelViewSet):
     
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
+    
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    
+    def get_permissions(self):
+        
+        if self.action == 'me':
+            return [IsAuthenticated()]
+        return [IsAdminUserRole()]
+
+    def get_serializer_class(self):
+       
+        if self.action in ['create', 'update', 'partial_update']:
+            return AdminUserManagementSerializer
+        return UserSerializer
+   
+    @action(detail=False, methods=['get'])
+    def me(self, request):
+    
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)    
