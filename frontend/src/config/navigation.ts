@@ -11,7 +11,8 @@ export const navigationByRole: Record<
     { label: "Inicio", path: "/dashboard" },
     { label: "Usuarios", path: "/usuarios" },
     { label: "Depósitos", path: "/depositos" },
-    { label: "Reportes", path: "/reportes" },
+    { label: "Rankings", path: "/rankings" },
+    { label: "Historial", path: "/historial" },
     
   ],
   OPERADOR: [

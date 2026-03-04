@@ -2,12 +2,13 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import Usuarios from "../pages/Usuarios";
-import Reportes from "../pages/Reportes";
 import Estadisticas from "../pages/Estadisticas";
 import ProtectedRoute from "./ProtectedRoute";
 import { Landing } from "../pages/Home";
 import { Registro } from "../pages/Registro";
 import Depositos from "../pages/Depositos";
+import Historial from "../pages/Historial";
+import Rankings from "../pages/Rankings";
 
 const AppRouter = () => {
   return (
@@ -49,10 +50,19 @@ const AppRouter = () => {
         />
 
         <Route
-          path="/reportes"
+          path="/historial"
           element={
             <ProtectedRoute>
-              <Reportes />
+              <Historial />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/rankings"
+          element={
+            <ProtectedRoute>
+              <Rankings />
             </ProtectedRoute>
           }
         />
