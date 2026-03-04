@@ -24,3 +24,18 @@ export const getUsers = async (): Promise<User[]> => {
     throw error;
   }
 };
+
+export const createUser = async (userData: any): Promise<User> => {
+  try {
+    
+    const response = await api.post('/users/', userData);
+    return response.data;
+  } catch (error: any) {
+    console.error("Error al crear usuario:", error);
+    
+    const errorMsg = error.response?.data 
+        ? JSON.stringify(error.response.data)
+        : 'Error desconocido al crear usuario';
+    throw new Error(errorMsg);
+  }
+};
