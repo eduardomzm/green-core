@@ -301,3 +301,33 @@ class RankingsView(APIView):
             "top_grupos": list(top_grupos),
             "top_carreras": list(top_carreras),
         })
+    
+class MisDepositosView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        if user.role != 'ALUMNO':
+            return Response(
+                {"detail": "Solo los alumnos pueden acceder a esta información."},
+                status=403
+            )
+
+        depositos = (
+            Deposito.objects
+            .filter(alumno=user)
+            .select_related('operador')
+            .order_by('-fecha')
+        )
+
+        data = [
+            {
+                "fecha": deposito.fecha,
+                "cantidad": deposito.cantidad,
+                "operador": deposito.operador.username
+            }
+            for deposito in depositos
+        ]
+
+        return Response(data)

@@ -1,5 +1,7 @@
 from rest_framework.routers import DefaultRouter
-from .views import DepositoViewSet,GrupoViewSet,MaterialViewSet,EstadisticasView, EstadisticasMaterialView, ProgresoView, DashboardView, RankingsView
+        # Filtrar únicamente depósitos del alumno logueado
+        # Filtrar únicamente depósitos del alumno logueado
+from .views import DepositoViewSet,GrupoViewSet,MaterialViewSet,EstadisticasView, EstadisticasMaterialView, ProgresoView, DashboardView, RankingsView, MisDepositosView
 from django.urls import path
 
 router = DefaultRouter()
@@ -13,5 +15,6 @@ urlpatterns = router.urls + [
     path('progreso/', ProgresoView.as_view()),
     path('dashboard/', DashboardView.as_view()),
     path('rankings/', RankingsView.as_view(), name='rankings'),
-
+    path('mis-depositos/', MisDepositosView.as_view(), name='mis-depositos'),
+    
 ]
