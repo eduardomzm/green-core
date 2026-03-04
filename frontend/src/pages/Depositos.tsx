@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
-// Importaremos los servicios más adelante, por ahora crearemos la estructura visual
+
 
 const Depositos = () => {
-  // Estados para nuestros 3 formularios
+
   const [depositoForm, setDepositoForm] = useState({ alumno_id: "", material_id: "", cantidad: "" });
   const [materialForm, setMaterialForm] = useState({ nombre: "", unidad: "pieza" });
   const [metaForm, setMetaForm] = useState({ nombre: "", cantidad_meta: "" });
 
-  // Listas simuladas (pronto las conectaremos a tu backend)
   const [materiales, setMateriales] = useState([{ id: 1, nombre: "Botella PET" }, { id: 2, nombre: "Cartón" }]);
   const [alumnos, setAlumnos] = useState([{ id: 1, username: "juan.perez" }, { id: 2, username: "ana.gomez" }]);
 
@@ -21,7 +20,6 @@ const Depositos = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* COLUMNA IZQUIERDA: Registro de Depósitos (Ocupa 2 espacios) */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
             <div className="flex items-center gap-3 mb-6">
@@ -60,10 +58,8 @@ const Depositos = () => {
           </div>
         </div>
 
-        {/* COLUMNA DERECHA: Materiales y Metas (Ocupa 1 espacio, apilados verticalmente) */}
         <div className="space-y-8">
           
-          {/* Tarjeta: Nuevo Material */}
           <div className="bg-white p-6 rounded-3xl shadow-sm border-t-4 border-secondary">
             <h3 className="text-lg font-bold text-textMain mb-4">Añadir Material</h3>
             <form className="space-y-4">
@@ -78,7 +74,7 @@ const Depositos = () => {
             </form>
           </div>
 
-          {/* Tarjeta: Configurar Meta */}
+
           <div className="bg-white p-6 rounded-3xl shadow-sm border-t-4 border-accent">
             <h3 className="text-lg font-bold text-textMain mb-4">Configurar Meta Global</h3>
             <form className="space-y-4">

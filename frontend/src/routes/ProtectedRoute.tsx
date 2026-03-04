@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import Sidebar from "../components/layout/Sidebar"; // Ajusta la ruta si tu Sidebar está en otra carpeta
+import Sidebar from "../components/layout/Sidebar"; 
 import type { ReactNode } from "react";
 
 interface Props {

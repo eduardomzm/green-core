@@ -6,7 +6,6 @@ const Usuarios = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // --- NUEVOS ESTADOS PARA EL MODAL ---
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalError, setModalError] = useState("");
   const [formData, setFormData] = useState({
@@ -16,7 +15,7 @@ const Usuarios = () => {
     first_name: "",
     primer_apellido: "",
     segundo_apellido: "",
-    role: "ALUMNO", // Por defecto
+    role: "ALUMNO",
     matricula: "",
     activo: true,
   });
@@ -37,10 +36,8 @@ const Usuarios = () => {
     }
   };
 
-  // --- MANEJO DEL FORMULARIO ---
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    // Manejo especial para el checkbox (activo)
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
       setFormData({ ...formData, [name]: checked });
@@ -54,11 +51,9 @@ const Usuarios = () => {
     setModalError("");
 
     try {
-      // Llamamos a la API
       const newUser = await createUser(formData);
-      // Actualizamos la tabla visualmente sin tener que recargar la página
       setUsers([...users, newUser]); 
-      // Cerramos el modal y limpiamos el formulario
+    
       setIsModalOpen(false);
       setFormData({
         username: "", email: "", password: "", first_name: "",
@@ -71,7 +66,7 @@ const Usuarios = () => {
 
   return (
     <div className="p-8">
-      {/* Encabezado y Botón de Acción */}
+
       <div className="flex justify-between items-center mb-8">
         <div>
           <h2 className="text-3xl font-extrabold text-textMain">Gestión de Usuarios</h2>
@@ -85,7 +80,6 @@ const Usuarios = () => {
         </button>
       </div>
 
-      {/* --- TABLA DE USUARIOS --- */}
       {loading ? (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
           <p className="text-gray-500 font-bold animate-pulse">Cargando usuarios...</p>
@@ -135,12 +129,10 @@ const Usuarios = () => {
         </div>
       )}
 
-      {/* --- MODAL PARA NUEVO USUARIO --- */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-fade-in-up max-h-[90vh] flex flex-col">
             
-            {/* Cabecera del Modal */}
             <div className="bg-primary p-6 text-white flex justify-between items-center">
               <div>
                 <h3 className="text-xl font-bold">Crear Nuevo Usuario</h3>
@@ -151,7 +143,6 @@ const Usuarios = () => {
               </button>
             </div>
 
-            {/* Cuerpo del Modal (Scrollable) */}
             <div className="p-6 overflow-y-auto">
               {modalError && (
                 <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm font-bold border border-red-200 break-words">
@@ -161,7 +152,6 @@ const Usuarios = () => {
 
               <form id="createUserForm" onSubmit={handleSubmit} className="space-y-4">
                 
-                {/* Fila 1: Username y Email */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Usuario</label>
@@ -175,7 +165,6 @@ const Usuarios = () => {
                   </div>
                 </div>
 
-                {/* Fila 2: Nombres y Apellidos */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre(s)</label>
@@ -194,7 +183,6 @@ const Usuarios = () => {
                   </div>
                 </div>
 
-                {/* Fila 3: Rol, Matrícula (Dinámica) y Contraseña */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-start">
                   <div>
                     <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Rol</label>
@@ -207,7 +195,6 @@ const Usuarios = () => {
                     </select>
                   </div>
                   
-                  {/* MAGIA: Solo mostrar si es ALUMNO */}
                   {formData.role === "ALUMNO" && (
                     <div className="animate-fade-in-up">
                       <label className="block text-xs font-bold text-accent uppercase mb-1">Matrícula (Obligatoria)</label>
@@ -223,7 +210,7 @@ const Usuarios = () => {
                   </div>
                 </div>
 
-                {/* Fila 4: Estado (Activo) */}
+              
                 <div className="flex items-center gap-2 pt-2">
                   <input type="checkbox" id="activo" name="activo" checked={formData.activo} onChange={handleChange}
                     className="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded cursor-pointer" />
@@ -234,7 +221,7 @@ const Usuarios = () => {
               </form>
             </div>
 
-            {/* Footer del Modal (Botones) */}
+           
             <div className="bg-gray-50 p-6 border-t border-gray-100 flex justify-end gap-3">
               <button onClick={() => setIsModalOpen(false)} className="px-6 py-2.5 rounded-xl font-bold text-gray-500 hover:bg-gray-200 transition-colors text-sm">
                 Cancelar
