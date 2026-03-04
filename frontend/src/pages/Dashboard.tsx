@@ -17,23 +17,19 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const [dashboardData, userData] = await Promise.all([
-          getDashboard(),
-          getMe(),
-        ]);
-
+        const dashboardData = await getDashboard();
         setData(dashboardData);
       } catch (error) {
-        console.error("Error loading dashboard");
+        console.error("Error loading dashboard", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchDashboard();
   }, []);
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <MainLayout>
         <p>Cargando...</p>

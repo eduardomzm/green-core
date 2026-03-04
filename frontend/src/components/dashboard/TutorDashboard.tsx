@@ -9,6 +9,8 @@ const TutorDashboard = ({ data }: Props) => {
     <div>
       <h2>Vista Tutor</h2>
       <p>Revisión de grupo activa</p>
+      <p>Depósitos del grupo: {data.estadisticas.total_depositos}</p>
+      <p>Avance del grupo: {data.progreso.porcentaje}%</p>
     </div>
   );
 };
