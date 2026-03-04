@@ -8,20 +8,22 @@ export const navigationByRole: Record<
   NavItem[]
 > = {
   ADMIN: [
-    { label: "Dashboard", path: "/dashboard" },
+    { label: "Inicio", path: "/dashboard" },
     { label: "Usuarios", path: "/usuarios" },
+    { label: "Depósitos", path: "/depositos" },
     { label: "Reportes", path: "/reportes" },
+    
   ],
   OPERADOR: [
-    { label: "Dashboard", path: "/dashboard" },
+    { label: "Inicio", path: "/dashboard" },
     { label: "Registrar Depósito", path: "/depositos" },
   ],
   ALUMNO: [
-    { label: "Dashboard", path: "/dashboard" },
+    { label: "Inicio", path: "/dashboard" },
     { label: "Mis Estadísticas", path: "/estadisticas" },
   ],
   TUTOR: [
-    { label: "Dashboard", path: "/dashboard" },
+    { label: "Inicio", path: "/dashboard" },
     { label: "Mi Grupo", path: "/grupo" },
   ],
 };

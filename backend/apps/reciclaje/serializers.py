@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Grupo, Material, Deposito
+from .models import Grupo, Material, Deposito, MetaSistema
 from apps.users.serializers import UserSimpleSerializer
 
 
@@ -34,3 +34,8 @@ class DepositoSerializer(serializers.ModelSerializer):
             'fecha'
         ]
         read_only_fields = ['operador']
+
+class MetaSistemaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MetaSistema
+        fields = '__all__'

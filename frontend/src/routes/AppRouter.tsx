@@ -6,7 +6,8 @@ import Reportes from "../pages/Reportes";
 import Estadisticas from "../pages/Estadisticas";
 import ProtectedRoute from "./ProtectedRoute";
 import { Landing } from "../pages/Home";
-import { Registro } from "../pages/Registro"; 
+import { Registro } from "../pages/Registro";
+import Depositos from "../pages/Depositos";
 
 const AppRouter = () => {
   return (
@@ -39,6 +40,15 @@ const AppRouter = () => {
         />
 
         <Route
+          path="/depositos"
+          element={
+            <ProtectedRoute>
+              <Depositos />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/reportes"
           element={
             <ProtectedRoute>
@@ -55,6 +65,8 @@ const AppRouter = () => {
             </ProtectedRoute>
           }
         />
+
+        
 
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>

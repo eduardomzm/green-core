@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from .models import Deposito, Grupo, Material, MetaSistema
-from .serializers import GrupoSerializer, MaterialSerializer, DepositoSerializer
+from .serializers import GrupoSerializer, MaterialSerializer, DepositoSerializer, MetaSistemaSerializer
 from .permissions import IsAdmin, CanCreateDeposito
 from django.db.models import Sum, Count
 from rest_framework.views import APIView
@@ -59,7 +59,33 @@ class GrupoViewSet(viewsets.ModelViewSet):
 class MaterialViewSet(viewsets.ModelViewSet):
     queryset = Material.objects.all()
     serializer_class = MaterialSerializer
-    permission_classes = [IsAuthenticated]
+    
+    def get_permissions(self):
+        
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsAuthenticated(), IsAdmin()]
+    
+        return [IsAuthenticated()]
+    
+
+class MetaSistemaViewSet(viewsets.ModelViewSet):
+    queryset = MetaSistema.objects.all()
+    serializer_class = MetaSistemaSerializer
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [IsAuthenticated()]
+        return [IsAuthenticated(), IsAdmin()]
+
+    def perform_create(self, serializer):
+        if serializer.validated_data.get('activa', True):
+            MetaSistema.objects.update(activa=False)
+        serializer.save()
+
+    def perform_update(self, serializer):
+        if serializer.validated_data.get('activa', True):
+            MetaSistema.objects.update(activa=False)
+        serializer.save()    
 
 
 class EstadisticasView(APIView):
@@ -184,43 +210,37 @@ class ProgresoView(APIView):
 class DashboardView(APIView):
     permission_classes = [IsAuthenticated]
 
-    meta = 100
 
     def get(self, request):
         user = request.user
 
-        # Filtrado por rol
+        meta_obj = MetaSistema.objects.filter(activa=True).first()
+        meta_actual = meta_obj.cantidad_meta if meta_obj else 100
+
         if user.role == 'ADMIN':
             depositos = Deposito.objects.all()
-
         elif user.role == 'OPERADOR':
             depositos = Deposito.objects.filter(operador=user)
-
         elif user.role == 'ALUMNO':
             depositos = Deposito.objects.filter(alumno=user)
-
         elif user.role == 'TUTOR':
             depositos = Deposito.objects.filter(
                 alumno__alumnogrupo__grupo__tutor=user
             )
-
         else:
             depositos = Deposito.objects.none()
 
-        # Estadísticas generales
         total_piezas = depositos.aggregate(
             total=Sum('cantidad')
         )['total'] or 0
 
         total_depositos = depositos.count()
 
-        # Progreso
         porcentaje = min(
-            round((total_piezas / self.meta) * 100, 2),
+            round((total_piezas / meta_actual) * 100, 2),
             100
         )
 
-        # Estadísticas por material
         estadisticas_material = (
             depositos
             .values('material__nombre')
@@ -242,7 +262,7 @@ class DashboardView(APIView):
                 "total_depositos": total_depositos
             },
             "progreso": {
-                "meta": self.meta,
+                "meta": meta_actual,  
                 "actual": total_piezas,
                 "porcentaje": porcentaje
             },
