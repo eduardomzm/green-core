@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import MainLayout from "../components/layout/MainLayout";
 import { getDashboard } from "../services/dashboardService";
+import { getMe } from "../services/userService";
 import type { DashboardResponse } from "../types/dashboard.types";
-import { useAuth } from "../hooks/useAuth";
+import type { MeResponse } from "../types/user.types";
 
 import AdminDashboard from "../components/dashboard/AdminDashboard";
 import OperadorDashboard from "../components/dashboard/OperadorDashboard";
@@ -10,12 +11,12 @@ import AlumnoDashboard from "../components/dashboard/AlumnoDashboard";
 import TutorDashboard from "../components/dashboard/TutorDashboard";
 
 const Dashboard = () => {
-  const { user, loading: authLoading } = useAuth();
   const [data, setData] = useState<DashboardResponse | null>(null);
+  const [user, setUser] = useState<MeResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchDashboard = async () => {
+    const fetchData = async () => {
       try {
         const [dashboardData, userData] = await Promise.all([
           getDashboard(),
@@ -23,6 +24,7 @@ const Dashboard = () => {
         ]);
 
         setData(dashboardData);
+        setUser(userData);
       } catch (error) {
         console.error("Error loading dashboard");
       } finally {
@@ -51,6 +53,7 @@ const Dashboard = () => {
 
   return (
     <MainLayout>
+      <h1 className="text-2xl font-bold">Dashboard</h1>
       <h1>Dashboard</h1>
       <p>Bienvenido {user.username}</p>
       <p>Rol: {user.role}</p>

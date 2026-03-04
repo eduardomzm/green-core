@@ -13,9 +13,11 @@ const AppRouter = () => {
     <BrowserRouter>
       <Routes>
         
-        <Route path="/" element={<Landing />} />
+        <Route path="/" element={<Navigate to="/home" replace />} />
+
+        <Route path="/home" element={<Landing />} />
+        
         <Route path="/login" element={<Login />} />
-       
         <Route path="/registro" element={<Registro />} />
 
         <Route
@@ -54,7 +56,7 @@ const AppRouter = () => {
           }
         />
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
     </BrowserRouter>
   );
