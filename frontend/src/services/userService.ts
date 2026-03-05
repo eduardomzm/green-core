@@ -12,7 +12,10 @@ export interface User {
   email: string;
   role: string;
   activo: boolean;
+  first_name?: string;
   primer_apellido?: string;
+  segundo_apellido?: string;
+  matricula?: string;
 }
 
 export const getUsers = async (): Promise<User[]> => {

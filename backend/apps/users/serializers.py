@@ -3,18 +3,31 @@ from .models import User, Carrera, AlumnoPerfil, AlumnoGrupo
 from django.db import transaction
 
 class UserSerializer(serializers.ModelSerializer):
+    # Declaramos la matrícula como un campo calculado
+    matricula = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = (
             'id',
             'username',
             'email',
+            'first_name',
             'primer_apellido',
             'segundo_apellido',
             'role',
             'activo',
+            'matricula'
         )
         read_only_fields = ('id',)
+
+    def get_matricula(self, obj):
+        if obj.role == 'ALUMNO':
+            try:
+                return obj.alumnoperfil.matricula
+            except AlumnoPerfil.DoesNotExist:
+                return None
+        return None
 
 
 class CarreraSerializer(serializers.ModelSerializer):
