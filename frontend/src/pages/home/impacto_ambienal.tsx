@@ -131,7 +131,6 @@ useEffect(() => {
             <p className="opacity-70 text-lg">
                 años tarda una botella en degradarse
             </p>
-
             </div>
         </div>
 

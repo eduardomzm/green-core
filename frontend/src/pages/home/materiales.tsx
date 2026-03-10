@@ -1,4 +1,4 @@
-import botella from "../../assets/img/botella_animada.jpg";
+import botella from "../../assets/img/boytella_animada.jpg";
 import carton from "../../assets/img/carton_animada.jpg";
 import lata from "../../assets/img/lata_animada.jpg";
 
