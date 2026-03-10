@@ -92,7 +92,6 @@ const co2 = (botellas * 0.03).toFixed(1);
                 </p>
 
             </div>
-
             </div>
 
         </div>
