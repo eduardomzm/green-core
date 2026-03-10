@@ -252,7 +252,6 @@ class DashboardView(APIView):
             "por_material": por_material
         })
 
-
 class RankingsView(APIView):
     permission_classes = [IsAuthenticated]
 
