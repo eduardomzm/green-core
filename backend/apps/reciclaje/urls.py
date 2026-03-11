@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from .views import DepositoViewSet,GrupoViewSet,MaterialViewSet,EstadisticasView, EstadisticasMaterialView, ProgresoView, DashboardView, MetaSistemaViewSet
+from .views import DepositoViewSet,GrupoViewSet,MaterialViewSet,EstadisticasView, EstadisticasMaterialView, ProgresoView, DashboardView, MetaSistemaViewSet, RankingsView
 from django.urls import path
 
 
@@ -14,7 +14,7 @@ urlpatterns = router.urls + [
     path('estadisticas-material/', EstadisticasMaterialView.as_view()),
     path('progreso/', ProgresoView.as_view()),
     path('dashboard/', DashboardView.as_view()),
-
+    path('rankings/', RankingsView.as_view(), name='rankings'),
 
 
 ]

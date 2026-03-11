@@ -6,7 +6,10 @@ from .permissions import IsAdmin, CanCreateDeposito
 from django.db.models import Sum, Count
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from django.utils import timezone
+from datetime import timedelta
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 
 class DepositoViewSet(viewsets.ModelViewSet):
@@ -268,3 +271,53 @@ class DashboardView(APIView):
             },
             "por_material": por_material
         })
+
+class RankingsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        fecha_inicio = timezone.now() - timedelta(days=7)
+
+        # Query base: depósitos últimos 7 días
+        depositos = Deposito.objects.filter(fecha__gte=fecha_inicio)
+
+        top_alumnos = (
+            depositos
+            .values(
+                'alumno__id',
+                'alumno__username',
+                'alumno__first_name',
+                'alumno__primer_apellido'
+            )
+            .annotate(total_piezas=Sum('cantidad'))
+            .order_by('-total_piezas')
+        )
+
+        top_grupos = (
+            depositos
+            .filter(alumno__alumnogrupo__isnull=False)
+            .values(
+                'alumno__alumnogrupo__grupo__id',
+                'alumno__alumnogrupo__grupo__nombre'
+            )
+            .annotate(total_piezas=Sum('cantidad'))
+            .order_by('-total_piezas')
+        )
+
+        top_carreras = (
+            depositos
+            .filter(alumno__alumnogrupo__isnull=False)
+            .values(
+                'alumno__alumnogrupo__grupo__carrera__id',
+                'alumno__alumnogrupo__grupo__carrera__nombre'
+            )
+            .annotate(total_piezas=Sum('cantidad'))
+            .order_by('-total_piezas')
+        )
+
+        return Response({
+            "top_alumnos": list(top_alumnos),
+            "top_grupos": list(top_grupos),
+            "top_carreras": list(top_carreras),
+        })
+        
