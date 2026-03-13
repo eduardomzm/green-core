@@ -276,10 +276,14 @@ class RankingsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        fecha_inicio = timezone.now() - timedelta(days=7)
+        timeframe = request.query_params.get('timeframe', 'general')
+        
+        depositos = Deposito.objects.all()
 
-        # Query base: depósitos últimos 7 días
-        depositos = Deposito.objects.filter(fecha__gte=fecha_inicio)
+        if timeframe == 'semanal':
+            fecha_inicio = timezone.now() - timedelta(days=7)
+            # Query: depósitos últimos 7 días
+            depositos = depositos.filter(fecha__gte=fecha_inicio)
 
         top_alumnos = (
             depositos
@@ -290,7 +294,7 @@ class RankingsView(APIView):
                 'alumno__primer_apellido'
             )
             .annotate(total_piezas=Sum('cantidad'))
-            .order_by('-total_piezas')
+            .order_by('-total_piezas')[:20]
         )
 
         top_grupos = (
@@ -301,7 +305,7 @@ class RankingsView(APIView):
                 'alumno__alumnogrupo__grupo__nombre'
             )
             .annotate(total_piezas=Sum('cantidad'))
-            .order_by('-total_piezas')
+            .order_by('-total_piezas')[:20]
         )
 
         top_carreras = (
@@ -312,13 +316,25 @@ class RankingsView(APIView):
                 'alumno__alumnogrupo__grupo__carrera__nombre'
             )
             .annotate(total_piezas=Sum('cantidad'))
-            .order_by('-total_piezas')
+            .order_by('-total_piezas')[:20]
+        )
+
+        top_materiales = (
+            depositos
+            .values(
+                'material__id',
+                'material__nombre'
+            )
+            .annotate(total_piezas=Sum('cantidad'))
+            .order_by('-total_piezas')[:20]
         )
 
         return Response({
+            "timeframe": timeframe,
             "top_alumnos": list(top_alumnos),
             "top_grupos": list(top_grupos),
             "top_carreras": list(top_carreras),
+            "top_materiales": list(top_materiales),
         })
 
 class MisDepositosView(APIView):

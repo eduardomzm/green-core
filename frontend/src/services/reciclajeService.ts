@@ -1,4 +1,4 @@
-import api from './api'; 
+import api from './api';
 
 
 export interface Material {
@@ -25,5 +25,17 @@ export const createDeposito = async (data: { alumno: number; material: number; c
 
 export const createMeta = async (data: { nombre: string; cantidad_meta: number; activa: boolean }) => {
   const response = await api.post('/metas/', data);
+  return response.data;
+};
+
+export interface RankingsResponse {
+  timeframe: string;
+  top_alumnos: any[];
+  top_grupos: any[];
+  top_carreras: any[];
+  top_materiales: any[];
+}
+export const getRankings = async (timeframe: 'general' | 'semanal' = 'general'): Promise<RankingsResponse> => {
+  const response = await api.get('/rankings/', { params: { timeframe } });
   return response.data;
 };
