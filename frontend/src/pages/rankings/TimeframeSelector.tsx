@@ -1,6 +1,6 @@
 type Props = {
-    timeframe: "general" | "semanal"
-    setTimeframe: (value: "general" | "semanal") => void
+    timeframe: "general" | "mensual"
+    setTimeframe: (value: "general" | "mensual") => void
 }
 
 export default function TimeframeSelector({ timeframe, setTimeframe }: Props) {
@@ -10,8 +10,8 @@ export default function TimeframeSelector({ timeframe, setTimeframe }: Props) {
 
             <button
                 onClick={() => setTimeframe("general")}
-                className={`px-6 py-2 rounded-md text-sm font-medium ${timeframe === "general"
-                        ? "bg-white shadow-sm text-green-600"
+                className={`px-6 py-2 rounded-md ${timeframe === "general"
+                        ? "bg-white text-green-600 shadow-sm"
                         : "text-gray-600"
                     }`}
             >
@@ -19,13 +19,13 @@ export default function TimeframeSelector({ timeframe, setTimeframe }: Props) {
             </button>
 
             <button
-                onClick={() => setTimeframe("semanal")}
-                className={`px-6 py-2 rounded-md text-sm font-medium ${timeframe === "semanal"
-                        ? "bg-white shadow-sm text-green-600"
+                onClick={() => setTimeframe("mensual")}
+                className={`px-6 py-2 rounded-md ${timeframe === "mensual"
+                        ? "bg-white text-green-600 shadow-sm"
                         : "text-gray-600"
                     }`}
             >
-                Semanal
+                Mensual
             </button>
 
         </div>

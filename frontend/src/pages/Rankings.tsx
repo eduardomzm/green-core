@@ -9,7 +9,7 @@ import StatsCards from "../pages/rankings/StatsCards";
 import TopRecicladores from "../pages/rankings/TopRecicladores";
 import ImpactoAmbiental from "../pages/rankings/ImpactoAmbientalP";
 
-type TimeframeType = "general" | "semanal";
+type TimeframeType = "general" | "mensual";
 
 export default function Rankings() {
 

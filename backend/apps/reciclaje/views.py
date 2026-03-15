@@ -1,15 +1,21 @@
+from datetime import timedelta
+
+from django.db.models import Sum
+from django.utils import timezone
+
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from .models import Deposito, Grupo, Material, MetaSistema
-from .serializers import GrupoSerializer, MaterialSerializer, DepositoSerializer, MetaSistemaSerializer
-from .permissions import IsAdmin, CanCreateDeposito
-from django.db.models import Sum, Count
+from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from django.utils import timezone
-from datetime import timedelta
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+
+from .models import Deposito, Grupo, Material, MetaSistema
+from .permissions import CanCreateDeposito, IsAdmin
+from .serializers import (
+                DepositoSerializer,
+                GrupoSerializer,
+                MaterialSerializer,
+                MetaSistemaSerializer,
+)
 
 
 class DepositoViewSet(viewsets.ModelViewSet):
@@ -280,9 +286,9 @@ class RankingsView(APIView):
         
         depositos = Deposito.objects.all()
 
-        if timeframe == 'semanal':
-            fecha_inicio = timezone.now() - timedelta(days=7)
-            # Query: depósitos últimos 7 días
+        if timeframe == 'mensual':
+            now = timezone.now()
+            fecha_inicio = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
             depositos = depositos.filter(fecha__gte=fecha_inicio)
 
         top_alumnos = (

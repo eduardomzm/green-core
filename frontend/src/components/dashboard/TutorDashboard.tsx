@@ -4,7 +4,7 @@ interface Props {
   data: DashboardResponse;
 }
 
-const TutorDashboard = ({ data }: Props) => {
+const TutorDashboard = ({ data: _data }: Props) => {
   return (
     <div>
       <h2>Vista Tutor</h2>
