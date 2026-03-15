@@ -21,7 +21,7 @@ useEffect(() => {
 
     }, []);
     return (
-    <nav className="flex justify-between items-center py-6 px-10 bg-white/70 backdrop-blur-md fixed w-full top-0 z-50">
+    <nav className={`flex justify-between items-center py-6 px-10 bg-white/70 backdrop-blur-md fixed w-full top-0 z-50 transition-all ${scrolled ? 'shadow-md' : ''}`}>
 
       {/* Logo */}
         <div className="flex items-center gap-2">

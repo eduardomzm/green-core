@@ -9,22 +9,12 @@ import {
     Cell
 } from "recharts";
 
-const COLORS = [
-    "#0cbc4dff",
-    "#3b82f6",
-    "#f59e0b",
-    "#ef4444",
-    "#8b5cf6",
-    "#ec4899",
-    "#06b6d4",
-    "#f97316"
-];
-
 type Props = {
     chartData: { name: string; value: number }[];
 };
 
 export default function RankingsChart({ chartData }: Props) {
+
     return (
         <div className="h-[260px] w-full">
 
@@ -35,65 +25,82 @@ export default function RankingsChart({ chartData }: Props) {
                     margin={{ top: 10, right: 20, left: 0, bottom: 70 }}
                 >
 
-                    {/* EFECTO NEÓN */}
+                    {/* Gradientes estilo iOS */}
                     <defs>
-                        <filter id="neonGlow" height="200%" width="200%" x="-50%" y="-50%">
-                            <feGaussianBlur stdDeviation="4" result="coloredBlur" />
-                            <feMerge>
-                                <feMergeNode in="coloredBlur" />
-                                <feMergeNode in="SourceGraphic" />
-                            </feMerge>
-                        </filter>
+
+                        <linearGradient id="bar1" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#34d399" />
+                            <stop offset="100%" stopColor="#10b981" />
+                        </linearGradient>
+
+                        <linearGradient id="bar2" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#60a5fa" />
+                            <stop offset="100%" stopColor="#3b82f6" />
+                        </linearGradient>
+
+                        <linearGradient id="bar3" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#fbbf24" />
+                            <stop offset="100%" stopColor="#f59e0b" />
+                        </linearGradient>
+
+                        <linearGradient id="bar4" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#fb7185" />
+                            <stop offset="100%" stopColor="#ef4444" />
+                        </linearGradient>
+
                     </defs>
 
-                    {/* GRID SUAVE */}
+                    {/* Grid muy suave */}
                     <CartesianGrid
-                        stroke="#e5e7eb"
+                        stroke="#f3f4f6"
                         strokeDasharray="3 3"
                         vertical={false}
                     />
 
-                    {/* EJE X SIN BORDES */}
+                    {/* Eje X estilo limpio */}
                     <XAxis
                         dataKey="name"
                         axisLine={false}
                         tickLine={false}
                         angle={-35}
                         textAnchor="end"
-                        tick={{ fill: "#2a2a2aff", fontSize: 12 }}
+                        tick={{ fill: "#6b7280", fontSize: 12 }}
                     />
 
-                    {/* EJE Y SIN BORDES */}
+                    {/* Eje Y estilo limpio */}
                     <YAxis
                         axisLine={false}
                         tickLine={false}
-                        tick={{ fill: "#2a2a2aff", fontSize: 12 }}
+                        tick={{ fill: "#6b7280", fontSize: 12 }}
                     />
 
+                    {/* Tooltip tipo tarjeta iOS */}
                     <Tooltip
                         formatter={(value) => [`${value} piezas`, "Total"]}
                         contentStyle={{
-                            borderRadius: "10px",
+                            borderRadius: "14px",
                             border: "none",
-                            boxShadow: "0 6px 20px rgba(0,0,0,0.08)"
+                            background: "rgba(255,255,255,0.95)",
+                            backdropFilter: "blur(6px)",
+                            boxShadow: "0 10px 30px rgba(0,0,0,0.08)"
                         }}
                     />
 
                     <Bar
                         dataKey="value"
-                        radius={[8, 8, 0, 0]}
-                        barSize={120}
+                        radius={[12, 12, 0, 0]}
+                        barSize={80}
                         animationDuration={900}
                     >
 
-                        {chartData.map((entry, index) => {
-                            const isTop = index === 0;
+                        {chartData.map((_, index) => {
+
+                            const gradients = ["url(#bar1)", "url(#bar2)", "url(#bar3)", "url(#bar4)"];
 
                             return (
                                 <Cell
                                     key={index}
-                                    fill={COLORS[index % COLORS.length]}
-                                    filter={isTop ? "url(#neonGlow)" : ""}
+                                    fill={gradients[index % gradients.length]}
                                 />
                             );
                         })}

@@ -1,56 +1,85 @@
+import { Trophy } from "lucide-react";
+
 type Alumno = {
-    alumno__first_name: string
-    total_piezas: number
-}
+    alumno__first_name: string;
+    alumno__username: string;
+    total_piezas: number;
+};
 
 type Props = {
-    alumnos: Alumno[]
-}
+    alumnos: Alumno[];
+};
 
 export default function TopRecicladores({ alumnos }: Props) {
 
-    const top3 = alumnos.slice(0, 3)
+    const top3 = alumnos.slice(0, 3);
 
-    const medals = ["🥇", "🥈", "🥉"]
+    const medals = ["🥇", "🥈", "🥉"];
 
     return (
-        <div className="bg-white p-6 rounded-xl shadow-sm ">
+        <div className="grid md:grid-cols-3 gap-6">
 
-            <h2 className="text-xl font-bold text-gray-800 mb-6">
-                Top 3 Recicladores
-            </h2>
+            {top3.map((alumno, index) => {
 
-            <div className="space-y-4">
+                const name =
+                    alumno.alumno__first_name || alumno.alumno__username;
 
-                {top3.map((alumno, index) => (
+                const isFirst = index === 0;
+
+                return (
 
                     <div
                         key={index}
-                        className="flex items-center justify-between bg-green-100 p-4 rounded-lg"
+                        className={`
+                            bg-white/70
+                            backdrop-blur-lg
+                            rounded-3xl
+                            p-6
+                            shadow-md
+                            text-center
+                            transition
+                            hover:shadow-xl
+                            ${isFirst ? "scale-105" : ""}
+                        `}
                     >
 
-                        <div className="flex items-center gap-3">
-
-                            <span className="text-2xl">
-                                {medals[index]}
-                            </span>
-
-                            <span className="font-medium text-gray-700">
-                                {alumno.alumno__first_name}
-                            </span>
-
+                        {/* MEDALLA */}
+                        <div className="text-3xl mb-3">
+                            {medals[index]}
                         </div>
 
-                        <span className="font-bold text-green-600">
+                        {/* ICONO */}
+                        <div
+                            className={`
+                                mx-auto
+                                w-14 h-14
+                                flex items-center justify-center
+                                rounded-full
+                                mb-3
+                                ${isFirst
+                                    ? "bg-yellow-100 text-yellow-500"
+                                    : "bg-gray-100 text-gray-500"}
+                            `}
+                        >
+                            <Trophy size={26} />
+                        </div>
+
+                        {/* NOMBRE */}
+                        <h3 className="font-semibold text-gray-800">
+                            {name}
+                        </h3>
+
+                        {/* PIEZAS */}
+                        <p className="text-sm text-gray-500 mt-1">
                             {alumno.total_piezas} piezas
-                        </span>
+                        </p>
 
                     </div>
 
-                ))}
+                );
 
-            </div>
+            })}
 
         </div>
-    )
+    );
 }

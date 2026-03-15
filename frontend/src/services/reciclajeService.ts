@@ -35,7 +35,7 @@ export interface RankingsResponse {
   top_carreras: any[];
   top_materiales: any[];
 }
-export const getRankings = async (timeframe: 'general' | 'semanal' = 'general'): Promise<RankingsResponse> => {
+export const getRankings = async (timeframe: 'general' | 'mensual' = 'general'): Promise<RankingsResponse> => {
   const response = await api.get('/rankings/', { params: { timeframe } });
   return response.data;
 };
