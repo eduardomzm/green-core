@@ -6,7 +6,7 @@ export const loginRequest = async (
   username: string,
   password: string
 ): Promise<LoginResponse> => {
-  const response = await api.post<LoginResponse>("/token/", {
+  const response = await api.post<LoginResponse>("token/", {
     username,
     password,
   });
@@ -15,6 +15,6 @@ export const loginRequest = async (
 };
 
 export const registerAlumno = async (userData: any) => {
-  const response = await api.post("/users/registro/alumno/", userData);
+  const response = await api.post("users/registro/alumno/", userData);
   return response.data;
 };
