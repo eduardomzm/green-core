@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_extensions',
     'corsheaders',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    
 
 ]
 
@@ -62,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     
 ]
 
@@ -168,9 +169,13 @@ SIMPLE_JWT = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]
 
 AUTHENTICATION_BACKENDS = [
     'apps.users.backends.EmailOrUsernameModelBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

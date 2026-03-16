@@ -52,23 +52,29 @@ const Dashboard = () => {
     );
   }
 
-  return (
- 
-    <div className="p-8 space-y-6">
+ return (
+    <div className="space-y-6">
       
-     
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center">
+      {/* Banner Minimalista de Bienvenida */}
+      <div className="bg-white p-6 rounded-2xl border border-gray-100 flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-extrabold text-primary">¡Hola de nuevo, {user.username}!</h1>
-          <p className="text-gray-500 text-sm mt-1 font-medium">Estás en el panel de <span className="text-secondary font-bold uppercase">{user.role}</span></p>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+            ¡Hola, {user.username}!
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">
+            Panel de control principal <span className="text-gray-300 mx-2">•</span> 
+            <span className="text-black font-semibold uppercase tracking-wider text-xs">{user.role}</span>
+          </p>
         </div>
-        <div className="text-4xl animate-bounce-slow"></div>
       </div>
 
-      {user.role === "ADMIN" && <AdminDashboard data={data} />}
-      {user.role === "OPERADOR" && <OperadorDashboard data={data} />}
-      {user.role === "ALUMNO" && <AlumnoDashboard data={data} />}
-      {user.role === "TUTOR" && <TutorDashboard data={data} />}
+      {/* Renderizado de los sub-paneles por rol */}
+      <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+        {user.role === "ADMIN" && <AdminDashboard data={data} />}
+        {user.role === "OPERADOR" && <OperadorDashboard data={data} />}
+        {user.role === "ALUMNO" && <AlumnoDashboard data={data} />}
+        {user.role === "TUTOR" && <TutorDashboard data={data} />}
+      </div>
 
     </div>
   );

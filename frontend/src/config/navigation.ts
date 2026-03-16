@@ -1,30 +1,17 @@
-export interface NavItem {
-  label: string;
-  path: string;
-}
+import {
+  LayoutDashboard,
+  Recycle,
+  Users,
+  Trophy,
+  FileText,
+  History
+} from "lucide-react";
 
-export const navigationByRole: Record<
-  "ADMIN" | "OPERADOR" | "ALUMNO" | "TUTOR",
-  NavItem[]
-> = {
-  ADMIN: [
-    { label: "Inicio", path: "/dashboard" },
-    { label: "Usuarios", path: "/usuarios" },
-    { label: "Depósitos", path: "/depositos" },
-    { label: "Rankings", path: "/rankings" },
-    { label: "Historial", path: "/historial" },
-    
-  ],
-  OPERADOR: [
-    { label: "Inicio", path: "/dashboard" },
-    { label: "Registrar Depósito", path: "/depositos" },
-  ],
-  ALUMNO: [
-    { label: "Inicio", path: "/dashboard" },
-    { label: "Mis Estadísticas", path: "/estadisticas" },
-  ],
-  TUTOR: [
-    { label: "Inicio", path: "/dashboard" },
-    { label: "Mi Grupo", path: "/grupo" },
-  ],
-};
+export const NAVIGATION = [
+  { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: ['ADMIN', 'OPERADOR', 'ALUMNO', 'TUTOR'] },
+  { name: 'Depósitos', path: '/dashboard/depositos', icon: Recycle, roles: ['ADMIN', 'OPERADOR'] },
+  { name: 'Usuarios', path: '/dashboard/usuarios', icon: Users, roles: ['ADMIN'] },
+  { name: 'Rankings', path: '/dashboard/rankings', icon: Trophy, roles: ['ADMIN', 'ALUMNO', 'TUTOR', 'OPERADOR'] },
+  { name: 'Reportes', path: '/dashboard/estadisticas', icon: FileText, roles: ['ADMIN', 'TUTOR'] },
+  { name: 'Mis Depósitos', path: '/dashboard/historial', icon: History, roles: ['ALUMNO'] },
+];

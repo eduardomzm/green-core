@@ -1,6 +1,5 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import Sidebar from "../components/layout/Sidebar"; 
 import type { ReactNode } from "react";
 
 interface Props {
@@ -14,20 +13,7 @@ const ProtectedRoute = ({ children }: Props) => {
     return <Navigate to="/login" replace />;
   }
 
-  return (
-    
-    <div className="flex min-h-screen bg-background font-sans text-textMain">
-      
-      
-      <Sidebar />
-
-      
-      <main className="flex-1 ml-64">
-        {children}
-      </main>
-
-    </div>
-  );
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

@@ -1,0 +1,84 @@
+[33m5575a16[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelop[m[33m, [m[1;31morigin/develop[m[33m)[m HEAD@{0}: checkout: moving from master to develop
+[33m7ceb738[m[33m ([m[1;31morigin/master[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{1}: reset: moving to HEAD
+[33m7ceb738[m[33m ([m[1;31morigin/master[m[33m, [m[1;32mmaster[m[33m)[m HEAD@{2}: commit: corregir concatenacion de rutas axios
+[33mfd14dc9[m HEAD@{3}: commit: agregar vercel .json para arreglar el error 404 al recargar
+[33ma1f1eb1[m HEAD@{4}: commit: forzar actualizacion de password de admin
+[33mbd6c335[m HEAD@{5}: commit: script para crear admin en produccion
+[33m8f1cae3[m HEAD@{6}: commit: apuntar frontend a produccion en render
+[33m266022f[m HEAD@{7}: commit: borrar CORS_ALLOWED_ORIGINS viego
+[33m6a805bf[m HEAD@{8}: commit: mover whitenoise a middleware
+[33m5575a16[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelop[m[33m, [m[1;31morigin/develop[m[33m)[m HEAD@{9}: merge develop: Fast-forward
+[33me472ed0[m HEAD@{10}: checkout: moving from develop to master
+[33m5575a16[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelop[m[33m, [m[1;31morigin/develop[m[33m)[m HEAD@{11}: commit: preparar django para render
+[33mfc1033f[m HEAD@{12}: pull origin develop: Fast-forward
+[33m54efb39[m HEAD@{13}: commit: actualización package.json
+[33m12cf1a4[m HEAD@{14}: pull origin develop: Fast-forward
+[33me399b33[m HEAD@{15}: pull origin develop: Fast-forward
+[33m623650e[m HEAD@{16}: pull origin develop: Fast-forward
+[33m8f10784[m HEAD@{17}: pull origin develop: Fast-forward
+[33m3d154cf[m[33m ([m[1;31morigin/back-front/end[m[33m)[m HEAD@{18}: pull origin back-front/end: Fast-forward
+[33mda3644c[m HEAD@{19}: reset: moving to ORIG_HEAD
+[33mda3644c[m HEAD@{20}: commit: funcinalidad de: registrar deposito, nuevo material y meta
+[33m53a90df[m HEAD@{21}: commit: agregar Historial.tsx y Rankings.tsx
+[33m5fef707[m HEAD@{22}: commit: front: depositos en admin
+[33m24f4bd0[m HEAD@{23}: commit: depósitos, meta y nuevo material en admin
+[33mec864c1[m HEAD@{24}: commit: front: crear nuevo usuario - admin
+[33m054dd1f[m HEAD@{25}: commit: back-front: tabla usuarios con datos reales y diseño
+[33me43392d[m HEAD@{26}: commit: front: Registro
+[33m2bfb85e[m HEAD@{27}: commit: front: Home y Login
+[33mcf4c0d5[m HEAD@{28}: pull origin develop: Fast-forward
+[33medf790b[m HEAD@{29}: commit (merge): Merge branch 'develop' of https://github.com/eduardomzm/green-core into develop
+[33m2bf2e11[m HEAD@{30}: commit: package.json
+[33m141f68e[m HEAD@{31}: pull origin develop: Fast-forward
+[33m06df259[m HEAD@{32}: pull origin develop: Fast-forward
+[33mfdc0deb[m HEAD@{33}: commit: Actualización de views.py
+[33m561ad10[m HEAD@{34}: commit: Correción inicio de sesión
+[33m4565a5a[m HEAD@{35}: commit: Agregar rutas Home y Registro
+[33m7acae8f[m HEAD@{36}: commit: feat(frontend): agrega vistas funcionales de Landing y Registro de Alumno
+[33m098b105[m HEAD@{37}: commit: implement role-based navigation and proted routes structure
+[33ma8b2fc3[m HEAD@{38}: commit: implement JWT
+[33maf1af06[m HEAD@{39}: commit: settings.py
+[33md08bbbb[m HEAD@{40}: commit: (frontend): JWT auth with persistent session and protected routes
+[33m4eb4d7f[m HEAD@{41}: commit: (frontend): base vite + typescript + tailwind setop
+[33mbfde65c[m HEAD@{42}: Branch: renamed refs/heads/develop to refs/heads/develop
+[33mbfde65c[m HEAD@{44}: commit: freeze api v1 for frontend integration
+[33mc8a3e78[m HEAD@{45}: commit: api: add material statistics endpoint with role-based filtering
+[33m00ffeee[m HEAD@{46}: commit: api: implement role-based permissions and secure deposito creation
+[33m774f167[m HEAD@{47}: commit: api: complete basic CRUD endpoints with JWT authentication
+[33m8731519[m HEAD@{48}: commit: add basic CRUD endpoints
+[33me480cf0[m HEAD@{49}: commit: implement JWT authentication and initial user endpoint
+[33m22ef8e8[m HEAD@{50}: commit: add initial user serializer
+[33m417613c[m HEAD@{51}: commit: create base apps structure
+[33m719e294[m HEAD@{52}: commit: initial django project
+[33ma35f6ee[m HEAD@{53}: commit: Add gitignore
+[33ma799573[m HEAD@{54}: reset: moving to origin/develop
+[33ma799573[m HEAD@{55}: checkout: moving from develop to develop
+[33ma799573[m HEAD@{56}: commit: Initial clean start
+[33m051dc9f[m HEAD@{57}: commit: Initial clean start
+[33m9260af4[m HEAD@{58}: reset: moving to origin/develop
+[33m9260af4[m HEAD@{59}: checkout: moving from refactor/modelo-final to develop
+[33m5124316[m HEAD@{60}: commit: Initial clean start
+[33m9260af4[m HEAD@{61}: reset: moving to origin/develop
+[33mb2c289f[m HEAD@{62}: reset: moving to HEAD
+[33mb2c289f[m HEAD@{63}: commit: refactor: reconstrucción limpia del modelo de datos definitivo
+[33m2222def[m HEAD@{64}: reset: moving to HEAD~1
+[33m5060b34[m HEAD@{65}: commit: refactor: reconstrucción limpia del modelo de datos definitivo
+[33m2222def[m HEAD@{66}: checkout: moving from develop to refactor/modelo-final
+[33m9260af4[m HEAD@{67}: checkout: moving from refactor/modelo-final to develop
+[33m2222def[m HEAD@{68}: commit: refactor: remove old migrations and reset database
+[33m9260af4[m HEAD@{69}: checkout: moving from develop to refactor/modelo-final
+[33m9260af4[m HEAD@{70}: reset: moving to origin/develop
+[33m9260af4[m HEAD@{71}: reset: moving to HEAD
+[33m9260af4[m HEAD@{72}: checkout: moving from develop to develop
+[33m9260af4[m HEAD@{73}: reset: moving to origin/develop
+[33m27c549f[m HEAD@{74}: checkout: moving from develop to develop
+[33m27c549f[m HEAD@{75}: reset: moving to 27c549f
+[33m9260af4[m HEAD@{76}: commit: firts
+[33m27c549f[m HEAD@{77}: checkout: moving from feature/users to develop
+[33mf97aa14[m[33m ([m[1;32mfeature/users[m[33m)[m HEAD@{78}: commit: feat: modelos iniciales
+[33m27c549f[m HEAD@{79}: checkout: moving from develop to feature/users
+[33m27c549f[m HEAD@{80}: checkout: moving from develop to develop
+[33m27c549f[m HEAD@{81}: commit: Feat: apps base del sistema (users, reciclaje, reportes)
+[33me472ed0[m HEAD@{82}: checkout: moving from master to develop
+[33me472ed0[m HEAD@{83}: commit: Environment creation
+[33m6ea076a[m HEAD@{84}: commit (initial): Basic structure of the project
