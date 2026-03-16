@@ -9,6 +9,7 @@ import { Registro } from "../pages/Registro";
 import Depositos from "../pages/Depositos";
 import Historial from "../pages/Historial";
 import Rankings from "../pages/Rankings";
+import MiGrupo from "../pages/MiGrupo";
 
 import MainLayout from "../components/layout/MainLayout"; 
 
@@ -39,6 +40,7 @@ const AppRouter = () => {
           <Route path="historial" element={<Historial />} />
           <Route path="rankings" element={<Rankings />} />
           <Route path="estadisticas" element={<Estadisticas />} />
+          <Route path="mi-grupo" element={<MiGrupo />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/home" replace />} />

@@ -39,3 +39,8 @@ export const getRankings = async (timeframe: 'general' | 'mensual' = 'general'):
   const response = await api.get('rankings/', { params: { timeframe } });
   return response.data;
 };
+
+export const getMiGrupoTutor = async () => {
+  const response = await api.get('reciclaje/mi-grupo/');
+  return response.data;
+};

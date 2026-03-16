@@ -1,4 +1,7 @@
 from datetime import timedelta
+from urllib import request
+
+from apps.users.models import AlumnoGrupo
 
 from django.db.models import Sum
 from django.utils import timezone
@@ -273,7 +276,9 @@ class DashboardView(APIView):
                 "fecha": dep.fecha.isoformat(), 
                 "cantidad": dep.cantidad,
                 "material": dep.material.nombre,
-                "operador": dep.operador.username
+                "operador": dep.operador.username,
+                "alumno": dep.alumno.username
+                
             }
             for dep in depositos_recientes
         ]
@@ -386,3 +391,53 @@ class MisDepositosView(APIView):
         ]
 
         return Response(data)
+    
+
+class MiGrupoTutorView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        if user.role != 'TUTOR':
+            return Response({"error": "Solo tutores pueden ver esto."}, status=403)
+        
+        grupo = Grupo.objects.filter(tutor=user).first()
+        if not grupo:
+            return Response({"error": "Aún no tienes un grupo asignado."}, status=404)
+        
+        alumnos_grupo = AlumnoGrupo.objects.filter(grupo=grupo).select_related('alumno')
+        alumnos_data = [{
+            "id": ag.alumno.id,
+            "nombre": f"{ag.alumno.first_name} {ag.alumno.primer_apellido}",
+            "matricula": ag.alumno.matricula,
+            "username": ag.alumno.username
+        } for ag in alumnos_grupo]
+
+        return Response({
+            "id": grupo.id,
+            "nombre": grupo.nombre,
+            "codigo_invitacion": grupo.codigo_invitacion,
+            "carrera": grupo.carrera.nombre if grupo.carrera else "Sin carrera",
+            "alumnos": alumnos_data
+        })
+
+class UnirseGrupoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        if user.role != 'ALUMNO':
+            return Response({"error": "Solo alumnos pueden unirse a un grupo."}, status=403)
+        
+        codigo = request.data.get('codigo')
+        grupo = Grupo.objects.filter(codigo_invitacion=codigo).first()
+        
+        if not grupo:
+            return Response({"error": "Código inválido o grupo inexistente."}, status=404)
+        
+        AlumnoGrupo.objects.update_or_create(
+            alumno=user,
+            defaults={'grupo': grupo}
+        )
+        
+        return Response({"mensaje": f"¡Te has unido a {grupo.nombre} exitosamente!"})

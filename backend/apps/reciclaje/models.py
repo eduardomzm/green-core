@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.db import models
+import random
+import string
 
 User = settings.AUTH_USER_MODEL
 
@@ -20,6 +22,14 @@ class Grupo(models.Model):
     )
 
     activo = models.BooleanField(default=True)
+
+    codigo_invitacion = models.CharField(max_length=6, unique=True, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.codigo_invitacion:
+            
+            self.codigo_invitacion = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.nombre} - {self.carrera.nombre}"

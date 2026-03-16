@@ -6,18 +6,15 @@ interface Props {
   data: DashboardResponse;
 }
 
-// Datos de prueba (MOCK) mientras tu backend te envía 'ultimos_depositos' reales
 const MOCK_DEPOSITOS: DepositoHistorial[] = [];
 
 const AlumnoDashboard = ({ data }: Props) => {
-  // Estados para los filtros
+ 
   const [filtroMaterial, setFiltroMaterial] = useState<string>("");
   const [filtroFecha, setFiltroFecha] = useState<string>("");
 
-  // Usamos los datos del backend si existen, si no, usamos los de prueba
   const depositos = data.ultimos_depositos || MOCK_DEPOSITOS;
 
-  // Lógica de filtrado dinámico
   const depositosFiltrados = useMemo(() => {
     return depositos.filter((deposito) => {
       const coincideMaterial = filtroMaterial ? deposito.material === filtroMaterial : true;
@@ -26,24 +23,21 @@ const AlumnoDashboard = ({ data }: Props) => {
     });
   }, [depositos, filtroMaterial, filtroFecha]);
 
-  // Extraemos los materiales únicos para llenar el selector del filtro
   const materialesUnicos = Array.from(new Set(depositos.map(d => d.material)));
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       
-      {/* TARJETA DE PROGRESO */}
       <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-8">
         <div className="flex-shrink-0 p-4 bg-background rounded-full">
           <Target className="w-12 h-12 text-primary" strokeWidth={1.5} />
         </div>
         <div className="flex-1 w-full">
-          <h2 className="text-lg font-bold text-textMain mb-2">Tu Progreso de Reciclaje</h2>
+          <h2 className="text-lg font-bold text-textMain mb-2">Progreso de Reciclaje</h2>
           <div className="flex justify-between text-sm text-gray-500 mb-2 font-medium">
             <span>{data.progreso.actual} piezas aportadas</span>
             <span>Meta: {data.progreso.meta}</span>
           </div>
-          {/* Barra de progreso minimalista */}
           <div className="w-full bg-background rounded-full h-3 overflow-hidden border border-gray-100">
             <div 
               className="bg-primary h-3 rounded-full transition-all duration-1000 ease-out"
