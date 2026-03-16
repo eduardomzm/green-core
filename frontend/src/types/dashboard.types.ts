@@ -19,3 +19,19 @@ export interface DashboardResponse {
   progreso: Progreso;
   por_material: MaterialItem[];
 }
+
+export interface DepositoHistorial {
+  id: number;
+  fecha: string; 
+  cantidad: number;
+  material: string;
+  operador: string;
+}
+
+export interface DashboardResponse {
+  estadisticas: Estadisticas;
+  progreso: Progreso;
+  por_material: MaterialItem[];
+  // Lo hacemos opcional (?) por si el backend aún no lo manda
+  ultimos_depositos?: DepositoHistorial[]; 
+}

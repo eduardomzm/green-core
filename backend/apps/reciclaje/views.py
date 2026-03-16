@@ -265,6 +265,19 @@ class DashboardView(APIView):
             for item in estadisticas_material
         ]
 
+        depositos_recientes = depositos.select_related('material', 'operador').order_by('-fecha')[:50]
+        
+        ultimos_depositos = [
+            {
+                "id": dep.id,
+                "fecha": dep.fecha.isoformat(), 
+                "cantidad": dep.cantidad,
+                "material": dep.material.nombre,
+                "operador": dep.operador.username
+            }
+            for dep in depositos_recientes
+        ]
+
         return Response({
             "estadisticas": {
                 "total_piezas": total_piezas,
@@ -275,7 +288,8 @@ class DashboardView(APIView):
                 "actual": total_piezas,
                 "porcentaje": porcentaje
             },
-            "por_material": por_material
+            "por_material": por_material,
+            "ultimos_depositos": ultimos_depositos 
         })
 
 class RankingsView(APIView):
