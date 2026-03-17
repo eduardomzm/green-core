@@ -1,9 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  getRankings,
-  getRankingHistorial,
-  type RankingsResponse
-} from "../services/reciclajeService";
+import { getRankings, type RankingsResponse } from "../services/reciclajeService";
 
 import RankingsHeader from "../pages/rankings/RankingsHeader";
 import RankingsFilters from "../pages/rankings/RankingsFilter";
@@ -12,7 +8,6 @@ import TimeframeSelector from "../pages/rankings/TimeframeSelector";
 import StatsCards from "../pages/rankings/StatsCards";
 import TopRecicladores from "../pages/rankings/TopRecicladores";
 import ImpactoAmbiental from "../pages/rankings/ImpactoAmbientalP";
-import RankingHistorySelector from "../pages/rankings/RankingsHistorySelector";
 
 type TimeframeType = "general" | "mensual";
 
@@ -22,55 +17,31 @@ export default function Rankings() {
   const [timeframe, setTimeframe] = useState<TimeframeType>("general");
   const [activeFilter, setActiveFilter] = useState("alumnos");
   const [lastUpdated, setLastUpdated] = useState(new Date());
-  const [mesHistorial, setMesHistorial] = useState<number | null>(null);
 
   useEffect(() => {
 
     const fetchData = async () => {
-
       try {
-
-        let result;
-
-        if (mesHistorial) {
-
-          result = await getRankingHistorial(
-            mesHistorial,
-            new Date().getFullYear()
-          );
-
-        } else {
-
-          result = await getRankings(timeframe);
-
-        }
-
+        const result = await getRankings(timeframe);
         setData(result);
         setLastUpdated(new Date());
-
       } catch (error) {
-
         console.error("Error obteniendo rankings", error);
-
       }
-
     };
 
+    // primera carga
     fetchData();
 
-    // SOLO actualizar cada 10s si NO estamos viendo historial
-    if (!mesHistorial) {
+    // actualización cada 10s
+    const interval = setInterval(fetchData, 10000);
 
-      const interval = setInterval(fetchData, 120000);
+    return () => clearInterval(interval);
 
-      return () => clearInterval(interval);
-
-    }
-
-  }, [timeframe, mesHistorial]);
+  }, [timeframe]);
 
 
-  /* CALCULAR DATOS PARA TARJETAS */
+  /*CALCULAR DATOS PARA TARJETAS*/
 
   const totalPiezas =
     data?.top_alumnos?.reduce(
@@ -84,7 +55,6 @@ export default function Rankings() {
 
   const materialTop =
     data?.top_materiales?.[0]?.material__nombre || "N/A";
-
 
   /* DATOS PARA LA GRÁFICA */
 
@@ -120,7 +90,6 @@ export default function Rankings() {
 
       default:
         return [];
-
     }
 
   })();
@@ -140,17 +109,7 @@ export default function Rankings() {
 
       </div>
 
-
-      {/* HISTORIAL MENSUAL */}
-
-      <RankingHistorySelector
-        mes={mesHistorial || 0}
-        setMes={setMesHistorial}
-      />
-
-
       {/* TARJETAS DE ESTADÍSTICAS */}
-
       <StatsCards
         totalPiezas={totalPiezas}
         totalAlumnos={totalAlumnos}
@@ -158,14 +117,10 @@ export default function Rankings() {
         materialTop={materialTop}
       />
 
-
       {/* TOP 3 RECICLADORES */}
-
       <TopRecicladores alumnos={data?.top_alumnos || []} />
 
-
       {/* SECCIÓN DEL RANKING */}
-
       <div className="bg-white p-6 rounded-xl shadow-sm">
 
         <RankingsFilters
@@ -177,12 +132,9 @@ export default function Rankings() {
 
       </div>
 
-
       {/* IMPACTO AMBIENTAL */}
-
       <ImpactoAmbiental totalPiezas={totalPiezas} />
 
     </div>
   );
-
 }
