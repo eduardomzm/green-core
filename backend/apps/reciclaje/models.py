@@ -78,3 +78,25 @@ class MetaSistema(models.Model):
 
     def __str__(self):
         return f"{self.nombre} - {self.cantidad_meta}"
+
+
+class RankingMensual(models.Model):
+
+    anio = models.IntegerField()
+    mes = models.IntegerField()
+
+    total_piezas = models.IntegerField(default=0)
+    total_alumnos = models.IntegerField(default=0)
+    total_grupos = models.IntegerField(default=0)
+
+    material_top = models.CharField(max_length=100)
+
+    datos = models.JSONField()
+
+    creado = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("anio", "mes")
+
+    def __str__(self):
+        return f"Ranking {self.mes}-{self.anio}"
