@@ -35,25 +35,35 @@ export interface RankingsResponse {
   top_carreras: any[];
   top_materiales: any[];
 }
-export const getRankings = async (timeframe: string) => {
-  const res = await api.get(`rankings/?timeframe=${timeframe}`)
-  return res.data
-}
-
-export const getRankingHistorial = async (
-  mes: number,
-  anio: number
-): Promise<RankingsResponse> => {
-
-  const response = await api.get('rankings/historial/', {
-    params: { mes, anio }
-  })
-
-  return response.data
-
-}
+export const getRankings = async (timeframe: 'general' | 'mensual' = 'general'): Promise<RankingsResponse> => {
+  const response = await api.get('rankings/', { params: { timeframe } });
+  return response.data;
+};
 
 export const getMiGrupoTutor = async () => {
-  const response = await api.get('reciclaje/mi-grupo/');
+  const response = await api.get('mi-grupo/');
+  return response.data;
+};
+
+export const unirseGrupo = async (codigo: string) => {
+  const response = await api.post('unirse-grupo/', { codigo });
+  return response.data;
+};
+
+export interface Grupo {
+  id: number;
+  nombre: string;
+  codigo_invitacion?: string;
+  carrera: number | any; 
+  tutor: number | any;
+}
+
+export const getGrupos = async () => {
+  const response = await api.get('grupos/');
+  return response.data;
+};
+
+export const createGrupo = async (data: { nombre: string, carrera: number, tutor: number, activo: boolean }) => {
+  const response = await api.post('grupos/', data);
   return response.data;
 };
