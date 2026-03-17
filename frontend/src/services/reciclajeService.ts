@@ -35,7 +35,25 @@ export interface RankingsResponse {
   top_carreras: any[];
   top_materiales: any[];
 }
-export const getRankings = async (timeframe: 'general' | 'mensual' = 'general'): Promise<RankingsResponse> => {
-  const response = await api.get('/rankings/', { params: { timeframe } });
+export const getRankings = async (timeframe: string) => {
+  const res = await api.get(`rankings/?timeframe=${timeframe}`)
+  return res.data
+}
+
+export const getRankingHistorial = async (
+  mes: number,
+  anio: number
+): Promise<RankingsResponse> => {
+
+  const response = await api.get('rankings/historial/', {
+    params: { mes, anio }
+  })
+
+  return response.data
+
+}
+
+export const getMiGrupoTutor = async () => {
+  const response = await api.get('reciclaje/mi-grupo/');
   return response.data;
 };
