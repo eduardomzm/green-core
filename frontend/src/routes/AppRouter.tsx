@@ -10,6 +10,7 @@ import Depositos from "../pages/Depositos";
 import Historial from "../pages/Historial";
 import Rankings from "../pages/Rankings";
 import MiGrupo from "../pages/MiGrupo";
+import GruposCarreras from "../pages/GruposCarreras";
 
 import MainLayout from "../components/layout/MainLayout"; 
 
@@ -39,6 +40,7 @@ const AppRouter = () => {
           <Route path="depositos" element={<Depositos />} />
           <Route path="historial" element={<Historial />} />
           <Route path="rankings" element={<Rankings />} />
+          <Route path="grupos-carreras" element={<GruposCarreras />} />
           <Route path="estadisticas" element={<Estadisticas />} />
           <Route path="mi-grupo" element={<MiGrupo />} />
         </Route>
