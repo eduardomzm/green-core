@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Users, Copy, CheckCircle, Target, Award } from "lucide-react";
+import { Users, Copy, CheckCircle, Target} from "lucide-react";
 import { getMiGrupoTutor } from "../services/reciclajeService";
 
 export default function MiGrupo() {
@@ -22,11 +22,32 @@ export default function MiGrupo() {
   }, []);
 
   const copiarCodigo = () => {
-    if (grupoData?.codigo_invitacion) {
-      navigator.clipboard.writeText(grupoData.codigo_invitacion);
-      setCopiado(true);
-      setTimeout(() => setCopiado(false), 2000);
-    }
+    // 🕵️‍♂️ RENDERIZAR EL REPORTE DEL DETECTIVE
+  if (grupoData?.soy_error_detective) {
+    return (
+      <div className="p-8 mt-8 bg-red-50 border-2 border-red-200 rounded-3xl">
+        <h3 className="text-2xl font-black text-red-800 mb-4">🕵️‍♂️ Reporte Forense de la Base de Datos</h3>
+        
+        <div className="bg-white p-4 rounded-xl mb-4 text-red-900 font-medium">
+          <p>{grupoData.tu_usuario_actual}</p>
+        </div>
+
+        <h4 className="font-bold text-red-800 mb-2">Esto es lo que Django realmente tiene en la tabla de Grupos:</h4>
+        <ul className="list-disc pl-5 space-y-2 text-red-900 bg-white p-4 rounded-xl">
+          {grupoData.grupos_existentes.length === 0 && <li>No hay NINGÚN grupo creado en esta base de datos.</li>}
+          {grupoData.grupos_existentes.map((info: string, index: number) => (
+            <li key={index} className="font-mono text-sm">{info}</li>
+          ))}
+        </ul>
+        
+        <p className="mt-4 text-sm text-red-700 font-bold">
+          👉 Conclusión: Compara tu ID de logueo con los IDs de la lista. Si no coinciden, o si la lista está vacía, estás conectado a una base de datos diferente a la que crees.
+        </p>
+      </div>
+    );
+  }
+
+  // Aquí sigue el if (!grupoData) original...
   };
 
   if (loading) {

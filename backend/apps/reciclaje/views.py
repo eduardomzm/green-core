@@ -402,25 +402,50 @@ class MiGrupoTutorView(APIView):
             return Response({"error": "Solo tutores pueden ver esto."}, status=403)
         
         grupo = Grupo.objects.filter(tutor=user).first()
+        
         if not grupo:
             return Response({"error": "Aún no tienes un grupo asignado."}, status=404)
-        
+            
+        if not grupo.codigo_invitacion:
+            grupo.save()
+            
         alumnos_grupo = AlumnoGrupo.objects.filter(grupo=grupo).select_related('alumno')
-        alumnos_data = [{
-            "id": ag.alumno.id,
-            "nombre": f"{ag.alumno.first_name} {ag.alumno.primer_apellido}",
-            "matricula": ag.alumno.matricula,
-            "username": ag.alumno.username
-        } for ag in alumnos_grupo]
+        
+        alumnos_data = []
+        for ag in alumnos_grupo:
+            try:
+                
+                matricula = getattr(ag.alumno, 'matricula', None)
+                if not matricula and hasattr(ag.alumno, 'alumnoperfil'):
+                    matricula = ag.alumno.alumnoperfil.matricula
+                
+               
+                nombre = getattr(ag.alumno, 'first_name', '')
+                apellido = getattr(ag.alumno, 'last_name', getattr(ag.alumno, 'primer_apellido', ''))
+                nombre_completo = f"{nombre} {apellido}".strip()
+                
+                alumnos_data.append({
+                    "id": ag.alumno.id,
+                    "nombre": nombre_completo if nombre_completo else ag.alumno.username,
+                    "matricula": matricula or 'Sin matrícula',
+                    "username": ag.alumno.username
+                })
+            except Exception as e:
+              
+                alumnos_data.append({
+                    "id": ag.alumno.id,
+                    "nombre": ag.alumno.username,
+                    "matricula": "Sin matrícula",
+                    "username": ag.alumno.username
+                })
 
         return Response({
             "id": grupo.id,
             "nombre": grupo.nombre,
             "codigo_invitacion": grupo.codigo_invitacion,
-            "carrera": grupo.carrera.nombre if grupo.carrera else "Sin carrera",
+            "carrera": getattr(grupo.carrera, 'nombre', "Sin carrera") if grupo.carrera else "Sin carrera",
             "alumnos": alumnos_data
         })
-
 class UnirseGrupoView(APIView):
     permission_classes = [IsAuthenticated]
 
