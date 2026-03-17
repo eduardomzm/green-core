@@ -171,6 +171,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://www.greencore.com.mx",
+    "https://greencore.com.mx",
+    "https://green-core-ashen.vercel.app",
 ]
 
 AUTHENTICATION_BACKENDS = [
