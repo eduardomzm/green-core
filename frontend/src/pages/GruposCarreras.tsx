@@ -226,6 +226,18 @@ export default function GruposCarreras() {
           </form>
 
         </div>
+
+        <div className="relative z-10 mt-8 pt-6 border-t border-gray-100">
+            <p className="text-xs font-bold text-gray-500 uppercase mb-3">Grupos Actuales ({grupos.length})</p>
+            <div className="flex flex-wrap gap-2">
+              {grupos.map(g => (
+                <span key={g.id} className="px-3 py-1 bg-blue-50 text-secondary text-xs font-bold rounded-lg border border-blue-100 flex items-center gap-1">
+                  {g.nombre}
+                </span>
+              ))}
+            </div>
+          </div>
+          
       </div>
       
     </div>
