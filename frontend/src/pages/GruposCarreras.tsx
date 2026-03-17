@@ -119,7 +119,7 @@ export default function GruposCarreras() {
                 required
                 value={carreraForm.nombre}
                 onChange={(e) => setCarreraForm({...carreraForm, nombre: e.target.value})}
-                placeholder="Ej. Ingeniería de Software"
+                placeholder=""
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary outline-none text-sm bg-gray-50/50 transition-all" 
               />
             </div>
@@ -175,7 +175,7 @@ export default function GruposCarreras() {
                 required
                 value={grupoForm.nombre}
                 onChange={(e) => setGrupoForm({...grupoForm, nombre: e.target.value})}
-                placeholder="Ej. 1A-Masc"
+                placeholder=""
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-secondary outline-none text-sm bg-gray-50/50 transition-all" 
               />
             </div>
@@ -237,7 +237,7 @@ export default function GruposCarreras() {
               ))}
             </div>
           </div>
-          
+
       </div>
       
     </div>
