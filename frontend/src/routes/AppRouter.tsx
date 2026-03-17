@@ -9,16 +9,19 @@ import { Registro } from "../pages/Registro";
 import Depositos from "../pages/Depositos";
 import Historial from "../pages/Historial";
 import Rankings from "../pages/Rankings";
+import MiGrupo from "../pages/MiGrupo";
+import GruposCarreras from "../pages/GruposCarreras";
+
+import MainLayout from "../components/layout/MainLayout"; 
 
 const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
         
+        {/* Rutas Públicas */}
         <Route path="/" element={<Navigate to="/home" replace />} />
-
         <Route path="/home" element={<Landing />} />
-        
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
 
@@ -26,59 +29,24 @@ const AppRouter = () => {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <MainLayout />
             </ProtectedRoute>
           }
-        />
-
-        <Route
-          path="/usuarios"
-          element={
-            <ProtectedRoute>
-              <Usuarios />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/depositos"
-          element={
-            <ProtectedRoute>
-              <Depositos />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/historial"
-          element={
-            <ProtectedRoute>
-              <Historial />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/rankings"
-          element={
-            <ProtectedRoute>
-              <Rankings />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/estadisticas"
-          element={
-            <ProtectedRoute>
-              <Estadisticas />
-            </ProtectedRoute>
-          }
-        />
-
-        
+        >
+      
+          <Route index element={<Dashboard />} />
+          
+          <Route path="usuarios" element={<Usuarios />} />
+          <Route path="depositos" element={<Depositos />} />
+          <Route path="historial" element={<Historial />} />
+          <Route path="rankings" element={<Rankings />} />
+          <Route path="grupos-carreras" element={<GruposCarreras />} />
+          <Route path="estadisticas" element={<Estadisticas />} />
+          <Route path="mi-grupo" element={<MiGrupo />} />
+        </Route>
 
         <Route path="*" element={<Navigate to="/home" replace />} />
+        
       </Routes>
     </BrowserRouter>
   );

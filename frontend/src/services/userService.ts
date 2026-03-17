@@ -2,7 +2,7 @@ import api from "./api";
 import type { MeResponse } from "../types/user.types";
 
 export const getMe = async (): Promise<MeResponse> => {
-  const response = await api.get("/users/me/");
+  const response = await api.get("users/me/");
   return response.data;
 };
 
@@ -20,7 +20,7 @@ export interface User {
 
 export const getUsers = async (): Promise<User[]> => {
   try {
-    const response = await api.get('/users/');
+    const response = await api.get('users/');
     return response.data;
   } catch (error) {
     console.error("Error al obtener usuarios:", error);
@@ -31,7 +31,7 @@ export const getUsers = async (): Promise<User[]> => {
 export const createUser = async (userData: any): Promise<User> => {
   try {
     
-    const response = await api.post('/users/', userData);
+    const response = await api.post('users/', userData);
     return response.data;
   } catch (error: any) {
     console.error("Error al crear usuario:", error);
@@ -41,4 +41,19 @@ export const createUser = async (userData: any): Promise<User> => {
         : 'Error desconocido al crear usuario';
     throw new Error(errorMsg);
   }
+};
+
+export interface Carrera {
+  id: number;
+  nombre: string;
+}
+
+export const getCarreras = async () => {
+  const response = await api.get('carreras/');
+  return response.data;
+};
+
+export const createCarrera = async (data: { nombre: string }) => {
+  const response = await api.post('carreras/', data);
+  return response.data;
 };

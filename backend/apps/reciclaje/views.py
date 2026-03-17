@@ -2,6 +2,8 @@ from datetime import timedelta
 from urllib import request
 
 from apps.users.models import AlumnoGrupo
+
+from apps.users.models import AlumnoGrupo
 from .utils import generar_ranking_mensual
 from django.db.models import Sum
 from django.utils import timezone
