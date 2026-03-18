@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://green-core-backend.onrender.com/api/",
+  baseURL: "https://greencore.com.mx/api/",
 });
 
 api.interceptors.request.use((config) => {
