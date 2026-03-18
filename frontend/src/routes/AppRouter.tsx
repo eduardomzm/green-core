@@ -10,8 +10,9 @@ import Depositos from "../pages/Depositos";
 import Historial from "../pages/Historial";
 import Rankings from "../pages/Rankings";
 import MiGrupo from "../pages/MiGrupo";
-
 import MainLayout from "../components/layout/MainLayout"; 
+import Terminos from "../pages/Terminos";
+import Privacidad from "../pages/Privacidad";
 
 const AppRouter = () => {
   return (
@@ -23,6 +24,8 @@ const AppRouter = () => {
         <Route path="/home" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
+        <Route path="/terminos" element={<Terminos />} />
+        <Route path="/privacidad" element={<Privacidad />} />
 
         <Route
           path="/dashboard"
