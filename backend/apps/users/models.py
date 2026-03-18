@@ -94,8 +94,19 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
                  f"Si no solicitaste este cambio, ignora este correo.\n\n" \
                  f"Equipo Green Core"
 
-    send_mail(
-        subject=email_subject,
-        message=email_body,
-        recipient_list=[reset_password_token.user.email]
-    )
+    
+    try:
+        print(f"Intentando enviar correo a: {reset_password_token.user.email} con Brevo...")
+        send_mail(
+            subject=email_subject,
+            message=email_body,
+            recipient_list=[reset_password_token.user.email]
+        )
+        print("¡ÉXITO! Brevo aceptó el correo.")
+    except Exception as e:
+        print("🔥 ERROR FATAL DE BREVO DETECTADO:")
+        print(str(e))
+        # Imprimimos el error completo para leerlo en Render
+        import traceback
+        traceback.print_exc()
+    
