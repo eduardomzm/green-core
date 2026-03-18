@@ -5,6 +5,7 @@ from django.db import models
 
 from django.dispatch import receiver
 from django.urls import reverse
+from backend.config.settings import DEFAULT_FROM_EMAIL
 from django_rest_passwordreset.signals import reset_password_token_created
 from django.core.mail import send_mail  
 
@@ -95,18 +96,10 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
                  f"Equipo Green Core"
 
     
-    try:
-        print(f"Intentando enviar correo a: {reset_password_token.user.email} con Brevo...")
-        send_mail(
-            subject=email_subject,
-            message=email_body,
-            recipient_list=[reset_password_token.user.email]
-        )
-        print("¡ÉXITO! Brevo aceptó el correo.")
-    except Exception as e:
-        print("🔥 ERROR FATAL DE BREVO DETECTADO:")
-        print(str(e))
-        # Imprimimos el error completo para leerlo en Render
-        import traceback
-        traceback.print_exc()
+    send_mail(
+        subject=email_subject,
+        message=email_body,
+        from_email=None, 
+        recipient_list=[reset_password_token.user.email]
+    )
     
