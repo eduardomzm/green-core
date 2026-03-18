@@ -75,7 +75,7 @@ export const Landing = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-6 space-y-5" >
+          <div className="flex items-center gap-6 space-y-5 text-2x1" >
             <ul>
             <a href="/terminos" className="text-sm text-gray-500 hover:text-primary transition-colors font-medium">
               <li>Términos y Condiciones</li>

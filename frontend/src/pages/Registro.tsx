@@ -17,6 +17,9 @@ export const Registro = () => {
     matricula: '',
   });
 
+  const [aceptaTerminos, setAceptaTerminos] = useState(false);
+  const [aceptaPrivacidad, setAceptaPrivacidad] = useState(false);
+
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorUI, setErrorUI] = useState("");
 
@@ -188,6 +191,39 @@ export const Registro = () => {
                 <span className="inline-block w-4">{getRuleIcon(reqNotCommon)}</span> No puede ser una contraseña de uso común.
               </li>
             </ul>
+          </div>
+
+          {/* CASILLAS LEGALES (OBLIGATORIAS) */}
+          <div className="space-y-3 mt-6 mb-8 bg-gray-50 p-4 rounded-xl border border-gray-100">
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <div className="flex items-center h-5 mt-0.5">
+                <input 
+                  type="checkbox" 
+                  required
+                  checked={aceptaTerminos}
+                  onChange={(e) => setAceptaTerminos(e.target.checked)}
+                  className="w-4 h-4 text-primary bg-white border-gray-300 rounded focus:ring-primary focus:ring-2 cursor-pointer" 
+                />
+              </div>
+              <span className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors">
+                He leído y acepto los <a href="/terminos" target="_blank" className="text-primary font-bold hover:underline">Términos y Condiciones de Uso</a>, deslindando al sistema de responsabilidad por mal uso.
+              </span>
+            </label>
+
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <div className="flex items-center h-5 mt-0.5">
+                <input 
+                  type="checkbox" 
+                  required
+                  checked={aceptaPrivacidad}
+                  onChange={(e) => setAceptaPrivacidad(e.target.checked)}
+                  className="w-4 h-4 text-secondary bg-white border-gray-300 rounded focus:ring-secondary focus:ring-2 cursor-pointer" 
+                />
+              </div>
+              <span className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors">
+                He leído y acepto la <a href="/privacidad" target="_blank" className="text-secondary font-bold hover:underline">Política de Privacidad</a> respecto al tratamiento de mi matrícula y datos personales.
+              </span>
+            </label>
           </div>
 
           <Button 
