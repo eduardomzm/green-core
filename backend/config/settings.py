@@ -190,11 +190,11 @@ AUTHENTICATION_BACKENDS = [
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-EMAIL_BACKEND = "anymail.backends.resend.EmailBackend"
+EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
 
 ANYMAIL = {
-   
-    "RESEND_API_KEY": "re_ZmWEn72k_K9v7WgS67DXgLGPcsrP9ZrdK", 
+    
+    "SENDINBLUE_API_KEY": "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", 
 }
 
-DEFAULT_FROM_EMAIL = "onboarding@resend.dev"
+DEFAULT_FROM_EMAIL = "greencore.smpt@gmail.com"
