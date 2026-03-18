@@ -79,6 +79,12 @@ const Login = () => {
             />
           </div>
 
+          <div className="flex justify-end mt-2">
+          <Link to="/olvide-mi-contrasena" className="text-sm text-primary font-bold hover:underline">
+          ¿Olvidaste tu contraseña?
+          </Link>
+          </div>
+
           <Button 
             type="submit"
             variant="primary"

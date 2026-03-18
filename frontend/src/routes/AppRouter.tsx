@@ -14,6 +14,8 @@ import GruposCarreras from "../pages/GruposCarreras";
 import MainLayout from "../components/layout/MainLayout"; 
 import Terminos from "../pages/Terminos";
 import Privacidad from "../pages/Privacidad";
+import OlvidarContrasena from "../pages/OlvidarContrasena";
+import RestablecerContrasena from "../pages/RestablecerContrasena";
 
 const AppRouter = () => {
   return (
@@ -27,6 +29,8 @@ const AppRouter = () => {
         <Route path="/registro" element={<Registro />} />
         <Route path="/terminos" element={<Terminos />} />
         <Route path="/privacidad" element={<Privacidad />} />
+        <Route path="/olvide-mi-contrasena" element={<OlvidarContrasena />} />
+        <Route path="/restablecer-contrasena" element={<RestablecerContrasena />} />
 
         <Route
           path="/dashboard"
@@ -46,6 +50,7 @@ const AppRouter = () => {
           <Route path="grupos-carreras" element={<GruposCarreras />} />
           <Route path="estadisticas" element={<Estadisticas />} />
           <Route path="mi-grupo" element={<MiGrupo />} />
+          
         </Route>
 
         <Route path="*" element={<Navigate to="/home" replace />} />
