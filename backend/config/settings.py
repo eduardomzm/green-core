@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.users',
     'apps.reciclaje',
+    'anymail',
     'rest_framework',
     'django_extensions',
     'corsheaders',
@@ -189,10 +190,11 @@ AUTHENTICATION_BACKENDS = [
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# CONFIGURACIÓN DE CORREO ELECTRÓNICO (SMTP)
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'greencore.smpt@gmail.com' 
-EMAIL_HOST_PASSWORD = 'lrkhaurvaliguhoj' 
+EMAIL_BACKEND = "anymail.backends.resend.EmailBackend"
+
+ANYMAIL = {
+   
+    "RESEND_API_KEY": "re_ZmWEn72k_K9v7WgS67DXgLGPcsrP9ZrdK", 
+}
+
+DEFAULT_FROM_EMAIL = "onboarding@resend.dev"

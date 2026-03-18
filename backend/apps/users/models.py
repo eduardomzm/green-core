@@ -97,6 +97,5 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
     send_mail(
         subject=email_subject,
         message=email_body,
-        from_email="noreply@greencore.com.mx",
         recipient_list=[reset_password_token.user.email]
     )
