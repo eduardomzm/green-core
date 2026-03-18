@@ -197,4 +197,4 @@ ANYMAIL = {
     "SENDINBLUE_API_KEY": "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", 
 }
 
-DEFAULT_FROM_EMAIL = "greencore.smpt@gmail.com"
+DEFAULT_FROM_EMAIL = "soporte@greencore.com.mx"
