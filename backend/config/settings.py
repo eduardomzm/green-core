@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_extensions',
     'corsheaders',
+    'django_rest_passwordreset',
     
 
 ]
@@ -187,3 +188,11 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# CONFIGURACIÓN DE CORREO ELECTRÓNICO (SMTP)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'greencore.smpt@gmail.com' 
+EMAIL_HOST_PASSWORD = 'lrkhaurvaliguhoj' 

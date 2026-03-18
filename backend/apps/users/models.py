@@ -1,6 +1,11 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from django.dispatch import receiver
+from django.urls import reverse
+from django_rest_passwordreset.signals import reset_password_token_created
+from django.core.mail import send_mail  
+
 
 class User(AbstractUser):
 
@@ -62,3 +67,28 @@ class AlumnoGrupo(models.Model):
 
     def __str__(self):
         return f"{self.alumno.username} → {self.grupo.nombre}"
+
+
+
+
+@receiver(reset_password_token_created)
+def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
+   
+    frontend_url = "http://localhost:5173/restablecer-contrasena" 
+    
+    reset_password_url = f"{frontend_url}?token={reset_password_token.key}"
+
+    email_subject = "Recuperación de Contraseña - Green Core"
+    email_body = f"Hola {reset_password_token.user.first_name},\n\n" \
+                 f"Has solicitado restablecer tu contraseña en Green Core.\n" \
+                 f"Haz clic en el siguiente enlace para crear una nueva contraseña:\n\n" \
+                 f"{reset_password_url}\n\n" \
+                 f"Si no solicitaste este cambio, ignora este correo.\n\n" \
+                 f"Equipo Green Core"
+
+    send_mail(
+        subject=email_subject,
+        message=email_body,
+        from_email="noreply@greencore.com.mx",
+        recipient_list=[reset_password_token.user.email]
+    )
