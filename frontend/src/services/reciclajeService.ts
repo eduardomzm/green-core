@@ -49,3 +49,21 @@ export const unirseGrupo = async (codigo: string) => {
   const response = await api.post('unirse-grupo/', { codigo });
   return response.data;
 };
+
+export interface Grupo {
+  id: number;
+  nombre: string;
+  codigo_invitacion?: string;
+  carrera: number | any; 
+  tutor: number | any;
+}
+
+export const getGrupos = async () => {
+  const response = await api.get('grupos/');
+  return response.data;
+};
+
+export const createGrupo = async (data: { nombre: string, carrera: number, tutor: number, activo: boolean }) => {
+  const response = await api.post('grupos/', data);
+  return response.data;
+};

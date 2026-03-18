@@ -42,3 +42,18 @@ export const createUser = async (userData: any): Promise<User> => {
     throw new Error(errorMsg);
   }
 };
+
+export interface Carrera {
+  id: number;
+  nombre: string;
+}
+
+export const getCarreras = async () => {
+  const response = await api.get('carreras/');
+  return response.data;
+};
+
+export const createCarrera = async (data: { nombre: string }) => {
+  const response = await api.post('carreras/', data);
+  return response.data;
+};
