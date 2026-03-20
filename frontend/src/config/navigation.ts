@@ -7,12 +7,14 @@ import {
   History,
   UsersRound,
   GraduationCap,
-  Key
+  Key,
+  Settings
 } from "lucide-react";
 
 export const NAVIGATION = [
   { name: 'Inicio', path: '/dashboard', icon: LayoutDashboard, roles: ['ADMIN', 'OPERADOR', 'ALUMNO', 'TUTOR'] },
   { name: 'Depósitos', path: '/dashboard/depositos', icon: Recycle, roles: ['ADMIN'] },
+  { name: 'Administración', path: '/dashboard/administracion', icon: Settings, roles: ['ADMIN'] },
   { name: 'Mi Grupo', path: '/dashboard/mi-grupo', icon: UsersRound, roles: ['TUTOR'] },
   { name: 'Mi Grupo', path: '/dashboard/mi-grupo/unirse', icon: Key, roles: ['ALUMNO'] },
   { name: 'Usuarios', path: '/dashboard/usuarios', icon: Users, roles: ['ADMIN'] },

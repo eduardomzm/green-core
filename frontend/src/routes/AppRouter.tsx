@@ -12,6 +12,7 @@ import Rankings from "../pages/Rankings";
 import MiGrupo from "../pages/MiGrupo";
 import UnirseMiGrupo from "../pages/UnirseMiGrupo";
 import GruposCarreras from "../pages/GruposCarreras";
+import Administracion from "../pages/Administracion";
 import MainLayout from "../components/layout/MainLayout"; 
 import Terminos from "../pages/Terminos";
 import Privacidad from "../pages/Privacidad";
@@ -49,6 +50,7 @@ const AppRouter = () => {
           <Route path="historial" element={<Historial />} />
           <Route path="rankings" element={<Rankings />} />
           <Route path="grupos-carreras" element={<GruposCarreras />} />
+          <Route path="administracion" element={<Administracion />} />
           <Route path="estadisticas" element={<Estadisticas />} />
           <Route path="mi-grupo" element={<MiGrupo />} />
           <Route path="mi-grupo/unirse" element={<UnirseMiGrupo />} />
