@@ -5,6 +5,11 @@ import { Button } from "../components/common/Button";
 import Background from "../components/common/Background";
 import { Modal } from '../components/common/Modal';
 import { TERMINOS_CONTENT, PRIVACIDAD_CONTENT } from '../constants/legalContent';
+import { parseBackendErrors } from '../utils/errorUtils';
+import type { FieldErrors } from '../utils/errorUtils';
+
+
+
 
 export const Registro = () => {
   const navigate = useNavigate();
@@ -23,7 +28,9 @@ export const Registro = () => {
   const [aceptaPrivacidad, setAceptaPrivacidad] = useState(false);
 
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [errorUI, setErrorUI] = useState("");
+  const [errors, setErrors] = useState<FieldErrors>({});
+
+
 
   const [showTerminos, setShowTerminos] = useState(false);
   const [showPrivacidad, setShowPrivacidad] = useState(false);
@@ -33,20 +40,20 @@ export const Registro = () => {
   };
 
   const pwd = formData.password;
-  
+
   const reqLength = pwd.length >= 8;
-  
+
   const reqNotNumeric = pwd.length > 0 && !/^\d+$/.test(pwd);
-  
-  const reqNotSimilar = pwd.length > 0 && 
+
+  const reqNotSimilar = pwd.length > 0 &&
     !(formData.username.length >= 3 && pwd.toLowerCase().includes(formData.username.toLowerCase())) &&
     !(formData.email.length >= 3 && pwd.toLowerCase().includes(formData.email.split('@')[0].toLowerCase()));
-    
+
   const reqNotCommon = pwd.length > 0 && !['12345678', 'password', 'qwertyui', '123456789', 'admin123'].includes(pwd.toLowerCase());
 
   const getRuleColor = (isValid: boolean) => {
-    if (pwd.length === 0) return "text-gray-400"; 
-    return isValid ? "text-primary font-bold" : "text-red-500"; 
+    if (pwd.length === 0) return "text-gray-400";
+    return isValid ? "text-primary font-bold" : "text-red-500";
   };
 
   const getRuleIcon = (isValid: boolean) => {
@@ -56,30 +63,47 @@ export const Registro = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorUI(""); 
-    
+    setErrors({});
+
     if (pwd !== confirmPassword) {
-      setErrorUI("Las contraseñas no coinciden. Por favor, verifícalas.");
+      setErrors({ confirmPassword: ["Las contraseñas no coinciden. Por favor, verifícalas."] });
       return;
     }
 
+
+
     if (!reqLength || !reqNotNumeric || !reqNotSimilar || !reqNotCommon) {
-      setErrorUI("Por favor, asegúrate de que tu contraseña cumpla con todos los requisitos de seguridad.");
+      setErrors({ password: ["Por favor, asegúrate de que tu contraseña cumpla con todos los requisitos de seguridad."] });
       return;
     }
-    
+
+    // Validación de Matricula (solo letras y números, max 12)
+    const matriculaRegex = /^[a-zA-Z0-9]+$/;
+    if (formData.matricula.length > 12) {
+      setErrors({ matricula: ["La matrícula no puede tener más de 12 caracteres."] });
+      return;
+    }
+    if (!matriculaRegex.test(formData.matricula)) {
+      setErrors({ matricula: ["La matrícula no puede contener caracteres especiales."] });
+      return;
+    }
+
+
+
+
     try {
       const response = await registerAlumno(formData);
       alert(response.mensaje || '¡Registro exitoso!');
       navigate('/login');
     } catch (error: any) {
-      const errorMsg = error.response?.data 
-        ? JSON.stringify(error.response.data)
-        : 'Error desconocido al registrar';
-      
-      setErrorUI('Error: ' + errorMsg);
+      const errorData = error.response?.data;
+      const parsedErrors = parseBackendErrors(errorData);
+
+      setErrors(parsedErrors);
       console.error("Error completo:", error);
     }
+
+
   };
 
   return (
@@ -87,7 +111,7 @@ export const Registro = () => {
       <Background></Background>
 
       <div className="relative z-10 bg-white/90 backdrop-blur-md p-8 sm:p-10 rounded-[2rem] shadow-2xl w-full max-w-lg border border-white/40">
-        
+
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold text-primary tracking-tight">Registro de Alumno</h1>
           <p className="text-gray-500 mt-2 text-sm font-medium">
@@ -95,31 +119,41 @@ export const Registro = () => {
           </p>
         </div>
 
-        {errorUI && (
+        {errors.non_field_errors && (
           <div className="bg-red-50/90 border-l-4 border-red-500 text-red-700 p-4 rounded-xl mb-6 text-xs font-bold shadow-sm break-words">
-            {errorUI}
+            <ul className="list-disc list-inside">
+              {errors.non_field_errors.map((err, index) => (
+                <li key={index}>{err}</li>
+              ))}
+            </ul>
           </div>
         )}
 
+
+
         <form onSubmit={handleSubmit} className="space-y-4">
-          
+
           <div>
             <label className="block text-xs font-bold text-textMain mb-1.5 ml-1 uppercase tracking-wide opacity-80">
               Nombre de Usuario
             </label>
             <input type="text" name="username" placeholder=""
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all bg-background/50 focus:bg-white shadow-inner text-sm"
+              className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition-all bg-background/50 focus:bg-white shadow-inner text-sm ${errors.username ? 'border-red-500 ring-red-500' : 'border-gray-200 focus:ring-secondary focus:border-transparent'}`}
               value={formData.username} onChange={handleChange} required />
+            {errors.username && <p className="text-red-500 text-[10px] mt-1 ml-1 font-bold">{errors.username[0]}</p>}
           </div>
+
 
           <div>
             <label className="block text-xs font-bold text-textMain mb-1.5 ml-1 uppercase tracking-wide opacity-80">
               Nombre(s)
             </label>
             <input type="text" name="first_name" placeholder=""
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all bg-background/50 focus:bg-white shadow-inner text-sm"
+              className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition-all bg-background/50 focus:bg-white shadow-inner text-sm ${errors.first_name ? 'border-red-500 ring-red-500' : 'border-gray-200 focus:ring-secondary focus:border-transparent'}`}
               value={formData.first_name} onChange={handleChange} required />
+            {errors.first_name && <p className="text-red-500 text-[10px] mt-1 ml-1 font-bold">{errors.first_name[0]}</p>}
           </div>
+
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -127,17 +161,21 @@ export const Registro = () => {
                 Primer Apellido
               </label>
               <input type="text" name="primer_apellido" placeholder=""
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all bg-background/50 focus:bg-white shadow-inner text-sm"
+                className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition-all bg-background/50 focus:bg-white shadow-inner text-sm ${errors.primer_apellido ? 'border-red-500 ring-red-500' : 'border-gray-200 focus:ring-secondary focus:border-transparent'}`}
                 value={formData.primer_apellido} onChange={handleChange} required />
+              {errors.primer_apellido && <p className="text-red-500 text-[10px] mt-1 ml-1 font-bold">{errors.primer_apellido[0]}</p>}
             </div>
+
             <div>
               <label className="block text-xs font-bold text-textMain mb-1.5 ml-1 uppercase tracking-wide opacity-80">
                 Segundo Apellido
               </label>
               <input type="text" name="segundo_apellido" placeholder=""
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all bg-background/50 focus:bg-white shadow-inner text-sm"
+                className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition-all bg-background/50 focus:bg-white shadow-inner text-sm ${errors.segundo_apellido ? 'border-red-500 ring-red-500' : 'border-gray-200 focus:ring-secondary focus:border-transparent'}`}
                 value={formData.segundo_apellido} onChange={handleChange} required />
+              {errors.segundo_apellido && <p className="text-red-500 text-[10px] mt-1 ml-1 font-bold">{errors.segundo_apellido[0]}</p>}
             </div>
+
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -145,18 +183,23 @@ export const Registro = () => {
               <label className="block text-xs font-bold text-textMain mb-1.5 ml-1 uppercase tracking-wide opacity-80">
                 Matrícula
               </label>
-              <input type="text" name="matricula" placeholder=""
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all bg-background/50 focus:bg-white shadow-inner text-sm"
+              <input type="text" name="matricula" placeholder="" maxLength={12}
+                className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition-all bg-background/50 focus:bg-white shadow-inner text-sm ${errors.matricula ? 'border-red-500 ring-red-500' : 'border-gray-200 focus:ring-secondary focus:border-transparent'}`}
+
                 value={formData.matricula} onChange={handleChange} required />
+              {errors.matricula && <p className="text-red-500 text-[10px] mt-1 ml-1 font-bold">{errors.matricula[0]}</p>}
             </div>
+
             <div>
               <label className="block text-xs font-bold text-textMain mb-1.5 ml-1 uppercase tracking-wide opacity-80">
                 Correo electrónico
               </label>
               <input type="email" name="email" placeholder=""
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all bg-background/50 focus:bg-white shadow-inner text-sm"
+                className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition-all bg-background/50 focus:bg-white shadow-inner text-sm ${errors.email ? 'border-red-500 ring-red-500' : 'border-gray-200 focus:ring-secondary focus:border-transparent'}`}
                 value={formData.email} onChange={handleChange} required />
+              {errors.email && <p className="text-red-500 text-[10px] mt-1 ml-1 font-bold">{errors.email[0]}</p>}
             </div>
+
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -165,18 +208,22 @@ export const Registro = () => {
                 Contraseña
               </label>
               <input type="password" name="password" placeholder=""
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all bg-background/50 focus:bg-white shadow-inner text-sm"
+                className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition-all bg-background/50 focus:bg-white shadow-inner text-sm ${errors.password ? 'border-red-500 ring-red-500' : 'border-gray-200 focus:ring-secondary focus:border-transparent'}`}
                 value={formData.password} onChange={handleChange} required />
+              {errors.password && <p className="text-red-500 text-[10px] mt-1 ml-1 font-bold">{errors.password[0]}</p>}
             </div>
+
             <div>
               <label className="block text-xs font-bold text-textMain mb-1.5 ml-1 uppercase tracking-wide opacity-80">
                 Repetir Contraseña
               </label>
               <input type="password" placeholder=""
                 className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition-all shadow-inner text-sm bg-background/50 focus:bg-white 
-                ${confirmPassword.length > 0 && pwd !== confirmPassword ? 'border-red-400 focus:ring-red-500' : 'border-gray-200 focus:ring-secondary focus:border-transparent'}`}
+                ${(confirmPassword.length > 0 && pwd !== confirmPassword) || errors.confirmPassword ? 'border-red-400 focus:ring-red-500' : 'border-gray-200 focus:ring-secondary focus:border-transparent'}`}
                 value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+              {errors.confirmPassword && <p className="text-red-500 text-[10px] mt-1 ml-1 font-bold">{errors.confirmPassword[0]}</p>}
             </div>
+
           </div>
 
           {/* Lista de Requisitos de Django (Feedback Visual) */}
@@ -202,12 +249,12 @@ export const Registro = () => {
           <div className="space-y-3 mt-6 mb-8 bg-gray-50 p-4 rounded-xl border border-gray-100">
             <label className="flex items-start gap-3 cursor-pointer group">
               <div className="flex items-center h-5 mt-0.5">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   required
                   checked={aceptaTerminos}
                   onChange={(e) => setAceptaTerminos(e.target.checked)}
-                  className="w-4 h-4 text-primary bg-white border-gray-300 rounded focus:ring-primary focus:ring-2 cursor-pointer" 
+                  className="w-4 h-4 text-primary bg-white border-gray-300 rounded focus:ring-primary focus:ring-2 cursor-pointer"
                 />
               </div>
               <span className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors">
@@ -217,12 +264,12 @@ export const Registro = () => {
 
             <label className="flex items-start gap-3 cursor-pointer group">
               <div className="flex items-center h-5 mt-0.5">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   required
                   checked={aceptaPrivacidad}
                   onChange={(e) => setAceptaPrivacidad(e.target.checked)}
-                  className="w-4 h-4 text-secondary bg-white border-gray-300 rounded focus:ring-secondary focus:ring-2 cursor-pointer" 
+                  className="w-4 h-4 text-secondary bg-white border-gray-300 rounded focus:ring-secondary focus:ring-2 cursor-pointer"
                 />
               </div>
               <span className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors">
@@ -231,7 +278,7 @@ export const Registro = () => {
             </label>
           </div>
 
-          <Button 
+          <Button
             type="submit" variant="primary"
             className="w-full py-4 mt-6 rounded-xl font-bold bg-primary hover:bg-secondary text-white shadow-[0_8px_30px_rgb(45,106,79,0.3)] hover:shadow-[0_8px_30px_rgb(0,180,216,0.4)] transition-all duration-300 transform hover:-translate-y-1 border-none"
           >
@@ -254,17 +301,17 @@ export const Registro = () => {
       </div>
 
       {/* MODALES LEGALES */}
-      <Modal 
-        isOpen={showTerminos} 
-        onClose={() => setShowTerminos(false)} 
+      <Modal
+        isOpen={showTerminos}
+        onClose={() => setShowTerminos(false)}
         title="Términos y Condiciones de Uso"
       >
         {TERMINOS_CONTENT}
       </Modal>
 
-      <Modal 
-        isOpen={showPrivacidad} 
-        onClose={() => setShowPrivacidad(false)} 
+      <Modal
+        isOpen={showPrivacidad}
+        onClose={() => setShowPrivacidad(false)}
         title="Política de Privacidad"
       >
         {PRIVACIDAD_CONTENT}
