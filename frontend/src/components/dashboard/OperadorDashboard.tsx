@@ -34,7 +34,9 @@ const OperadorDashboard = ({ data }: Props) => {
         ]);
         
         setMateriales(materialesData);
-        setAlumnos(usuariosData.filter(u => u.role === "ALUMNO"));
+        // Manejamos tanto si la respuesta es un array como si es un objeto paginado
+        const usersArray = Array.isArray(usuariosData) ? usuariosData : (usuariosData.results || []);
+        setAlumnos(usersArray.filter((u: User) => u.role === "ALUMNO"));
       } catch (error) {
         console.error("Error al cargar datos iniciales", error);
       } finally {
