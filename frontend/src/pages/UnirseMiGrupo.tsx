@@ -136,11 +136,10 @@ export default function UnirseMiGrupo() {
               >
                 {loadingJoin ? "Enviando..." : "Solicitar abandonar el grupo"}
               </button>
-              
+
               {joinMsg.text && (estado === "ACTIVO") && (
-                <div className={`text-sm font-bold flex items-center gap-2 ${
-                  joinMsg.type === "success" ? "text-green-600" : "text-red-600"
-                }`}>
+                <div className={`text-sm font-bold flex items-center gap-2 ${joinMsg.type === "success" ? "text-green-600" : "text-red-600"
+                  }`}>
                   {joinMsg.text}
                 </div>
               )}
@@ -159,7 +158,7 @@ export default function UnirseMiGrupo() {
                   Solicitud de salida enviada
                 </h2>
                 <p className="text-gray-500 mt-1">
-                  Tu solicitud de salida está pendiente. Espera a que tu tutor la apruebe.
+                  Tu solicitud de salida está pendiente. Espera a que el tutor la apruebe.
                 </p>
               </div>
             </div>
@@ -234,11 +233,10 @@ export default function UnirseMiGrupo() {
 
               {joinMsg.text && joinMsg.type !== "loading" && (
                 <div
-                  className={`mt-2 p-3 rounded-xl text-sm font-bold flex items-center gap-2 animate-in slide-in-from-top-2 ${
-                    joinMsg.type === "success"
+                  className={`mt-2 p-3 rounded-xl text-sm font-bold flex items-center gap-2 animate-in slide-in-from-top-2 ${joinMsg.type === "success"
                       ? "bg-green-100 text-green-800"
                       : "bg-red-100 text-red-800"
-                  }`}
+                    }`}
                 >
                   {joinMsg.type === "success" ? (
                     <CheckCircle className="w-5 h-5 shrink-0" />

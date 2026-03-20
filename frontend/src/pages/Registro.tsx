@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { registerAlumno } from '../services/authService';
 import { Button } from "../components/common/Button";
 import Background from "../components/common/Background";
+import { Modal } from '../components/common/Modal';
+import { TERMINOS_CONTENT, PRIVACIDAD_CONTENT } from '../constants/legalContent';
 
 export const Registro = () => {
   const navigate = useNavigate();
@@ -22,6 +24,9 @@ export const Registro = () => {
 
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorUI, setErrorUI] = useState("");
+
+  const [showTerminos, setShowTerminos] = useState(false);
+  const [showPrivacidad, setShowPrivacidad] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -206,7 +211,7 @@ export const Registro = () => {
                 />
               </div>
               <span className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors">
-                He leído y acepto los <a href="/terminos" target="_blank" className="text-primary font-bold hover:underline">Términos y Condiciones de Uso</a>, deslindando al sistema de responsabilidad por mal uso.
+                He leído y acepto los <button type="button" onClick={() => setShowTerminos(true)} className="text-primary font-bold hover:underline">Términos y Condiciones de Uso</button>, deslindando al sistema de responsabilidad por mal uso.
               </span>
             </label>
 
@@ -221,7 +226,7 @@ export const Registro = () => {
                 />
               </div>
               <span className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors">
-                He leído y acepto la <a href="/privacidad" target="_blank" className="text-secondary font-bold hover:underline">Política de Privacidad</a> respecto al tratamiento de mi matrícula y datos personales.
+                He leído y acepto la <button type="button" onClick={() => setShowPrivacidad(true)} className="text-secondary font-bold hover:underline">Política de Privacidad</button> respecto al tratamiento de mi matrícula y datos personales.
               </span>
             </label>
           </div>
@@ -247,6 +252,24 @@ export const Registro = () => {
         </div>
 
       </div>
+
+      {/* MODALES LEGALES */}
+      <Modal 
+        isOpen={showTerminos} 
+        onClose={() => setShowTerminos(false)} 
+        title="Términos y Condiciones de Uso"
+      >
+        {TERMINOS_CONTENT}
+      </Modal>
+
+      <Modal 
+        isOpen={showPrivacidad} 
+        onClose={() => setShowPrivacidad(false)} 
+        title="Política de Privacidad"
+      >
+        {PRIVACIDAD_CONTENT}
+      </Modal>
+
     </div>
   );
 };
