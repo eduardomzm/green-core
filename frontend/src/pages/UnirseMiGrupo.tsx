@@ -79,11 +79,19 @@ export default function UnirseMiGrupo() {
   };
 
   const handleSolicitarSalida = async () => {
+    setLoadingJoin(true);
+    setJoinMsg({ text: "Enviando solicitud...", type: "loading" });
     try {
       await solicitarSalidaGrupo();
       await fetchMiGrupoAlumno();
-    } catch (error) {
+      setJoinMsg({ text: "Solicitud de salida enviada correctamente.", type: "success" });
+      setTimeout(() => setJoinMsg({ text: "", type: "" }), 4000);
+    } catch (error: any) {
       console.error("Error al solicitar salida", error);
+      const errorText = error.response?.data?.error || "Error al enviar la solicitud.";
+      setJoinMsg({ text: errorText, type: "error" });
+    } finally {
+      setLoadingJoin(false);
     }
   };
 
@@ -120,12 +128,23 @@ export default function UnirseMiGrupo() {
               </div>
             </div>
 
-            <button
-              onClick={handleSolicitarSalida}
-              className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-5 rounded-xl transition-colors shadow-md"
-            >
-              Solicitar abandonar el grupo
-            </button>
+            <div className="flex flex-col items-end gap-3">
+              <button
+                disabled={loadingJoin}
+                onClick={handleSolicitarSalida}
+                className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-5 rounded-xl transition-colors shadow-md disabled:opacity-50"
+              >
+                {loadingJoin ? "Enviando..." : "Solicitar abandonar el grupo"}
+              </button>
+              
+              {joinMsg.text && (estado === "ACTIVO") && (
+                <div className={`text-sm font-bold flex items-center gap-2 ${
+                  joinMsg.type === "success" ? "text-green-600" : "text-red-600"
+                }`}>
+                  {joinMsg.text}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       ) : miGrupoAlumno && estado === "PENDIENTE_SALIDA" ? (

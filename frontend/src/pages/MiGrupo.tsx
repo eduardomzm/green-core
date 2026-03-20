@@ -97,69 +97,63 @@ export default function MiGrupo() {
         {/* SOLICITUDES Y LISTA DE ALUMNOS */}
         <div className="lg:col-span-2">
           <div className="space-y-6">
-            {/* SOLICITUDES DE INGRESO */}
+            {/* SOLICITUDES PENDIENTES (INGRESO Y SALIDA) */}
             <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="p-6 border-b border-gray-50 flex justify-between items-center">
                 <h3 className="text-lg font-bold text-textMain flex items-center gap-2">
                   <UserCheck className="w-5 h-5 text-secondary" />
-                  Solicitudes de ingreso ({grupoData.solicitudes_ingreso?.length || 0})
+                  Solicitudes Pendientes ({(grupoData.solicitudes_ingreso?.length || 0) + (grupoData.solicitudes_salida?.length || 0)})
                 </h3>
               </div>
-              <div className="divide-y divide-gray-50 max-h-[220px] overflow-y-auto">
-                {grupoData.solicitudes_ingreso && grupoData.solicitudes_ingreso.length > 0 ? (
-                  grupoData.solicitudes_ingreso.map((alumno: any) => (
-                    <div key={alumno.id} className="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                      <div>
-                        <h4 className="font-bold text-textMain">{alumno.nombre}</h4>
-                        <p className="text-sm text-gray-500">Matrícula: {alumno.matricula}</p>
+              <div className="divide-y divide-gray-50 max-h-[400px] overflow-y-auto">
+                {[
+                  ...(grupoData.solicitudes_ingreso || []).map((s: any) => ({ ...s, tipo: 'INGRESO' })),
+                  ...(grupoData.solicitudes_salida || []).map((s: any) => ({ ...s, tipo: 'SALIDA' }))
+                ].length > 0 ? (
+                  [
+                    ...(grupoData.solicitudes_ingreso || []).map((s: any) => ({ ...s, tipo: 'INGRESO' })),
+                    ...(grupoData.solicitudes_salida || []).map((s: any) => ({ ...s, tipo: 'SALIDA' }))
+                  ].map((alumno: any) => (
+                    <div key={`${alumno.tipo}-${alumno.id}`} className="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                      <div className="flex items-center gap-4">
+                        <div>
+                          <h4 className="font-bold text-textMain">{alumno.nombre}</h4>
+                          <div className="flex items-center gap-2 mt-1">
+                            <p className="text-sm text-gray-500">Matrícula: {alumno.matricula}</p>
+                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase border ${
+                              alumno.tipo === 'INGRESO' 
+                                ? 'bg-green-50 text-green-700 border-green-100' 
+                                : 'bg-red-50 text-red-700 border-red-100'
+                            }`}>
+                              {alumno.tipo === 'INGRESO' ? 'Solicitud Ingreso' : 'Solicitud Salida'}
+                            </span>
+                          </div>
+                        </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => autorizarIngreso(alumno.id)}
-                          className="flex items-center gap-2 text-sm font-bold text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-xl transition-colors"
-                        >
-                          <UserCheck className="w-4 h-4" />
-                          Autorizar
-                        </button>
+                        {alumno.tipo === 'INGRESO' ? (
+                          <button
+                            onClick={() => autorizarIngreso(alumno.id)}
+                            className="flex items-center gap-2 text-sm font-bold text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-xl transition-colors shadow-sm"
+                          >
+                            <UserCheck className="w-4 h-4" />
+                            Autorizar
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => autorizarSalida(alumno.id)}
+                            className="flex items-center gap-2 text-sm font-bold text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl transition-colors shadow-sm"
+                          >
+                            <UserX className="w-4 h-4" />
+                            Autorizar salida
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))
                 ) : (
                   <div className="p-12 text-center">
-                    <p className="text-gray-500 font-medium">No hay solicitudes de ingreso pendientes.</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* SOLICITUDES DE SALIDA */}
-            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-              <div className="p-6 border-b border-gray-50 flex justify-between items-center">
-                <h3 className="text-lg font-bold text-textMain flex items-center gap-2">
-                  <UserX className="w-5 h-5 text-secondary" />
-                  Solicitudes de salida ({grupoData.solicitudes_salida?.length || 0})
-                </h3>
-              </div>
-              <div className="divide-y divide-gray-50 max-h-[220px] overflow-y-auto">
-                {grupoData.solicitudes_salida && grupoData.solicitudes_salida.length > 0 ? (
-                  grupoData.solicitudes_salida.map((alumno: any) => (
-                    <div key={alumno.id} className="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                      <div>
-                        <h4 className="font-bold text-textMain">{alumno.nombre}</h4>
-                        <p className="text-sm text-gray-500">Matrícula: {alumno.matricula}</p>
-                      </div>
-                      <button
-                        onClick={() => autorizarSalida(alumno.id)}
-                        className="flex items-center gap-2 text-sm font-bold text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl transition-colors"
-                      >
-                        <UserX className="w-4 h-4" />
-                        Autorizar salida
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <div className="p-12 text-center">
-                    <p className="text-gray-500 font-medium">No hay solicitudes de salida pendientes.</p>
+                    <p className="text-gray-500 font-medium">No hay solicitudes pendientes.</p>
                   </div>
                 )}
               </div>
