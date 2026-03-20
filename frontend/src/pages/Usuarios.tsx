@@ -1,13 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
-import { 
-  getUsers, 
-  createUser, 
-  updateUser, 
-  getCarreras, 
-  getGrupos, 
-  type User, 
-  type Carrera, 
-  type Grupo 
+import {
+  getUsers,
+  createUser,
+  updateUser,
+  getCarreras,
+  getGrupos,
+  type User,
+  type Carrera,
+  type Grupo
 } from "../services/userService";
 
 const Usuarios = () => {
@@ -95,7 +95,7 @@ const Usuarios = () => {
     setFormData({
       username: user.username,
       email: user.email,
-      password: "", 
+      password: "",
       first_name: user.first_name || "",
       primer_apellido: user.primer_apellido || "",
       segundo_apellido: user.segundo_apellido || "",
@@ -125,7 +125,7 @@ const Usuarios = () => {
       if (editingUser) {
         const dataToUpdate = { ...formData };
         if (!dataToUpdate.password) {
-            delete (dataToUpdate as any).password;
+          delete (dataToUpdate as any).password;
         }
         await updateUser(editingUser.id, dataToUpdate);
         fetchUsers(); // Recargar para ver cambios
@@ -133,7 +133,7 @@ const Usuarios = () => {
         await createUser(formData);
         fetchUsers();
       }
-    
+
       handleCloseModal();
     } catch (err: any) {
       setModalError(err.message);
@@ -150,7 +150,7 @@ const Usuarios = () => {
           <h2 className="text-3xl font-extrabold text-textMain">Gestión de Usuarios</h2>
           <p className="text-gray-500 mt-1">Administra cuentas, roles y accesos al sistema.</p>
         </div>
-        <button 
+        <button
           onClick={() => {
             setEditingUser(null);
             setIsModalOpen(true);
@@ -170,17 +170,17 @@ const Usuarios = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </span>
-            <input 
-              type="text" 
-              placeholder="Buscar por nombre, usuario o matrícula..." 
+            <input
+              type="text"
+              placeholder="Buscar por nombre, usuario o matrícula..."
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
               className="w-full pl-12 pr-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition-all text-sm"
             />
           </div>
-          
-          <select 
-            value={roleFilter} 
+
+          <select
+            value={roleFilter}
             onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
             className="px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-secondary outline-none transition-all text-sm font-bold text-primary"
           >
@@ -192,21 +192,21 @@ const Usuarios = () => {
           </select>
 
           <div className="flex gap-2">
-            <select 
-                value={carreraFilter} 
-                onChange={(e) => { setCarreraFilter(e.target.value); setPage(1); }}
-                className="flex-1 px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-secondary outline-none transition-all text-sm font-bold text-primary"
+            <select
+              value={carreraFilter}
+              onChange={(e) => { setCarreraFilter(e.target.value); setPage(1); }}
+              className="flex-1 px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-secondary outline-none transition-all text-sm font-bold text-primary"
             >
-                <option value="">Carrera</option>
-                {carreras.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+              <option value="">Todas las Carreras</option>
+              {carreras.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
             </select>
-            <select 
-                value={grupoFilter} 
-                onChange={(e) => { setGrupoFilter(e.target.value); setPage(1); }}
-                className="flex-1 px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-secondary outline-none transition-all text-sm font-bold text-primary"
+            <select
+              value={grupoFilter}
+              onChange={(e) => { setGrupoFilter(e.target.value); setPage(1); }}
+              className="flex-1 px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-secondary outline-none transition-all text-sm font-bold text-primary"
             >
-                <option value="">Grupo</option>
-                {grupos.map(g => <option key={g.id} value={g.id}>{g.nombre}</option>)}
+              <option value="">Todos los Grupos</option>
+              {grupos.map(g => <option key={g.id} value={g.id}>{g.nombre}</option>)}
             </select>
           </div>
         </div>
@@ -251,28 +251,26 @@ const Usuarios = () => {
                       </p>
                       <p className="text-xs text-secondary font-medium mt-0.5">{u.email}</p>
                       {u.matricula && (
-                         <p className="text-[10px] text-accent font-bold mt-1 uppercase tracking-tight">Matrícula: {u.matricula}</p>
+                        <p className="text-[10px] text-accent font-bold mt-1 uppercase tracking-tight">Matrícula: {u.matricula}</p>
                       )}
                     </td>
                     <td className="p-5">
-                      <span className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
-                        u.role === 'ADMIN' ? 'bg-purple-100 text-purple-700' :
+                      <span className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${u.role === 'ADMIN' ? 'bg-purple-100 text-purple-700' :
                         u.role === 'OPERADOR' ? 'bg-secondary/10 text-secondary' :
-                        u.role === 'TUTOR' ? 'bg-blue-100 text-blue-700' : 'bg-primary/10 text-primary'
-                      }`}>
+                          u.role === 'TUTOR' ? 'bg-blue-100 text-blue-700' : 'bg-primary/10 text-primary'
+                        }`}>
                         {u.role}
                       </span>
                     </td>
                     <td className="p-5">
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
-                        u.activo ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'
-                      }`}>
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${u.activo ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'
+                        }`}>
                         <div className={`w-1.5 h-1.5 rounded-full ${u.activo ? 'bg-green-500' : 'bg-red-500'}`}></div>
                         {u.activo ? 'Activo' : 'Inactivo'}
                       </span>
                     </td>
                     <td className="p-5 text-center">
-                      <button 
+                      <button
                         onClick={() => handleEdit(u)}
                         className="opacity-0 group-hover:opacity-100 transition-opacity bg-secondary text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md hover:shadow-lg"
                       >
@@ -283,11 +281,11 @@ const Usuarios = () => {
                 ))}
               </tbody>
             </table>
-            
+
             {users.length === 0 && (
-                <div className="p-12 text-center text-gray-500 font-medium">
-                    No se encontraron usuarios con los filtros aplicados.
-                </div>
+              <div className="p-12 text-center text-gray-500 font-medium">
+                No se encontraron usuarios con los filtros aplicados.
+              </div>
             )}
           </div>
 
@@ -299,14 +297,14 @@ const Usuarios = () => {
                 <span className="hidden sm:inline"> — {totalCount} usuarios en total</span>
               </p>
               <div className="flex gap-2">
-                <button 
+                <button
                   disabled={page === 1}
                   onClick={() => setPage(p => p - 1)}
                   className="px-4 py-2 rounded-xl font-bold border border-gray-100 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-gray-50 transition-all text-sm"
                 >
                   Anterior
                 </button>
-                <button 
+                <button
                   disabled={page === totalPages}
                   onClick={() => setPage(p => p + 1)}
                   className="px-4 py-2 rounded-xl font-bold bg-primary text-white shadow-md disabled:opacity-30 disabled:cursor-not-allowed hover:bg-secondary transition-all text-sm"
@@ -322,7 +320,7 @@ const Usuarios = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-fade-in-up max-h-[90vh] flex flex-col">
-            
+
             <div className="bg-primary p-6 text-white flex justify-between items-center">
               <div>
                 <h3 className="text-xl font-bold">{editingUser ? 'Editar Usuario' : 'Crear Nuevo Usuario'}</h3>
@@ -343,7 +341,7 @@ const Usuarios = () => {
               )}
 
               <form id="userForm" onSubmit={handleSubmit} className="space-y-4">
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Usuario</label>
@@ -386,7 +384,7 @@ const Usuarios = () => {
                       <option value="ADMIN">Administrador</option>
                     </select>
                   </div>
-                  
+
                   {formData.role === "ALUMNO" && (
                     <div className="animate-fade-in-up">
                       <label className="block text-xs font-bold text-accent uppercase mb-1">Matrícula (Obligatoria)</label>
@@ -397,14 +395,14 @@ const Usuarios = () => {
 
                   <div className={formData.role !== "ALUMNO" ? "col-span-2" : ""}>
                     <label className="block text-xs font-bold text-gray-500 uppercase mb-1">
-                        {editingUser ? 'Contraseña (Vacio para mantener)' : 'Contraseña Temporal'}
+                      {editingUser ? 'Contraseña (Vacio para mantener)' : 'Contraseña Temporal'}
                     </label>
                     <input type="password" name="password" value={formData.password} onChange={handleChange} required={!editingUser}
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-secondary outline-none transition-all text-sm" />
                   </div>
                 </div>
 
-              
+
                 <div className="flex items-center gap-2 pt-2">
                   <input type="checkbox" id="activo" name="activo" checked={formData.activo} onChange={handleChange}
                     className="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded cursor-pointer" />
@@ -415,7 +413,7 @@ const Usuarios = () => {
               </form>
             </div>
 
-           
+
             <div className="bg-gray-50 p-6 border-t border-gray-100 flex justify-end gap-3">
               <button onClick={handleCloseModal} className="px-6 py-2.5 rounded-xl font-bold text-gray-500 hover:bg-gray-200 transition-colors text-sm">
                 Cancelar

@@ -7,8 +7,8 @@ interface Props {
 }
 
 const MOCK_DEPOSITOS: DepositoHistorial[] = [
-  { id: 1, fecha: "2024-10-25", cantidad: 15, material: "PET", operador: "operador_juan" },
-  { id: 2, fecha: "2024-10-24", cantidad: 5, material: "Cartón", operador: "operador_maria" },
+  { id: 1, fecha: "2024-10-25", cantidad: 15, material: "PET", operador: "operador_juan", alumno: "alumno_mock" },
+  { id: 2, fecha: "2024-10-24", cantidad: 5, material: "Cartón", operador: "operador_maria", alumno: "alumno_mock" },
 ];
 
 const AlumnoDashboard = ({ data }: Props) => {

@@ -22,16 +22,17 @@ export interface DashboardResponse {
 
 export interface DepositoHistorial {
   id: number;
-  fecha: string; 
+  fecha: string;
   cantidad: number;
   material: string;
   operador: string;
+  alumno: string;
 }
 
 export interface DashboardResponse {
   estadisticas: Estadisticas;
   progreso: Progreso;
   por_material: MaterialItem[];
-  // Lo hacemos opcional (?) por si el backend aún no lo manda
-  ultimos_depositos?: DepositoHistorial[]; 
+  ultimos_depositos?: DepositoHistorial[];
+  ultimos_usuarios?: any[];
 }

@@ -268,7 +268,7 @@ class DashboardView(APIView):
             for item in estadisticas_material
         ]
 
-        depositos_recientes = depositos.select_related('material', 'operador').order_by('-fecha')[:50]
+        depositos_recientes = depositos.select_related('material', 'operador', 'alumno').order_by('-fecha')[:5]
         
         ultimos_depositos = [
             {
@@ -278,10 +278,26 @@ class DashboardView(APIView):
                 "material": dep.material.nombre,
                 "operador": dep.operador.username,
                 "alumno": dep.alumno.username
-                
             }
             for dep in depositos_recientes
         ]
+
+        # Solo para ADMIN agrupamos los últimos usuarios
+        ultimos_usuarios = []
+        if user.role == 'ADMIN':
+            from apps.users.models import User
+            usuarios_recientes = User.objects.order_by('-date_joined')[:5]
+            ultimos_usuarios = [
+                {
+                    "id": u.id,
+                    "username": u.username,
+                    "first_name": u.first_name,
+                    "primer_apellido": u.primer_apellido,
+                    "role": u.role,
+                    "date_joined": u.date_joined.isoformat()
+                }
+                for u in usuarios_recientes
+            ]
 
         return Response({
             "estadisticas": {
@@ -294,7 +310,8 @@ class DashboardView(APIView):
                 "porcentaje": porcentaje
             },
             "por_material": por_material,
-            "ultimos_depositos": ultimos_depositos 
+            "ultimos_depositos": ultimos_depositos,
+            "ultimos_usuarios": ultimos_usuarios
         })
 
 class RankingsView(APIView):
