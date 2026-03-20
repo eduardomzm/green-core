@@ -190,11 +190,13 @@ AUTHENTICATION_BACKENDS = [
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
+EMAIL_BACKEND = os.getenv(
+    "EMAIL_BACKEND",
+    "anymail.backends.sendinblue.EmailBackend"
+)
 
 ANYMAIL = {
-    
-    "SENDINBLUE_API_KEY": "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", 
+    "SENDINBLUE_API_KEY": os.getenv("SENDINBLUE_API_KEY"),
 }
 
-DEFAULT_FROM_EMAIL = "soporte@greencore.com.mx"
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "soporte@greencore.com.mx")
