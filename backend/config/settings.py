@@ -17,15 +17,26 @@ import os
 from dotenv import load_dotenv
 import dj_database_url
 
-load_dotenv()
-
-
 def get_env_list(name, default=""):
     raw_value = os.getenv(name, default)
     return [item.strip() for item in raw_value.split(",") if item.strip()]
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from a file depending on DJANGO_ENV.
+# Examples:
+# - DJANGO_ENV=local   -> backend/.env.local
+# - DJANGO_ENV=staging -> backend/.env.staging
+env_name = os.getenv("DJANGO_ENV", "local").strip()
+specific_env_path = BASE_DIR / f".env.{env_name}"
+default_env_path = BASE_DIR / ".env"
+
+if specific_env_path.exists():
+    load_dotenv(dotenv_path=specific_env_path)
+else:
+    # Fallback (useful if you only keep backend/.env)
+    load_dotenv(dotenv_path=default_env_path)
 
 
 # Quick-start development settings - unsuitable for production
