@@ -53,6 +53,7 @@ export const createUser = async (userData: any): Promise<User> => {
 export interface Carrera {
   id: number;
   nombre: string;
+  abreviatura?: string;
 }
 
 export const getCarreras = async (): Promise<Carrera[]> => {
@@ -60,7 +61,7 @@ export const getCarreras = async (): Promise<Carrera[]> => {
   return response.data;
 };
 
-export const createCarrera = async (data: { nombre: string }) => {
+export const createCarrera = async (data: { nombre: string, abreviatura: string }): Promise<Carrera> => {
   const response = await api.post('carreras/', data);
   return response.data;
 };

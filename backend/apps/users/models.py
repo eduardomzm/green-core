@@ -36,6 +36,7 @@ class User(AbstractUser):
 
 class Carrera(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
+    abreviatura = models.CharField(max_length=10, unique=True, null=True, blank=True)
     activo = models.BooleanField(default=True)
 
     def __str__(self):

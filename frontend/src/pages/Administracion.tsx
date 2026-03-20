@@ -14,7 +14,7 @@ const Administracion = () => {
   const [metaMsg, setMetaMsg] = useState({ text: "", type: "" });
 
   const [carreras, setCarreras] = useState<Carrera[]>([]);
-  const [carreraForm, setCarreraForm] = useState({ nombre: "" });
+  const [carreraForm, setCarreraForm] = useState({ nombre: "", abreviatura: "" });
   const [carreraMsg, setCarreraMsg] = useState({ text: "", type: "" });
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const Administracion = () => {
       setMateriales([...materiales, nuevoMaterial]);
       setMaterialMsg({ text: "¡Material guardado!", type: "success" });
       setMaterialForm({ nombre: "", unidad: "pieza" });
-      
+
       setTimeout(() => setMaterialMsg({ text: "", type: "" }), 3000);
     } catch (error) {
       setMaterialMsg({ text: "Error al crear material.", type: "error" });
@@ -64,7 +64,7 @@ const Administracion = () => {
       });
       setMetaMsg({ text: "¡Meta global actualizada! ", type: "success" });
       setMetaForm({ nombre: "", cantidad_meta: "" });
-      
+
       setTimeout(() => setMetaMsg({ text: "", type: "" }), 3000);
     } catch (error) {
       setMetaMsg({ text: "Error al actualizar la meta.", type: "error" });
@@ -72,15 +72,18 @@ const Administracion = () => {
   };
 
   const handleCarreraSubmit = async () => {
-    if (!carreraForm.nombre) return;
+    if (!carreraForm.nombre || !carreraForm.abreviatura) return;
     setCarreraMsg({ text: "Guardando...", type: "loading" });
 
     try {
-      const nuevaCarrera = await createCarrera({ nombre: carreraForm.nombre });
+      const nuevaCarrera = await createCarrera({
+        nombre: carreraForm.nombre,
+        abreviatura: carreraForm.abreviatura
+      });
       setCarreras([...carreras, nuevaCarrera]);
       setCarreraMsg({ text: "¡Carrera creada con éxito!", type: "success" });
-      setCarreraForm({ nombre: "" });
-      
+      setCarreraForm({ nombre: "", abreviatura: "" });
+
       setTimeout(() => setCarreraMsg({ text: "", type: "" }), 3000);
     } catch (error) {
       setCarreraMsg({ text: "Error al crear la carrera.", type: "error" });
@@ -106,12 +109,12 @@ const Administracion = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        
+
         {/* Añadir Material */}
         <div className="bg-white p-6 rounded-3xl shadow-sm border-t-4 border-secondary relative h-fit">
           <h3 className="text-lg font-bold text-textMain mb-6 flex items-center justify-between">
             <span className="flex items-center gap-2">
-              <Plus className="w-5 h-5 text-secondary" /> 
+              <Plus className="w-5 h-5 text-secondary" />
               Añadir Material
             </span>
             {materialMsg.text && (
@@ -123,20 +126,20 @@ const Administracion = () => {
           <form className="space-y-4">
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Nombre del Material</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder="Ej. PET, Aluminio, Vidrio..."
-                value={materialForm.nombre} 
-                onChange={(e) => setMaterialForm({...materialForm, nombre: e.target.value})}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-secondary outline-none text-sm bg-background/50" 
+                value={materialForm.nombre}
+                onChange={(e) => setMaterialForm({ ...materialForm, nombre: e.target.value })}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-secondary outline-none text-sm bg-background/50"
               />
             </div>
-            
+
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Unidad de medida</label>
-              <select 
-                value={materialForm.unidad} 
-                onChange={(e) => setMaterialForm({...materialForm, unidad: e.target.value})}
+              <select
+                value={materialForm.unidad}
+                onChange={(e) => setMaterialForm({ ...materialForm, unidad: e.target.value })}
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-secondary outline-none text-sm bg-background/50 appearance-none"
               >
                 <option value="pieza">Por Pieza</option>
@@ -144,9 +147,9 @@ const Administracion = () => {
               </select>
             </div>
 
-            <button 
-              type="button" 
-              onClick={handleMaterialSubmit} 
+            <button
+              type="button"
+              onClick={handleMaterialSubmit}
               disabled={!materialForm.nombre || materialMsg.type === 'loading'}
               className="w-full bg-secondary hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl shadow-sm transition-colors text-sm mt-2"
             >
@@ -182,28 +185,28 @@ const Administracion = () => {
           <form className="space-y-4">
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Nombre de la Campaña</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder="Ej. Reciclatón Octubre 2024"
-                value={metaForm.nombre} 
-                onChange={(e) => setMetaForm({...metaForm, nombre: e.target.value})}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent outline-none text-sm bg-background/50" 
+                value={metaForm.nombre}
+                onChange={(e) => setMetaForm({ ...metaForm, nombre: e.target.value })}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent outline-none text-sm bg-background/50"
               />
             </div>
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Cantidad a lograr (piezas/kg)</label>
-              <input 
-                type="number" 
-                min="1" 
+              <input
+                type="number"
+                min="1"
                 placeholder="0"
-                value={metaForm.cantidad_meta} 
-                onChange={(e) => setMetaForm({...metaForm, cantidad_meta: e.target.value})}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent outline-none text-sm bg-background/50" 
+                value={metaForm.cantidad_meta}
+                onChange={(e) => setMetaForm({ ...metaForm, cantidad_meta: e.target.value })}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent outline-none text-sm bg-background/50"
               />
             </div>
-            <button 
-              type="button" 
-              onClick={handleMetaSubmit} 
+            <button
+              type="button"
+              onClick={handleMetaSubmit}
               disabled={!metaForm.nombre || !metaForm.cantidad_meta || metaMsg.type === 'loading'}
               className="w-full bg-accent hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl shadow-sm transition-colors text-sm mt-2"
             >
@@ -231,20 +234,32 @@ const Administracion = () => {
                 )}
               </h3>
               <form className="space-y-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Nombre de la Carrera</label>
-                  <input 
-                    type="text" 
-                    placeholder="Ej. Ingeniería en Sistemas, Lic. en Administración..."
-                    value={carreraForm.nombre} 
-                    onChange={(e) => setCarreraForm({...carreraForm, nombre: e.target.value})}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary outline-none text-sm bg-background/50" 
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Nombre de la Carrera</label>
+                    <input
+                      type="text"
+                      placeholder=""
+                      value={carreraForm.nombre}
+                      onChange={(e) => setCarreraForm({ ...carreraForm, nombre: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary outline-none text-sm bg-background/50"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Abreviatura</label>
+                    <input
+                      type="text"
+                      placeholder=""
+                      value={carreraForm.abreviatura}
+                      onChange={(e) => setCarreraForm({ ...carreraForm, abreviatura: e.target.value.toUpperCase() })}
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary outline-none text-sm bg-background/50"
+                    />
+                  </div>
                 </div>
-                <button 
-                  type="button" 
-                  onClick={handleCarreraSubmit} 
-                  disabled={!carreraForm.nombre || carreraMsg.type === 'loading'}
+                <button
+                  type="button"
+                  onClick={handleCarreraSubmit}
+                  disabled={!carreraForm.nombre || !carreraForm.abreviatura || carreraMsg.type === 'loading'}
                   className="w-full bg-primary hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl shadow-sm transition-colors text-sm mt-2"
                 >
                   Guardar Carrera
@@ -257,7 +272,7 @@ const Administracion = () => {
               <div className="flex flex-wrap gap-2">
                 {carreras.map(c => (
                   <span key={c.id} className="px-3 py-1 bg-gray-50 text-gray-600 text-xs font-bold rounded-lg border border-gray-100">
-                    {c.nombre}
+                    {c.nombre} {c.abreviatura && <span className="text-primary font-black ml-1">({c.abreviatura})</span>}
                   </span>
                 ))}
               </div>
