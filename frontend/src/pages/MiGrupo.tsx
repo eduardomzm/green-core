@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Users, Copy, CheckCircle, Target } from "lucide-react";
-import { getMiGrupoTutor } from "../services/reciclajeService";
+import { Users, Copy, CheckCircle, Target, UserX, UserCheck } from "lucide-react";
+import { autorizarIngresoGrupo, autorizarSalidaGrupo, getMiGrupoTutor } from "../services/reciclajeService";
 
 export default function MiGrupo() {
   const [grupoData, setGrupoData] = useState<any>(null);
@@ -20,6 +20,26 @@ export default function MiGrupo() {
     };
     fetchGrupo();
   }, []);
+
+  const autorizarIngreso = async (alumno_id: number) => {
+    try {
+      await autorizarIngresoGrupo(alumno_id);
+      const data = await getMiGrupoTutor();
+      setGrupoData(data);
+    } catch (error) {
+      console.error("Error al autorizar ingreso", error);
+    }
+  };
+
+  const autorizarSalida = async (alumno_id: number) => {
+    try {
+      await autorizarSalidaGrupo(alumno_id);
+      const data = await getMiGrupoTutor();
+      setGrupoData(data);
+    } catch (error) {
+      console.error("Error al autorizar salida", error);
+    }
+  };
 
   // Esta es la función que Vercel estaba buscando
   const copiarCodigo = () => {
@@ -74,36 +94,107 @@ export default function MiGrupo() {
           </div>
         </div>
 
-        {/* LISTA DE ALUMNOS */}
+        {/* SOLICITUDES Y LISTA DE ALUMNOS */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden h-full">
-            <div className="p-6 border-b border-gray-50 flex justify-between items-center">
-              <h3 className="text-lg font-bold text-textMain flex items-center gap-2">
-                <Users className="w-5 h-5 text-secondary" />
-                Tus Alumnos ({grupoData.alumnos?.length || 0})
-              </h3>
-            </div>
-            
-            <div className="divide-y divide-gray-50 max-h-[400px] overflow-y-auto">
-              {grupoData.alumnos && grupoData.alumnos.length > 0 ? (
-                grupoData.alumnos.map((alumno: any) => (
-                  <div key={alumno.id} className="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                    <div>
-                      <h4 className="font-bold text-textMain">{alumno.nombre}</h4>
-                      <p className="text-sm text-gray-500">Matrícula: {alumno.matricula}</p>
+          <div className="space-y-6">
+            {/* SOLICITUDES DE INGRESO */}
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+              <div className="p-6 border-b border-gray-50 flex justify-between items-center">
+                <h3 className="text-lg font-bold text-textMain flex items-center gap-2">
+                  <UserCheck className="w-5 h-5 text-secondary" />
+                  Solicitudes de ingreso ({grupoData.solicitudes_ingreso?.length || 0})
+                </h3>
+              </div>
+              <div className="divide-y divide-gray-50 max-h-[220px] overflow-y-auto">
+                {grupoData.solicitudes_ingreso && grupoData.solicitudes_ingreso.length > 0 ? (
+                  grupoData.solicitudes_ingreso.map((alumno: any) => (
+                    <div key={alumno.id} className="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                      <div>
+                        <h4 className="font-bold text-textMain">{alumno.nombre}</h4>
+                        <p className="text-sm text-gray-500">Matrícula: {alumno.matricula}</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => autorizarIngreso(alumno.id)}
+                          className="flex items-center gap-2 text-sm font-bold text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-xl transition-colors"
+                        >
+                          <UserCheck className="w-4 h-4" />
+                          Autorizar
+                        </button>
+                      </div>
                     </div>
-                    <button className="flex items-center gap-2 text-sm font-bold text-accent hover:text-orange-600 bg-orange-50 px-4 py-2 rounded-xl transition-colors">
-                      <Target className="w-4 h-4" />
-                      Asignar Meta
-                    </button>
+                  ))
+                ) : (
+                  <div className="p-12 text-center">
+                    <p className="text-gray-500 font-medium">No hay solicitudes de ingreso pendientes.</p>
                   </div>
-                ))
-              ) : (
-                <div className="p-12 text-center">
-                  <p className="text-gray-500 font-medium">Aún no hay alumnos en tu grupo.</p>
-                  <p className="text-sm mt-2">Comparte el código de invitación para que comiencen a unirse.</p>
-                </div>
-              )}
+                )}
+              </div>
+            </div>
+
+            {/* SOLICITUDES DE SALIDA */}
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+              <div className="p-6 border-b border-gray-50 flex justify-between items-center">
+                <h3 className="text-lg font-bold text-textMain flex items-center gap-2">
+                  <UserX className="w-5 h-5 text-secondary" />
+                  Solicitudes de salida ({grupoData.solicitudes_salida?.length || 0})
+                </h3>
+              </div>
+              <div className="divide-y divide-gray-50 max-h-[220px] overflow-y-auto">
+                {grupoData.solicitudes_salida && grupoData.solicitudes_salida.length > 0 ? (
+                  grupoData.solicitudes_salida.map((alumno: any) => (
+                    <div key={alumno.id} className="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                      <div>
+                        <h4 className="font-bold text-textMain">{alumno.nombre}</h4>
+                        <p className="text-sm text-gray-500">Matrícula: {alumno.matricula}</p>
+                      </div>
+                      <button
+                        onClick={() => autorizarSalida(alumno.id)}
+                        className="flex items-center gap-2 text-sm font-bold text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl transition-colors"
+                      >
+                        <UserX className="w-4 h-4" />
+                        Autorizar salida
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-12 text-center">
+                    <p className="text-gray-500 font-medium">No hay solicitudes de salida pendientes.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* LISTA DE ALUMNOS ACTIVOS */}
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden h-full">
+              <div className="p-6 border-b border-gray-50 flex justify-between items-center">
+                <h3 className="text-lg font-bold text-textMain flex items-center gap-2">
+                  <Users className="w-5 h-5 text-secondary" />
+                  Tus Alumnos ({grupoData.alumnos_activos?.length || 0})
+                </h3>
+              </div>
+
+              <div className="divide-y divide-gray-50 max-h-[260px] overflow-y-auto">
+                {grupoData.alumnos_activos && grupoData.alumnos_activos.length > 0 ? (
+                  grupoData.alumnos_activos.map((alumno: any) => (
+                    <div key={alumno.id} className="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                      <div>
+                        <h4 className="font-bold text-textMain">{alumno.nombre}</h4>
+                        <p className="text-sm text-gray-500">Matrícula: {alumno.matricula}</p>
+                      </div>
+                      <button className="flex items-center gap-2 text-sm font-bold text-accent hover:text-orange-600 bg-orange-50 px-4 py-2 rounded-xl transition-colors">
+                        <Target className="w-4 h-4" />
+                        Asignar Meta
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <div className="p-12 text-center">
+                    <p className="text-gray-500 font-medium">Aún no hay alumnos activos en tu grupo.</p>
+                    <p className="text-sm mt-2">Comparte el código de invitación para que comiencen a unirse.</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

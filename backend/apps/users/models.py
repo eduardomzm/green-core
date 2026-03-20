@@ -56,6 +56,11 @@ class AlumnoPerfil(models.Model):
 
 
 class AlumnoGrupo(models.Model):
+    class Estados(models.TextChoices):
+        PENDIENTE_INGRESO = "PENDIENTE_INGRESO", "Pendiente de ingreso"
+        ACTIVO = "ACTIVO", "Activo"
+        PENDIENTE_SALIDA = "PENDIENTE_SALIDA", "Pendiente de salida"
+
     alumno = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -65,6 +70,12 @@ class AlumnoGrupo(models.Model):
     grupo = models.ForeignKey(
         'reciclaje.Grupo',
         on_delete=models.PROTECT
+    )
+
+    estado = models.CharField(
+        max_length=30,
+        choices=Estados.choices,
+        default=Estados.PENDIENTE_INGRESO,
     )
 
     def __str__(self):

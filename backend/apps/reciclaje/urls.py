@@ -1,5 +1,22 @@
 from rest_framework.routers import DefaultRouter
-from .views import DepositoViewSet,GrupoViewSet,MaterialViewSet,EstadisticasView, EstadisticasMaterialView, ProgresoView, DashboardView, MetaSistemaViewSet, RankingsView, MisDepositosView, UnirseGrupoView, MiGrupoTutorView
+from .views import (
+    DepositoViewSet,
+    GrupoViewSet,
+    MaterialViewSet,
+    EstadisticasView,
+    EstadisticasMaterialView,
+    ProgresoView,
+    DashboardView,
+    MetaSistemaViewSet,
+    RankingsView,
+    MisDepositosView,
+    UnirseGrupoView,
+    MiGrupoTutorView,
+    SolicitarSalidaGrupoView,
+    AutorizarIngresoGrupoView,
+    AutorizarSalidaGrupoView,
+    MiGrupoAlumnoView,
+)
     
 from django.urls import path
 
@@ -19,5 +36,9 @@ urlpatterns = router.urls + [
     path('mis-depositos/', MisDepositosView.as_view(), name='mis-depositos'),
     path('mi-grupo/', MiGrupoTutorView.as_view(), name='mi-grupo-tutor'),
     path('unirse-grupo/', UnirseGrupoView.as_view(), name='unirse-grupo'),
+    path('solicitar-salida-grupo/', SolicitarSalidaGrupoView.as_view(), name='solicitar-salida-grupo'),
+    path('autorizar-ingreso-grupo/', AutorizarIngresoGrupoView.as_view(), name='autorizar-ingreso-grupo'),
+    path('autorizar-salida-grupo/', AutorizarSalidaGrupoView.as_view(), name='autorizar-salida-grupo'),
+    path('mi-grupo-alumno/', MiGrupoAlumnoView.as_view(), name='mi-grupo-alumno'),
 
 ]

@@ -45,8 +45,28 @@ export const getMiGrupoTutor = async () => {
   return response.data;
 };
 
+export const getMiGrupoAlumno = async () => {
+  const response = await api.get('mi-grupo-alumno/');
+  return response.data;
+};
+
 export const unirseGrupo = async (codigo: string) => {
   const response = await api.post('unirse-grupo/', { codigo });
+  return response.data;
+};
+
+export const solicitarSalidaGrupo = async () => {
+  const response = await api.post('solicitar-salida-grupo/');
+  return response.data;
+};
+
+export const autorizarIngresoGrupo = async (alumno_id: number) => {
+  const response = await api.post('autorizar-ingreso-grupo/', { alumno_id });
+  return response.data;
+};
+
+export const autorizarSalidaGrupo = async (alumno_id: number) => {
+  const response = await api.post('autorizar-salida-grupo/', { alumno_id });
   return response.data;
 };
 

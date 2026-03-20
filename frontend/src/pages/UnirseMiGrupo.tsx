@@ -1,20 +1,51 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AlertCircle, ArrowRight, CheckCircle, Key } from "lucide-react";
-import { unirseGrupo } from "../services/reciclajeService";
+import {
+  getMiGrupoAlumno,
+  solicitarSalidaGrupo,
+  unirseGrupo,
+} from "../services/reciclajeService";
 
 export default function UnirseMiGrupo() {
+  const [miGrupoAlumno, setMiGrupoAlumno] = useState<any | null>(null);
+  const [loadingAlumno, setLoadingAlumno] = useState(true);
+
   const [codigo, setCodigo] = useState("");
   const [joinMsg, setJoinMsg] = useState<{ text: string; type: string }>({
     text: "",
     type: "",
   });
   const [loadingJoin, setLoadingJoin] = useState(false);
-  const [codigoIngresado, setCodigoIngresado] = useState<string | null>(null);
+  const [showJoinForm, setShowJoinForm] = useState(true);
+
+  const fetchMiGrupoAlumno = async () => {
+    try {
+      const data = await getMiGrupoAlumno();
+      const hasGrupo = !!data?.grupo;
+      setMiGrupoAlumno(hasGrupo ? data : null);
+
+      if (hasGrupo && data?.estado === "PENDIENTE_INGRESO") {
+        setShowJoinForm(false);
+      } else if (!hasGrupo) {
+        setShowJoinForm(true);
+      }
+    } catch (error) {
+      console.error("Error al cargar mi grupo", error);
+      setMiGrupoAlumno(null);
+    } finally {
+      setLoadingAlumno(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMiGrupoAlumno();
+  }, []);
 
   const handleUnirseGrupo = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!codigo.trim()) return;
-    if (codigoIngresado) return;
+    if (miGrupoAlumno?.estado === "ACTIVO") return;
+    if (miGrupoAlumno?.estado === "PENDIENTE_SALIDA") return;
 
     setLoadingJoin(true);
     setJoinMsg({ text: "Verificando...", type: "loading" });
@@ -26,8 +57,9 @@ export default function UnirseMiGrupo() {
         text: res.mensaje || "¡Solicitud enviada!",
         type: "success",
       });
-      setCodigoIngresado(code);
       setCodigo("");
+      setShowJoinForm(false);
+      await fetchMiGrupoAlumno();
 
       setTimeout(() => setJoinMsg({ text: "", type: "" }), 4000);
     } catch (error: any) {
@@ -41,14 +73,36 @@ export default function UnirseMiGrupo() {
   };
 
   const handleIngresarOtroCodigo = () => {
-    setCodigoIngresado(null);
+    setShowJoinForm(true);
     setCodigo("");
     setJoinMsg({ text: "", type: "" });
   };
 
+  const handleSolicitarSalida = async () => {
+    try {
+      await solicitarSalidaGrupo();
+      await fetchMiGrupoAlumno();
+    } catch (error) {
+      console.error("Error al solicitar salida", error);
+    }
+  };
+
+  const estado = miGrupoAlumno?.estado as string | undefined;
+  const codigoInvitacion = miGrupoAlumno?.grupo?.codigo_invitacion as
+    | string
+    | undefined;
+
+  if (loadingAlumno) {
+    return (
+      <div className="p-8 text-gray-500 animate-pulse font-medium">
+        Cargando información de tu grupo...
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      {codigoIngresado ? (
+      {miGrupoAlumno && estado === "ACTIVO" ? (
         <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="p-6 md:p-8 flex flex-col md:flex-row gap-6 md:items-center md:justify-between">
             <div className="flex items-start gap-4">
@@ -56,11 +110,60 @@ export default function UnirseMiGrupo() {
                 <CheckCircle className="w-6 h-6 text-primary" strokeWidth={2} />
               </div>
               <div>
-                <h2 className="text-xl font-extrabold text-textMain">Código ingresado</h2>
+                <h2 className="text-xl font-extrabold text-textMain">
+                  Tu grupo está activo
+                </h2>
+                <p className="text-gray-500 mt-1">
+                  {miGrupoAlumno.grupo?.nombre} - Código:{' '}
+                  <span className="font-bold">{codigoInvitacion}</span>
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleSolicitarSalida}
+              className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-5 rounded-xl transition-colors shadow-md"
+            >
+              Solicitar abandonar el grupo
+            </button>
+          </div>
+        </div>
+      ) : miGrupoAlumno && estado === "PENDIENTE_SALIDA" ? (
+        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="p-6 md:p-8 flex flex-col md:flex-row gap-6 md:items-center md:justify-between">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-orange-50 border border-orange-100 flex items-center justify-center">
+                <AlertCircle className="w-6 h-6 text-accent" strokeWidth={2} />
+              </div>
+              <div>
+                <h2 className="text-xl font-extrabold text-textMain">
+                  Solicitud de salida enviada
+                </h2>
+                <p className="text-gray-500 mt-1">
+                  Tu solicitud de salida está pendiente. Espera a que tu tutor la apruebe.
+                </p>
+              </div>
+            </div>
+
+            <div className="text-sm font-bold text-gray-500">
+              Estado: Pendiente de aprobación
+            </div>
+          </div>
+        </div>
+      ) : miGrupoAlumno && estado === "PENDIENTE_INGRESO" && !showJoinForm ? (
+        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="p-6 md:p-8 flex flex-col md:flex-row gap-6 md:items-center md:justify-between">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-green-50 border border-green-100 flex items-center justify-center">
+                <CheckCircle className="w-6 h-6 text-primary" strokeWidth={2} />
+              </div>
+              <div>
+                <h2 className="text-xl font-extrabold text-textMain">
+                  Solicitud enviada
+                </h2>
                 <p className="text-gray-500 mt-1">
                   Ya registraste el código{" "}
-                  <span className="font-bold">{codigoIngresado}</span>. Espera a que
-                  tu tutor lo revise y te confirme.
+                  <span className="font-bold">{codigoInvitacion}</span>. Espera a que tu tutor lo revise y te confirme.
                 </p>
               </div>
             </div>

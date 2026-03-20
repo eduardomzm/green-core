@@ -410,9 +410,8 @@ class MiGrupoTutorView(APIView):
             grupo.save()
             
         alumnos_grupo = AlumnoGrupo.objects.filter(grupo=grupo).select_related('alumno')
-        
-        alumnos_data = []
-        for ag in alumnos_grupo:
+
+        def alumno_to_data(ag):
             try:
                 
                 matricula = getattr(ag.alumno, 'matricula', None)
@@ -424,27 +423,41 @@ class MiGrupoTutorView(APIView):
                 apellido = getattr(ag.alumno, 'last_name', getattr(ag.alumno, 'primer_apellido', ''))
                 nombre_completo = f"{nombre} {apellido}".strip()
                 
-                alumnos_data.append({
+                return {
                     "id": ag.alumno.id,
                     "nombre": nombre_completo if nombre_completo else ag.alumno.username,
                     "matricula": matricula or 'Sin matrícula',
-                    "username": ag.alumno.username
-                })
+                    "username": ag.alumno.username,
+                }
             except Exception as e:
-              
-                alumnos_data.append({
+                return {
                     "id": ag.alumno.id,
                     "nombre": ag.alumno.username,
                     "matricula": "Sin matrícula",
-                    "username": ag.alumno.username
-                })
+                    "username": ag.alumno.username,
+                }
+
+        alumnos_activos = []
+        solicitudes_ingreso = []
+        solicitudes_salida = []
+
+        for ag in alumnos_grupo:
+            data = alumno_to_data(ag)
+            if ag.estado == "ACTIVO":
+                alumnos_activos.append(data)
+            elif ag.estado == "PENDIENTE_INGRESO":
+                solicitudes_ingreso.append(data)
+            elif ag.estado == "PENDIENTE_SALIDA":
+                solicitudes_salida.append(data)
 
         return Response({
             "id": grupo.id,
             "nombre": grupo.nombre,
             "codigo_invitacion": grupo.codigo_invitacion,
             "carrera": getattr(grupo.carrera, 'nombre', "Sin carrera") if grupo.carrera else "Sin carrera",
-            "alumnos": alumnos_data
+            "alumnos_activos": alumnos_activos,
+            "solicitudes_ingreso": solicitudes_ingreso,
+            "solicitudes_salida": solicitudes_salida,
         })
 class UnirseGrupoView(APIView):
     permission_classes = [IsAuthenticated]
@@ -459,10 +472,118 @@ class UnirseGrupoView(APIView):
         
         if not grupo:
             return Response({"error": "Código inválido o grupo inexistente."}, status=404)
-        
+
+        # Si el alumno ya tiene una solicitud/afiliación pendiente, reemplazamos el grupo.
+        # Si está ACTIVO en otro grupo, el tutor deberá resolver (por ahora permitimos sobrescritura).
         AlumnoGrupo.objects.update_or_create(
             alumno=user,
-            defaults={'grupo': grupo}
+            defaults={
+                'grupo': grupo,
+                'estado': 'PENDIENTE_INGRESO'
+            }
         )
         
-        return Response({"mensaje": f"¡Te has unido a {grupo.nombre} exitosamente!"})
+        return Response({"mensaje": f"Solicitud enviada para unirte a {grupo.nombre}."})
+
+
+class SolicitarSalidaGrupoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        if user.role != 'ALUMNO':
+            return Response({"error": "Solo alumnos pueden solicitar salida."}, status=403)
+
+        ag = AlumnoGrupo.objects.filter(alumno=user).first()
+        if not ag:
+            return Response({"error": "No tienes grupo para solicitar salida."}, status=404)
+
+        if ag.estado != "ACTIVO":
+            return Response(
+                {"error": "No puedes solicitar salida en este momento."},
+                status=400,
+            )
+
+        ag.estado = "PENDIENTE_SALIDA"
+        ag.save(update_fields=["estado"])
+        return Response({"mensaje": "Tu solicitud de salida fue enviada al tutor."})
+
+
+class AutorizarIngresoGrupoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        if user.role != "TUTOR":
+            return Response({"error": "Solo tutores pueden autorizar ingreso."}, status=403)
+
+        alumno_id = request.data.get("alumno_id")
+        if not alumno_id:
+            return Response({"error": "alumno_id es requerido."}, status=400)
+
+        grupo = Grupo.objects.filter(tutor=user).first()
+        if not grupo:
+            return Response({"error": "No tienes un grupo asignado."}, status=404)
+
+        ag = AlumnoGrupo.objects.filter(alumno_id=alumno_id, grupo=grupo).first()
+        if not ag:
+            return Response({"error": "Solicitud no encontrada."}, status=404)
+
+        if ag.estado != "PENDIENTE_INGRESO":
+            return Response({"error": "La solicitud no está pendiente de ingreso."}, status=400)
+
+        ag.estado = "ACTIVO"
+        ag.save(update_fields=["estado"])
+        return Response({"mensaje": "Ingreso autorizado."})
+
+
+class AutorizarSalidaGrupoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        if user.role != "TUTOR":
+            return Response({"error": "Solo tutores pueden autorizar salida."}, status=403)
+
+        alumno_id = request.data.get("alumno_id")
+        if not alumno_id:
+            return Response({"error": "alumno_id es requerido."}, status=400)
+
+        grupo = Grupo.objects.filter(tutor=user).first()
+        if not grupo:
+            return Response({"error": "No tienes un grupo asignado."}, status=404)
+
+        ag = AlumnoGrupo.objects.filter(alumno_id=alumno_id, grupo=grupo).first()
+        if not ag:
+            return Response({"error": "Solicitud no encontrada."}, status=404)
+
+        if ag.estado != "PENDIENTE_SALIDA":
+            return Response({"error": "La solicitud no está pendiente de salida."}, status=400)
+
+        ag.delete()
+        return Response({"mensaje": "Salida autorizada. El alumno ya no pertenece al grupo."})
+
+
+class MiGrupoAlumnoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        if user.role != "ALUMNO":
+            return Response({"error": "Solo alumnos pueden ver esto."}, status=403)
+
+        ag = AlumnoGrupo.objects.filter(alumno=user).select_related("grupo", "grupo__carrera").first()
+        if not ag:
+            return Response({"grupo": None, "estado": None})
+
+        grupo = ag.grupo
+        return Response({
+            "grupo": {
+                "id": grupo.id,
+                "nombre": grupo.nombre,
+                "codigo_invitacion": grupo.codigo_invitacion,
+                "carrera": getattr(grupo.carrera, "nombre", "Sin carrera") if grupo.carrera else "Sin carrera",
+                "tutor": grupo.tutor_id,
+            },
+            "estado": ag.estado,
+        })
