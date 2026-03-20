@@ -7,6 +7,7 @@ export interface User {
   segundo_apellido?: string;
   role: "ADMIN" | "OPERADOR" | "ALUMNO" | "TUTOR";
   matricula?: string | null;
+  avatar: string;
 }
 
 export interface AuthContextType {

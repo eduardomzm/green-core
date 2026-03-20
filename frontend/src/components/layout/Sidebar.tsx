@@ -3,6 +3,14 @@ import { useAuth } from '../../hooks/useAuth';
 import { NAVIGATION } from '../../config/navigation';
 import { Leaf, X, Settings } from 'lucide-react';
 
+const AVATARS: Record<string, string> = {
+  default: '/avatars/avatar_bin.png',
+  leaf: '/avatars/avatar_leaf.png',
+  earth: '/avatars/avatar_earth.png',
+  sprout: '/avatars/avatar_sprout.png',
+  water: '/avatars/avatar_water.png',
+};
+
 export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const { user } = useAuth();
   const location = useLocation();
@@ -57,10 +65,12 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
             location.pathname === '/dashboard/perfil' ? 'bg-primary/5 shadow-sm ring-1 ring-primary/10' : 'hover:bg-gray-50'
           }`}
         >
-          <div className={`w-8 h-8 rounded-full border flex items-center justify-center text-xs font-black uppercase flex-shrink-0 transition-colors ${
-            location.pathname === '/dashboard/perfil' ? 'bg-primary text-white border-primary' : 'bg-primary/10 text-primary border-primary/20'
-          }`}>
-            {user?.username?.charAt(0) || "U"}
+          <div className="w-8 h-8 rounded-full overflow-hidden border border-primary/20 flex-shrink-0 transition-all group-hover:ring-4 group-hover:ring-primary/10">
+            <img 
+              src={AVATARS[user?.avatar || 'default']} 
+              alt="Avatar"
+              className="w-full h-full object-cover"
+            />
           </div>
           <div className="flex flex-col min-w-0 flex-1">
             <span className={`text-sm font-semibold truncate transition-colors ${

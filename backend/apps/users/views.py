@@ -49,11 +49,16 @@ class MeView(APIView):
             "segundo_apellido": user.segundo_apellido,
             "role": user.role,
             "matricula": matricula,
+            "avatar": user.avatar,
         })
 
     def patch(self, request):
         user = request.user
         data = request.data
+
+        # Actualizar avatar
+        if 'avatar' in data:
+            user.avatar = data['avatar']
 
         # Actualizar username
         if 'username' in data:
@@ -101,7 +106,9 @@ class MeView(APIView):
             "segundo_apellido": user.segundo_apellido,
             "role": user.role,
             "matricula": matricula,
+            "avatar": user.avatar,
         })
+
 
 
 class CarreraViewSet(viewsets.ModelViewSet):

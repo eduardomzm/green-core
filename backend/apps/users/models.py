@@ -29,6 +29,7 @@ class User(AbstractUser):
     )
 
     activo = models.BooleanField(default=True)
+    avatar = models.CharField(max_length=50, default='default')
 
     def __str__(self):
         return f"{self.username} ({self.role})"

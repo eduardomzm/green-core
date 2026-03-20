@@ -18,6 +18,14 @@ const ROLE_LABELS: Record<string, string> = {
   OPERADOR: "Operador",
 };
 
+const AVATARS = [
+  { id: 'default', url: '/src/assets/img/logo.jpeg', label: 'Bote' },
+  { id: 'leaf', url: '/avatars/avatar_leaf.png', label: 'Hoja' },
+  { id: 'earth', url: '/avatars/avatar_earth.png', label: 'Tierra' },
+  { id: 'sprout', url: '/avatars/avatar_sprout.png', label: 'Brote' },
+  { id: 'water', url: '/avatars/avatar_water.png', label: 'Gota' },
+];
+
 export default function Perfil() {
   const { user, refreshUser } = useAuth();
 
@@ -28,6 +36,8 @@ export default function Perfil() {
     nueva_contrasena: "",
     repetir_contrasena: "",
   });
+
+  const [selectedAvatar, setSelectedAvatar] = useState(user?.avatar || 'default');
 
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
@@ -45,6 +55,7 @@ export default function Perfil() {
         nueva_contrasena: "",
         repetir_contrasena: "",
       });
+      setSelectedAvatar(user.avatar || 'default');
     }
   }, [user]);
 
@@ -57,6 +68,7 @@ export default function Perfil() {
 
     if (form.username !== user?.username) payload.username = form.username;
     if (form.email !== user?.email) payload.email = form.email;
+    if (selectedAvatar !== user?.avatar) payload.avatar = selectedAvatar;
 
     if (form.nueva_contrasena) {
       payload.contrasena_actual = form.contrasena_actual;
@@ -75,7 +87,7 @@ export default function Perfil() {
       await refreshUser();
       setMsg({ text: "¡Cambios guardados correctamente!", type: "success" });
       setForm(f => ({ ...f, contrasena_actual: "", nueva_contrasena: "", repetir_contrasena: "" }));
-      
+
       // Limpiar mensaje de éxito después de 3 segundos
       setTimeout(() => setMsg({ text: "", type: "" }), 3000);
     } catch (err: any) {
@@ -117,7 +129,7 @@ export default function Perfil() {
 
   return (
     <div className="p-4 md:p-8 space-y-8 animate-in fade-in duration-500">
-      
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -127,10 +139,14 @@ export default function Perfil() {
           </h2>
           <p className="text-gray-500 mt-1">Gestiona tu información personal y seguridad de la cuenta.</p>
         </div>
-        
+
         <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-2xl border border-gray-100 shadow-sm w-fit">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-lg font-black text-primary uppercase">
-            {user?.username?.charAt(0) || "U"}
+          <div className="w-10 h-10 rounded-xl overflow-hidden border border-primary/20 flex-shrink-0">
+            <img
+              src={AVATARS.find(a => a.id === selectedAvatar)?.url || AVATARS[0].url}
+              alt="Avatar"
+              className="w-full h-full object-cover"
+            />
           </div>
           <div>
             <p className="text-sm font-bold text-textMain leading-tight">{user?.username}</p>
@@ -142,15 +158,16 @@ export default function Perfil() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         {/* Columna Izquierda: Datos Personales */}
-        <div className="lg:col-span-1 space-y-0 h-fit">
+        <div className="lg:col-span-1 space-y-8 h-fit">
+          {/* Datos personales (solo lectura) */}
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative">
             <h3 className="text-lg font-bold text-textMain mb-6 flex items-center gap-2">
               <UserIcon className="w-5 h-5 text-primary" />
               Información Personal
             </h3>
-            
+
             <div className="space-y-5">
               <ReadOnlyField label="Nombre" value={user?.first_name} />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -169,21 +186,61 @@ export default function Perfil() {
               </p>
             </div>
           </div>
+
+          {/* Selección de Avatar */}
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative">
+            <h3 className="text-lg font-bold text-textMain mb-6 flex items-center gap-2">
+              <UserIcon className="w-5 h-5 text-secondary" />
+              Foto de Perfil
+            </h3>
+            <p className="text-xs text-gray-400 mb-6">Elige un avatar que te represente en el sistema.</p>
+
+            <div className="grid grid-cols-3 gap-4">
+              {AVATARS.map((avatar) => (
+                <button
+                  key={avatar.id}
+                  onClick={() => setSelectedAvatar(avatar.id)}
+                  className={`relative aspect-square rounded-2xl overflow-hidden border-2 transition-all group ${selectedAvatar === avatar.id
+                    ? 'border-primary ring-4 ring-primary/10 shadow-lg'
+                    : 'border-transparent hover:border-gray-200 bg-gray-50'
+                    }`}
+                >
+                  <img
+                    src={avatar.url}
+                    alt={avatar.label}
+                    className={`w-full h-full object-cover transition-transform duration-500 ${selectedAvatar === avatar.id ? 'scale-110' : 'group-hover:scale-105'
+                      }`}
+                  />
+                  {selectedAvatar === avatar.id && (
+                    <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
+                      <div className="bg-primary text-white p-1 rounded-full shadow-lg">
+                        <CheckCircle className="w-4 h-4" />
+                      </div>
+                    </div>
+                  )}
+                  <div className="absolute inset-x-0 bottom-0 bg-black/40 py-1 text-[8px] font-black text-white uppercase text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    {avatar.label}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
+
 
         {/* Columna Derecha: Configuración y Seguridad */}
         <div className="lg:col-span-2 space-y-8">
-          
+
           <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 relative">
             <div className="flex flex-col md:flex-row gap-12">
-              
+
               {/* Sección: Datos de Cuenta */}
               <div className="flex-1 space-y-6">
                 <h3 className="text-lg font-bold text-textMain flex items-center gap-2">
                   <Mail className="w-5 h-5 text-secondary" />
                   Datos de Acceso
                 </h3>
-                
+
                 <div className="space-y-4">
                   <div className="space-y-1.5">
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">Nombre de Usuario</label>
@@ -218,7 +275,7 @@ export default function Perfil() {
                   <Lock className="w-5 h-5 text-accent" />
                   Seguridad
                 </h3>
-                
+
                 <div className="space-y-4">
                   <div className="space-y-1.5">
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">Contraseña Actual</label>
@@ -286,7 +343,7 @@ export default function Perfil() {
                   </div>
                 )}
               </div>
-              
+
               <button
                 onClick={handleSubmit}
                 disabled={saving}
