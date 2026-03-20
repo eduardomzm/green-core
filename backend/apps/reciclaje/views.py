@@ -10,6 +10,8 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import filters
+from apps.users.views import UserPagination
 
 from .models import Deposito, Grupo, Material, MetaSistema
 from .permissions import CanCreateDeposito, IsAdmin
@@ -25,6 +27,10 @@ class DepositoViewSet(viewsets.ModelViewSet):
     queryset = Deposito.objects.all()
     serializer_class = DepositoSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = UserPagination
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['fecha', 'cantidad']
+    ordering = ['-fecha']
 
     def perform_create(self, serializer):
         serializer.save(operador=self.request.user)
@@ -44,22 +50,39 @@ class DepositoViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        queryset = Deposito.objects.none()
 
         if user.role == 'ADMIN':
-            return Deposito.objects.all()
-
-        if user.role == 'OPERADOR':
-            return Deposito.objects.filter(operador=user)
-
-        if user.role == 'ALUMNO':
-            return Deposito.objects.filter(alumno=user)
-
-        if user.role == 'TUTOR':
-            return Deposito.objects.filter(
+            queryset = Deposito.objects.all()
+        elif user.role == 'OPERADOR':
+            queryset = Deposito.objects.filter(operador=user)
+        elif user.role == 'ALUMNO':
+            queryset = Deposito.objects.filter(alumno=user)
+        elif user.role == 'TUTOR':
+            queryset = Deposito.objects.filter(
                 alumno__alumnogrupo__grupo__tutor=user
             )
 
-        return Deposito.objects.none()
+        # Filtros adicionales para ADMIN (y otros roles si se desea)
+        if user.role == 'ADMIN':
+            fecha = self.request.query_params.get('fecha')
+            alumno_id = self.request.query_params.get('alumno')
+            grupo_id = self.request.query_params.get('grupo')
+            carrera_id = self.request.query_params.get('carrera')
+            material_id = self.request.query_params.get('material')
+
+            if fecha:
+                queryset = queryset.filter(fecha__date=fecha)
+            if alumno_id:
+                queryset = queryset.filter(alumno_id=alumno_id)
+            if grupo_id:
+                queryset = queryset.filter(alumno__alumnogrupo__grupo_id=grupo_id)
+            if carrera_id:
+                queryset = queryset.filter(alumno__alumnogrupo__grupo__carrera_id=carrera_id)
+            if material_id:
+                queryset = queryset.filter(material_id=material_id)
+
+        return queryset
 
 
 class GrupoViewSet(viewsets.ModelViewSet):
