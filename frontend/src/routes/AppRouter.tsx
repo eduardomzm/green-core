@@ -18,6 +18,7 @@ import Terminos from "../pages/Terminos";
 import Privacidad from "../pages/Privacidad";
 import OlvidarContrasena from "../pages/OlvidarContrasena";
 import RestablecerContrasena from "../pages/RestablecerContrasena";
+import Perfil from "../pages/Perfil";
 
 const AppRouter = () => {
   return (
@@ -54,8 +55,9 @@ const AppRouter = () => {
           <Route path="estadisticas" element={<Estadisticas />} />
           <Route path="mi-grupo" element={<MiGrupo />} />
           <Route path="mi-grupo/unirse" element={<UnirseMiGrupo />} />
-          
+          <Route path="perfil" element={<Perfil />} />
         </Route>
+
 
         <Route path="*" element={<Navigate to="/home" replace />} />
         
