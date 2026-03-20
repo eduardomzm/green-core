@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 export const NAVIGATION = [
-  { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: ['ADMIN', 'OPERADOR', 'ALUMNO', 'TUTOR'] },
+  { name: 'Inicio', path: '/dashboard', icon: LayoutDashboard, roles: ['ADMIN', 'OPERADOR', 'ALUMNO', 'TUTOR'] },
   { name: 'Depósitos', path: '/dashboard/depositos', icon: Recycle, roles: ['ADMIN'] },
   { name: 'Mi Grupo', path: '/dashboard/mi-grupo', icon: UsersRound, roles: ['TUTOR'] },
   { name: 'Mi Grupo', path: '/dashboard/mi-grupo/unirse', icon: Key, roles: ['ALUMNO'] },
