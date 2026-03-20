@@ -111,3 +111,8 @@ export const getDepositos = async (params: any = {}): Promise<PaginatedDepositos
   const response = await api.get('depositos/', { params });
   return response.data;
 };
+
+export const asignarMetaAlumno = async (data: { alumno_id: number; material_id: number; cantidad_meta: number }) => {
+  const response = await api.post('asignar-meta-alumno/', data);
+  return response.data;
+};

@@ -14,12 +14,6 @@ export interface MaterialItem {
   total_piezas: number;
 }
 
-export interface DashboardResponse {
-  estadisticas: Estadisticas;
-  progreso: Progreso;
-  por_material: MaterialItem[];
-}
-
 export interface DepositoHistorial {
   id: number;
   fecha: string;
@@ -29,10 +23,20 @@ export interface DepositoHistorial {
   alumno: string;
 }
 
+export interface MetaAlumnoData {
+  id: number;
+  material: string;
+  material_unidad: string;
+  cantidad_meta: number;
+  actual: number;
+  porcentaje: number;
+}
+
 export interface DashboardResponse {
   estadisticas: Estadisticas;
   progreso: Progreso;
   por_material: MaterialItem[];
   ultimos_depositos?: DepositoHistorial[];
   ultimos_usuarios?: any[];
+  meta_alumno?: MetaAlumnoData | null;
 }

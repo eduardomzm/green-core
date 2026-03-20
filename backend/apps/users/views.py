@@ -33,11 +33,74 @@ class MeView(APIView):
 
     def get(self, request):
         user = request.user
+        matricula = None
+        if user.role == 'ALUMNO':
+            try:
+                matricula = user.alumnoperfil.matricula
+            except Exception:
+                pass
 
         return Response({
             "id": user.id,
             "username": user.username,
+            "email": user.email,
+            "first_name": user.first_name,
+            "primer_apellido": user.primer_apellido,
+            "segundo_apellido": user.segundo_apellido,
             "role": user.role,
+            "matricula": matricula,
+        })
+
+    def patch(self, request):
+        user = request.user
+        data = request.data
+
+        # Actualizar username
+        if 'username' in data:
+            new_username = data['username'].strip()
+            if User.objects.exclude(pk=user.pk).filter(username=new_username).exists():
+                return Response({"username": ["Este nombre de usuario ya está en uso."]}, status=400)
+            user.username = new_username
+
+        # Actualizar email
+        if 'email' in data:
+            new_email = data['email'].strip()
+            if User.objects.exclude(pk=user.pk).filter(email=new_email).exists():
+                return Response({"email": ["Este correo ya está en uso."]}, status=400)
+            user.email = new_email
+
+        # Cambiar contraseña
+        if 'nueva_contrasena' in data:
+            current = data.get('contrasena_actual', '')
+            nueva = data.get('nueva_contrasena', '')
+            repetir = data.get('repetir_contrasena', '')
+
+            if not user.check_password(current):
+                return Response({"contrasena_actual": ["La contraseña actual es incorrecta."]}, status=400)
+            if nueva != repetir:
+                return Response({"repetir_contrasena": ["Las contraseñas no coinciden."]}, status=400)
+            if len(nueva) < 6:
+                return Response({"nueva_contrasena": ["La contraseña debe tener al menos 6 caracteres."]}, status=400)
+            user.set_password(nueva)
+
+        user.save()
+
+        matricula = None
+        if user.role == 'ALUMNO':
+            try:
+                matricula = user.alumnoperfil.matricula
+            except Exception:
+                pass
+
+        return Response({
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "first_name": user.first_name,
+            "primer_apellido": user.primer_apellido,
+            "segundo_apellido": user.segundo_apellido,
+            "role": user.role,
+            "matricula": matricula,
         })
 
 

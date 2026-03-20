@@ -1,8 +1,18 @@
 import api from "./api";
-import type { MeResponse } from "../types/user.types";
 
-export const getMe = async (): Promise<MeResponse> => {
+export const getMe = async () => {
   const response = await api.get("users/me/");
+  return response.data;
+};
+
+export const updateMe = async (data: {
+  username?: string;
+  email?: string;
+  contrasena_actual?: string;
+  nueva_contrasena?: string;
+  repetir_contrasena?: string;
+}) => {
+  const response = await api.patch("users/me/", data);
   return response.data;
 };
 

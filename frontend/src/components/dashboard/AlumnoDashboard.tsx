@@ -26,10 +26,12 @@ const AlumnoDashboard = ({ data }: Props) => {
   }, [depositos, filtroMaterial, filtroFecha]);
 
   const materialesUnicos = Array.from(new Set(depositos.map(d => d.material)));
+  const metaAlumno = data.meta_alumno;
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       
+      {/* META GLOBAL */}
       <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-8">
         <div className="flex-shrink-0 p-5 bg-green-50 rounded-2xl">
           <Target className="w-10 h-10 text-primary" strokeWidth={2} />
@@ -51,6 +53,40 @@ const AlumnoDashboard = ({ data }: Props) => {
           <p className="text-right text-xs font-bold text-primary mt-2">{data.progreso.porcentaje}% Completado</p>
         </div>
       </div>
+
+      {/* META ASIGNADA POR TUTOR (si existe) */}
+      {metaAlumno && (
+        <div className="bg-white p-8 rounded-3xl border border-orange-100 shadow-sm flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
+          <div className="absolute -right-6 -top-6 text-accent opacity-5">
+            <Target className="w-40 h-40" />
+          </div>
+          <div className="flex-shrink-0 p-5 bg-orange-50 rounded-2xl relative z-10">
+            <Target className="w-10 h-10 text-accent" strokeWidth={2} />
+          </div>
+          <div className="flex-1 w-full relative z-10">
+            <div className="flex items-center gap-3 mb-2">
+              <h2 className="text-lg font-bold text-textMain">Meta Asignada por tu Tutor</h2>
+              <span className="text-[10px] font-black px-2 py-0.5 rounded-full uppercase bg-orange-50 text-accent border border-orange-100">
+                {metaAlumno.material}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm text-gray-500 mb-2 font-medium">
+              <span>{metaAlumno.actual} {metaAlumno.material_unidad}s aportados</span>
+              <span>Meta: {metaAlumno.cantidad_meta} {metaAlumno.material_unidad}s</span>
+            </div>
+            <div className="w-full bg-orange-50 rounded-full h-3 overflow-hidden border border-orange-100">
+              <div 
+                className="bg-accent h-3 rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
+                style={{ width: `${Math.min(metaAlumno.porcentaje, 100)}%` }}
+              >
+                <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+              </div>
+            </div>
+            <p className="text-right text-xs font-bold text-accent mt-2">{metaAlumno.porcentaje}% Completado</p>
+          </div>
+        </div>
+      )}
+
 
   
       <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">

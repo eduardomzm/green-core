@@ -16,6 +16,7 @@ from .views import (
     AutorizarIngresoGrupoView,
     AutorizarSalidaGrupoView,
     MiGrupoAlumnoView,
+    AsignarMetaAlumnoView,
 )
     
 from django.urls import path
@@ -40,5 +41,6 @@ urlpatterns = router.urls + [
     path('autorizar-ingreso-grupo/', AutorizarIngresoGrupoView.as_view(), name='autorizar-ingreso-grupo'),
     path('autorizar-salida-grupo/', AutorizarSalidaGrupoView.as_view(), name='autorizar-salida-grupo'),
     path('mi-grupo-alumno/', MiGrupoAlumnoView.as_view(), name='mi-grupo-alumno'),
+    path('asignar-meta-alumno/', AsignarMetaAlumnoView.as_view(), name='asignar-meta-alumno'),
 
 ]

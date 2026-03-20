@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Grupo, Material, Deposito, MetaSistema
+from .models import Grupo, Material, Deposito, MetaSistema, MetaAlumno
 from apps.users.serializers import UserSimpleSerializer
 
 
@@ -39,3 +39,12 @@ class MetaSistemaSerializer(serializers.ModelSerializer):
     class Meta:
         model = MetaSistema
         fields = '__all__'
+
+
+class MetaAlumnoSerializer(serializers.ModelSerializer):
+    material_nombre = serializers.CharField(source='material.nombre', read_only=True)
+
+    class Meta:
+        model = MetaAlumno
+        fields = ['id', 'alumno', 'material', 'material_nombre', 'cantidad_meta', 'asignada_por', 'creada_en']
+        read_only_fields = ['asignada_por', 'creada_en']

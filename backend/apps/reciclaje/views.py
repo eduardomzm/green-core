@@ -13,13 +13,14 @@ from rest_framework.views import APIView
 from rest_framework import filters
 from apps.users.views import UserPagination
 
-from .models import Deposito, Grupo, Material, MetaSistema
+from .models import Deposito, Grupo, Material, MetaSistema, MetaAlumno
 from .permissions import CanCreateDeposito, IsAdmin
 from .serializers import (
                 DepositoSerializer,
                 GrupoSerializer,
                 MaterialSerializer,
                 MetaSistemaSerializer,
+                MetaAlumnoSerializer,
 )
 
 
@@ -334,8 +335,27 @@ class DashboardView(APIView):
             },
             "por_material": por_material,
             "ultimos_depositos": ultimos_depositos,
-            "ultimos_usuarios": ultimos_usuarios
+            "ultimos_usuarios": ultimos_usuarios,
+            "meta_alumno": self._get_meta_alumno(user)
         })
+
+    def _get_meta_alumno(self, user):
+        if user.role != 'ALUMNO':
+            return None
+        meta = MetaAlumno.objects.filter(alumno=user).select_related('material').order_by('-creada_en').first()
+        if not meta:
+            return None
+        depositos_material = Deposito.objects.filter(alumno=user, material=meta.material).aggregate(total=Sum('cantidad'))['total'] or 0
+        porcentaje = min(round((depositos_material / meta.cantidad_meta) * 100, 2), 100)
+        return {
+            "id": meta.id,
+            "material": meta.material.nombre,
+            "material_unidad": meta.material.unidad,
+            "cantidad_meta": meta.cantidad_meta,
+            "actual": depositos_material,
+            "porcentaje": porcentaje,
+        }
+
 
 class RankingsView(APIView):
     permission_classes = [IsAuthenticated]
@@ -627,3 +647,35 @@ class MiGrupoAlumnoView(APIView):
             },
             "estado": ag.estado,
         })
+
+
+class AsignarMetaAlumnoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        if user.role != 'TUTOR':
+            return Response({'error': 'Solo los tutores pueden asignar metas.'}, status=403)
+
+        alumno_id = request.data.get('alumno_id')
+        material_id = request.data.get('material_id')
+        cantidad_meta = request.data.get('cantidad_meta')
+
+        if not alumno_id or not material_id or not cantidad_meta:
+            return Response({'error': 'Faltan campos requeridos.'}, status=400)
+
+        try:
+            cantidad_meta = int(cantidad_meta)
+            if cantidad_meta <= 0:
+                raise ValueError
+        except (ValueError, TypeError):
+            return Response({'error': 'La cantidad debe ser un número entero positivo.'}, status=400)
+
+        meta = MetaAlumno.objects.create(
+            alumno_id=alumno_id,
+            material_id=material_id,
+            cantidad_meta=cantidad_meta,
+            asignada_por=user
+        )
+        serializer = MetaAlumnoSerializer(meta)
+        return Response(serializer.data, status=201)

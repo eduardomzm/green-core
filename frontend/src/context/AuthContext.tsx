@@ -1,11 +1,9 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
 import type { ReactNode } from "react";
 import type { AuthContextType, User } from "../types/auth.types";
 import api from "../services/api";
 
-export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
-);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface Props {
   children: ReactNode;
@@ -21,26 +19,26 @@ export const AuthProvider = ({ children }: Props) => {
 
   const isAuthenticated = !!token;
 
+  const fetchUser = useCallback(async (currentToken: string | null) => {
+    if (!currentToken) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await api.get("/users/me/");
+      setUser(response.data);
+    } catch (error) {
+      console.error("Token inválido");
+      logout();
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
-    const fetchUser = async () => {
-      if (!token) {
-        setUser(null);
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const response = await api.get("/users/me/");
-        setUser(response.data);
-      } catch (error) {
-        console.error("Token inválido");
-        logout();
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
+    fetchUser(token);
   }, [token]);
 
   const login = async (newToken: string) => {
@@ -54,6 +52,10 @@ export const AuthProvider = ({ children }: Props) => {
     setUser(null);
   };
 
+  const refreshUser = async () => {
+    await fetchUser(token);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -63,6 +65,7 @@ export const AuthProvider = ({ children }: Props) => {
         loading,
         login,
         logout,
+        refreshUser,
       }}
     >
       {children}
