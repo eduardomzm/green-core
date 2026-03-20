@@ -35,10 +35,37 @@ export interface RankingsResponse {
   top_carreras: any[];
   top_materiales: any[];
 }
-export const getRankings = async (timeframe: string) => {
-  const res = await api.get(`rankings/?timeframe=${timeframe}`)
-  return res.data
+export const getRankings = async (timeframe: 'actual' | 'mensual' | string = 'actual', month?: string): Promise<RankingsResponse> => {
+  const params: any = { timeframe };
+  if (timeframe === 'mensual' && month) {
+    params.month = month;
+  }
+  const response = await api.get('rankings/', { params });
+  return response.data;
+};
+
+export const unirseGrupo = async (codigo: string) => {
+  const response = await api.post('unirse-grupo/', { codigo });
+  return response.data;
+};
+
+export interface Grupo {
+  id: number;
+  nombre: string;
+  codigo_invitacion?: string;
+  carrera: number | any;
+  tutor: number | any;
 }
+
+export const getGrupos = async () => {
+  const response = await api.get('grupos/');
+  return response.data;
+};
+
+export const createGrupo = async (data: { nombre: string, carrera: number, tutor: number, activo: boolean }) => {
+  const response = await api.post('grupos/', data);
+  return response.data;
+};
 
 export const getRankingHistorial = async (
   mes: number,

@@ -304,32 +304,51 @@ class RankingsView(APIView):
 
     def get(self, request):
         generar_ranking_mensual()
-
-        timeframe = request.query_params.get("timeframe", "general")
-
+        
+        timeframe = request.query_params.get('timeframe', 'actual')
+        
         depositos = Deposito.objects.select_related(
             "alumno", "material"
         ).prefetch_related(
             "alumno__alumnogrupo"
         )
 
-        if timeframe == "mensual":
+        if timeframe == 'actual':
             now = timezone.now()
-            inicio = now.replace(
-                day=1,
-                hour=0,
-                minute=0,
-                second=0,
-                microsecond=0
-            )
-            depositos = depositos.filter(fecha__gte=inicio)
+            fecha_inicio = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            depositos = depositos.filter(fecha__gte=fecha_inicio)
+            
+        elif timeframe == 'mensual':
+            now = timezone.now()
+            month_param = request.query_params.get('month')
+            
+            if month_param:
+                try:
+                    year, month = map(int, month_param.split('-'))
+                    fecha_inicio = now.replace(year=year, month=month, day=1, hour=0, minute=0, second=0, microsecond=0)
+                except ValueError:
+                    fecha_inicio = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            else:
+                if now.month == 1:
+                    fecha_inicio = now.replace(year=now.year - 1, month=12, day=1, hour=0, minute=0, second=0, microsecond=0)
+                else:
+                    fecha_inicio = now.replace(month=now.month - 1, day=1, hour=0, minute=0, second=0, microsecond=0)
+
+            if fecha_inicio.month == 12:
+                fecha_fin = fecha_inicio.replace(year=fecha_inicio.year + 1, month=1)
+            else:
+                fecha_fin = fecha_inicio.replace(month=fecha_inicio.month + 1)
+                
+            depositos = depositos.filter(fecha__gte=fecha_inicio, fecha__lt=fecha_fin)
 
         # 🔹 ALUMNOS
         top_alumnos = list(
             depositos
             .values(
+                'alumno__id',
+                'alumno__username',
                 'alumno__first_name',
-                'alumno__username'
+                'alumno__primer_apellido'
             )
             .annotate(total_piezas=Sum('cantidad'))
             .order_by('-total_piezas')[:10]
@@ -338,7 +357,9 @@ class RankingsView(APIView):
         # 🔹 GRUPOS
         top_grupos = list(
             depositos
+            .filter(alumno__alumnogrupo__isnull=False)
             .values(
+                'alumno__alumnogrupo__grupo__id',
                 'alumno__alumnogrupo__grupo__nombre'
             )
             .annotate(total_piezas=Sum('cantidad'))
@@ -348,7 +369,9 @@ class RankingsView(APIView):
         # 🔹 CARRERAS
         top_carreras = list(
             depositos
+            .filter(alumno__alumnogrupo__isnull=False)
             .values(
+                'alumno__alumnogrupo__grupo__carrera__id',
                 'alumno__alumnogrupo__grupo__carrera__nombre'
             )
             .annotate(total_piezas=Sum('cantidad'))
@@ -359,6 +382,7 @@ class RankingsView(APIView):
         top_materiales = list(
             depositos
             .values(
+                'material__id',
                 'material__nombre'
             )
             .annotate(total_piezas=Sum('cantidad'))
