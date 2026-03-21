@@ -17,12 +17,12 @@ export default function MiGrupo() {
   useEffect(() => {
     const init = async () => {
       try {
-        const [grupoRes, materialesRes] = await Promise.all([
+        const [grupoRes, materialesRes]: [any, Material[]] = await Promise.all([
           getMiGrupoTutor(),
           getMateriales()
         ]);
         setGrupoData(grupoRes);
-        setMateriales(materialesRes.filter(m => m.activo));
+        setMateriales(materialesRes.filter((m: Material) => m.activo));
       } catch (error) {
         console.error("Error al cargar datos", error);
       } finally {

@@ -8,7 +8,6 @@ import TimeframeSelector from "../pages/rankings/TimeframeSelector";
 import StatsCards from "../pages/rankings/StatsCards";
 import TopRecicladores from "../pages/rankings/TopRecicladores";
 import ImpactoAmbiental from "../pages/rankings/ImpactoAmbientalP";
-import RankingHistorySelector from "../pages/rankings/RankingsHistorySelector";
 import RankingTable from "../pages/rankings/RankingTable";
 
 type TimeframeType = "actual" | "mensual";
@@ -33,14 +32,7 @@ export default function Rankings() {
       try {
         let result;
 
-        if (mesHistorial) {
-          result = await getRankingHistorial(
-            mesHistorial,
-            new Date().getFullYear()
-          );
-        } else {
-          result = await getRankings(timeframe, timeframe === 'mensual' ? selectedMonth : undefined);
-        }
+        result = await getRankings(timeframe, timeframe === 'mensual' ? selectedMonth : undefined);
         setData(result);
         setLastUpdated(new Date());
       } catch (error) {
@@ -56,7 +48,7 @@ export default function Rankings() {
 
     return () => clearInterval(interval);
 
-  }, [timeframe, selectedMonth, mesHistorial]);
+  }, [timeframe, selectedMonth]);
 
 
   /*CALCULAR DATOS PARA TARJETAS*/

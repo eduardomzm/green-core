@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 type Alumno = {
     alumno__id?: number;

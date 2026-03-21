@@ -49,6 +49,31 @@ export const unirseGrupo = async (codigo: string) => {
   return response.data;
 };
 
+export const getMiGrupoTutor = async () => {
+    const response = await api.get('mi-grupo/');
+    return response.data;
+};
+
+export const getMiGrupoAlumno = async () => {
+    const response = await api.get('mi-grupo-alumno/');
+    return response.data;
+};
+
+export const solicitarSalidaGrupo = async () => {
+    const response = await api.post('solicitar-salida-grupo/');
+    return response.data;
+};
+
+export const autorizarIngresoGrupo = async (alumno_id: number) => {
+    const response = await api.post('autorizar-ingreso-grupo/', { alumno_id });
+    return response.data;
+};
+
+export const autorizarSalidaGrupo = async (alumno_id: number) => {
+    const response = await api.post('autorizar-salida-grupo/', { alumno_id });
+    return response.data;
+};
+
 export interface Grupo {
   id: number;
   nombre: string;
@@ -71,10 +96,8 @@ export const getRankingHistorial = async (
   mes: number,
   anio: number
 ): Promise<RankingsResponse> => {
-
-export const createGrupo = async (data: { nombre: string, carrera: number, tutor: number, activo: boolean }) => {
-  const response = await api.post('grupos/', data);
-  return response.data;
+  const monthStr = `${anio}-${String(mes).padStart(2, '0')}`;
+  return getRankings('mensual', monthStr);
 };
 
 export interface Deposito {
