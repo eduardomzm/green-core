@@ -1,5 +1,12 @@
+import os
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
+from django.dispatch import receiver
+from django.urls import reverse
+from django_rest_passwordreset.signals import reset_password_token_created
+from django.core.mail import send_mail  
 
 
 class User(AbstractUser):
@@ -22,6 +29,7 @@ class User(AbstractUser):
     )
 
     activo = models.BooleanField(default=True)
+    avatar = models.CharField(max_length=50, default='default')
 
     def __str__(self):
         return f"{self.username} ({self.role})"
@@ -29,6 +37,7 @@ class User(AbstractUser):
 
 class Carrera(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
+    abreviatura = models.CharField(max_length=10, unique=True, null=True, blank=True)
     activo = models.BooleanField(default=True)
 
     def __str__(self):
@@ -49,6 +58,11 @@ class AlumnoPerfil(models.Model):
 
 
 class AlumnoGrupo(models.Model):
+    class Estados(models.TextChoices):
+        PENDIENTE_INGRESO = "PENDIENTE_INGRESO", "Pendiente de ingreso"
+        ACTIVO = "ACTIVO", "Activo"
+        PENDIENTE_SALIDA = "PENDIENTE_SALIDA", "Pendiente de salida"
+
     alumno = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -60,5 +74,44 @@ class AlumnoGrupo(models.Model):
         on_delete=models.PROTECT
     )
 
+    estado = models.CharField(
+        max_length=30,
+        choices=Estados.choices,
+        default=Estados.PENDIENTE_INGRESO,
+    )
+
     def __str__(self):
         return f"{self.alumno.username} → {self.grupo.nombre}"
+
+
+
+@receiver(reset_password_token_created)
+def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
+    """
+    Esta función se dispara automáticamente cuando un usuario pide recuperar su contraseña.
+    """
+
+    frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
+    
+    if frontend_url.endswith('/'):
+        frontend_url = frontend_url[:-1]
+        
+    reset_password_url = f"https://www.greencore.com.mx/restablecer-contrasena?token={reset_password_token.key}"
+
+    # Construimos el correo
+    email_subject = "Recuperación de Contraseña - Green Core"
+    email_body = f"Hola {reset_password_token.user.first_name},\n\n" \
+                 f"Has solicitado restablecer tu contraseña en Green Core.\n" \
+                 f"Haz clic en el siguiente enlace para crear una nueva contraseña:\n\n" \
+                 f"{reset_password_url}\n\n" \
+                 f"Si no solicitaste este cambio, ignora este correo.\n\n" \
+                 f"Equipo Green Core"
+
+    
+    send_mail(
+        subject=email_subject,
+        message=email_body,
+        from_email=None, 
+        recipient_list=[reset_password_token.user.email]
+    )
+    

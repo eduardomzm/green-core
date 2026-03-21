@@ -1,25 +1,19 @@
 import { useState, useMemo } from "react";
-import { Search, Filter, Calendar, Recycle, User, Target, Key, ArrowRight, CheckCircle, AlertCircle } from "lucide-react";
+import { Search, Filter, Calendar, Recycle, User, Target } from "lucide-react";
 import type { DashboardResponse, DepositoHistorial } from "../../types/dashboard.types";
-import { unirseGrupo } from "../../services/reciclajeService";
 
 interface Props {
   data: DashboardResponse;
 }
 
 const MOCK_DEPOSITOS: DepositoHistorial[] = [
-  { id: 1, fecha: "2024-10-25", cantidad: 15, material: "PET", operador: "operador_juan" },
-  { id: 2, fecha: "2024-10-24", cantidad: 5, material: "Cartón", operador: "operador_maria" },
+  { id: 1, fecha: "2024-10-25", cantidad: 15, material: "PET", operador: "operador_juan", alumno: "alumno_mock" },
+  { id: 2, fecha: "2024-10-24", cantidad: 5, material: "Cartón", operador: "operador_maria", alumno: "alumno_mock" },
 ];
 
 const AlumnoDashboard = ({ data }: Props) => {
   const [filtroMaterial, setFiltroMaterial] = useState<string>("");
   const [filtroFecha, setFiltroFecha] = useState<string>("");
-  
- 
-  const [codigo, setCodigo] = useState("");
-  const [joinMsg, setJoinMsg] = useState({ text: "", type: "" });
-  const [loadingJoin, setLoadingJoin] = useState(false);
 
   const depositos = data.ultimos_depositos || MOCK_DEPOSITOS;
 
@@ -32,84 +26,12 @@ const AlumnoDashboard = ({ data }: Props) => {
   }, [depositos, filtroMaterial, filtroFecha]);
 
   const materialesUnicos = Array.from(new Set(depositos.map(d => d.material)));
-
-  
-  const handleUnirseGrupo = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!codigo.trim()) return;
-    
-    setLoadingJoin(true);
-    setJoinMsg({ text: "Verificando...", type: "loading" });
-    
-    try {
-      
-      const res = await unirseGrupo(codigo.trim().toUpperCase());
-      setJoinMsg({ text: res.mensaje || "¡Te has unido exitosamente!", type: "success" });
-      setCodigo("");
-      
-      
-      setTimeout(() => setJoinMsg({ text: "", type: "" }), 4000);
-    } catch (error: any) {
- 
-      const errorText = error.response?.data?.error || "Código inválido o grupo no encontrado.";
-      setJoinMsg({ text: errorText, type: "error" });
-    } finally {
-      setLoadingJoin(false);
-    }
-  };
+  const metaAlumno = data.meta_alumno;
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       
-      <div className="bg-gradient-to-r from-primary to-green-600 p-6 md:p-8 rounded-3xl shadow-lg text-white relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="absolute -right-10 -top-10 text-white opacity-10">
-          <Key className="w-48 h-48 transform rotate-45" />
-        </div>
-        
-        <div className="relative z-10 w-full md:w-1/2">
-          <span className="bg-white/20 backdrop-blur-sm text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-3 inline-block">
-            
-          </span>
-          <h2 className="text-2xl md:text-3xl font-extrabold mb-2 tracking-tight">¿Tienes un código de invitación?</h2>
-          <p className="text-green-100 text-sm md:text-base opacity-90">
-            Ingresa el código que te dio tu tutor para unirte a tu grupo y comenzar a sumar juntos.
-          </p>
-        </div>
-
-        <div className="relative z-10 w-full md:w-auto flex-1 max-w-md bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 shadow-inner">
-          <form onSubmit={handleUnirseGrupo} className="flex flex-col gap-3">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder=""
-                value={codigo}
-                onChange={(e) => setCodigo(e.target.value)}
-                maxLength={6}
-                className="w-full pl-4 pr-4 py-3 bg-white text-gray-900 rounded-xl outline-none font-bold tracking-widest uppercase placeholder:text-gray-400 focus:ring-4 focus:ring-green-400/50 transition-all text-center text-lg"
-              />
-            </div>
-            <button 
-              type="submit"
-              disabled={loadingJoin || codigo.length < 4}
-              className="w-full bg-accent hover:bg-orange-500 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {loadingJoin ? "Conectando..." : "Vincular a mi Grupo"}
-              {!loadingJoin && <ArrowRight className="w-4 h-4" />}
-            </button>
-            
-            {joinMsg.text && joinMsg.type !== 'loading' && (
-              <div className={`mt-2 p-3 rounded-xl text-sm font-bold flex items-center gap-2 animate-in slide-in-from-top-2 ${
-                joinMsg.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-              }`}>
-                {joinMsg.type === 'success' ? <CheckCircle className="w-5 h-5 shrink-0" /> : <AlertCircle className="w-5 h-5 shrink-0" />}
-                {joinMsg.text}
-              </div>
-            )}
-          </form>
-        </div>
-      </div>
-
-     
+      {/* META GLOBAL */}
       <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-8">
         <div className="flex-shrink-0 p-5 bg-green-50 rounded-2xl">
           <Target className="w-10 h-10 text-primary" strokeWidth={2} />
@@ -131,6 +53,40 @@ const AlumnoDashboard = ({ data }: Props) => {
           <p className="text-right text-xs font-bold text-primary mt-2">{data.progreso.porcentaje}% Completado</p>
         </div>
       </div>
+
+      {/* META ASIGNADA POR TUTOR (si existe) */}
+      {metaAlumno && (
+        <div className="bg-white p-8 rounded-3xl border border-orange-100 shadow-sm flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
+          <div className="absolute -right-6 -top-6 text-accent opacity-5">
+            <Target className="w-40 h-40" />
+          </div>
+          <div className="flex-shrink-0 p-5 bg-orange-50 rounded-2xl relative z-10">
+            <Target className="w-10 h-10 text-accent" strokeWidth={2} />
+          </div>
+          <div className="flex-1 w-full relative z-10">
+            <div className="flex items-center gap-3 mb-2">
+              <h2 className="text-lg font-bold text-textMain">Meta Asignada por tu Tutor</h2>
+              <span className="text-[10px] font-black px-2 py-0.5 rounded-full uppercase bg-orange-50 text-accent border border-orange-100">
+                {metaAlumno.material}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm text-gray-500 mb-2 font-medium">
+              <span>{metaAlumno.actual} {metaAlumno.material_unidad}s aportados</span>
+              <span>Meta: {metaAlumno.cantidad_meta} {metaAlumno.material_unidad}s</span>
+            </div>
+            <div className="w-full bg-orange-50 rounded-full h-3 overflow-hidden border border-orange-100">
+              <div 
+                className="bg-accent h-3 rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
+                style={{ width: `${Math.min(metaAlumno.porcentaje, 100)}%` }}
+              >
+                <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+              </div>
+            </div>
+            <p className="text-right text-xs font-bold text-accent mt-2">{metaAlumno.porcentaje}% Completado</p>
+          </div>
+        </div>
+      )}
+
 
   
       <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">

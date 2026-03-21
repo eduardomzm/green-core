@@ -5,7 +5,8 @@ from .views import (
     CarreraViewSet,
     AlumnoPerfilViewSet,
     AlumnoGrupoViewSet,
-    RegistroAlumnoView 
+    RegistroAlumnoView,
+    MeView,
 )
 
 router = DefaultRouter()
@@ -16,5 +17,6 @@ router.register(r'alumno-grupos', AlumnoGrupoViewSet)
 
 urlpatterns = [
     path('users/registro/alumno/', RegistroAlumnoView.as_view(), name='registro_alumno'),
+    path('users/me/', MeView.as_view(), name='me'),
     path('', include(router.urls)),
-]
+]

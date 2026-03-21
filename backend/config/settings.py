@@ -17,10 +17,26 @@ import os
 from dotenv import load_dotenv
 import dj_database_url
 
-load_dotenv()
+def get_env_list(name, default=""):
+    raw_value = os.getenv(name, default)
+    return [item.strip() for item in raw_value.split(",") if item.strip()]
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from a file depending on DJANGO_ENV.
+# Examples:
+# - DJANGO_ENV=local   -> backend/.env.local
+# - DJANGO_ENV=staging -> backend/.env.staging
+env_name = os.getenv("DJANGO_ENV", "local").strip()
+specific_env_path = BASE_DIR / f".env.{env_name}"
+default_env_path = BASE_DIR / ".env"
+
+if specific_env_path.exists():
+    load_dotenv(dotenv_path=specific_env_path)
+else:
+    # Fallback (useful if you only keep backend/.env)
+    load_dotenv(dotenv_path=default_env_path)
 
 
 # Quick-start development settings - unsuitable for production
@@ -32,7 +48,10 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = get_env_list(
+    "ALLOWED_HOSTS",
+    "localhost,127.0.0.1,.vercel.app,.onrender.com"
+)
 
 
 # Application definition
@@ -46,9 +65,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.users',
     'apps.reciclaje',
+    'anymail',
     'rest_framework',
     'django_extensions',
     'corsheaders',
+    'django_rest_passwordreset',
     
 
 ]
@@ -169,17 +190,19 @@ SIMPLE_JWT = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL_ORIGINS", "False") == "True"
 
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = os.getenv("CORS_ALLOW_CREDENTIALS", "True") == "True"
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "https://www.greencore.com.mx",
-    "https://greencore.com.mx",
-    "https://green-core-ashen.vercel.app",
-]
+CORS_ALLOWED_ORIGINS = get_env_list(
+    "CORS_ALLOWED_ORIGINS",
+    "http://localhost:5173,http://127.0.0.1:5173"
+)
+
+CSRF_TRUSTED_ORIGINS = get_env_list(
+    "CSRF_TRUSTED_ORIGINS",
+    "http://localhost:5173,http://127.0.0.1:5173"
+)
 
 AUTHENTICATION_BACKENDS = [
     'apps.users.backends.EmailOrUsernameModelBackend',
@@ -187,3 +210,14 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+EMAIL_BACKEND = os.getenv(
+    "EMAIL_BACKEND",
+    "anymail.backends.sendinblue.EmailBackend"
+)
+
+ANYMAIL = {
+    "SENDINBLUE_API_KEY": os.getenv("SENDINBLUE_API_KEY"),
+}
+
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "soporte@greencore.com.mx")

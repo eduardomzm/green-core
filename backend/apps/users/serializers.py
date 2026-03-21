@@ -110,7 +110,7 @@ class AdminUserManagementSerializer(serializers.ModelSerializer):
     Serializador exclusivo para que el Administrador cree/edite usuarios de cualquier rol.
     """
     matricula = serializers.CharField(max_length=30, required=False, allow_blank=True)
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True, required=False, allow_blank=True)
 
     class Meta:
         model = User
@@ -120,21 +120,56 @@ class AdminUserManagementSerializer(serializers.ModelSerializer):
         )
 
     def validate(self, data):
-        if data.get('role') == User.Roles.ALUMNO and not data.get('matricula'):
-            raise serializers.ValidationError({"matricula": "La matrícula es obligatoria al crear una cuenta de Alumno."})
+        role = data.get('role')
+        if not role and self.instance:
+            role = self.instance.role
+            
+        if role == User.Roles.ALUMNO and not data.get('matricula'):
+            if not self.instance or not hasattr(self.instance, 'alumnoperfil'):
+                 raise serializers.ValidationError({"matricula": "La matrícula es obligatoria para cuentas de Alumno."})
+        
         return data
 
     def create(self, validated_data):
         matricula = validated_data.pop('matricula', None)
-        password = validated_data.pop('password')
+        password = validated_data.pop('password', None)
 
         with transaction.atomic():
-           
             user = User(**validated_data)
-            user.set_password(password) 
+            if password:
+                user.set_password(password)
             user.save()
 
             if user.role == User.Roles.ALUMNO and matricula:
                 AlumnoPerfil.objects.create(usuario=user, matricula=matricula)
 
         return user
+
+    def update(self, instance, validated_data):
+        matricula = validated_data.pop('matricula', None)
+        password = validated_data.pop('password', None)
+        # El Administrador no puede cambiar el rol de un usuario existente para evitar inconsistencias
+        validated_data.pop('role', None) 
+
+        with transaction.atomic():
+            # Actualizar campos del User
+            for attr, value in validated_data.items():
+                setattr(instance, attr, value)
+            
+            if password:
+                instance.set_password(password)
+            
+            instance.save()
+
+            # Manejo de AlumnoPerfil (matrícula)
+            if instance.role == User.Roles.ALUMNO:
+                if matricula:
+                    AlumnoPerfil.objects.update_or_create(
+                        usuario=instance,
+                        defaults={'matricula': matricula}
+                    )
+            else:
+                # Si el rol ya no es ALUMNO, opcionalmente borrar el perfil
+                AlumnoPerfil.objects.filter(usuario=instance).delete()
+
+        return instance

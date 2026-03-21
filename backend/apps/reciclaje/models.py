@@ -80,23 +80,22 @@ class MetaSistema(models.Model):
         return f"{self.nombre} - {self.cantidad_meta}"
 
 
-class RankingMensual(models.Model):
-
-    anio = models.IntegerField()
-    mes = models.IntegerField()
-
-    total_piezas = models.IntegerField(default=0)
-    total_alumnos = models.IntegerField(default=0)
-    total_grupos = models.IntegerField(default=0)
-
-    material_top = models.CharField(max_length=100)
-
-    datos = models.JSONField()
-
-    creado = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ("anio", "mes")
+class MetaAlumno(models.Model):
+    alumno = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='metas',
+        limit_choices_to={'role': 'ALUMNO'}
+    )
+    material = models.ForeignKey(Material, on_delete=models.PROTECT)
+    cantidad_meta = models.PositiveIntegerField()
+    asignada_por = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name='metas_asignadas',
+        limit_choices_to={'role': 'TUTOR'}
+    )
+    creada_en = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Ranking {self.mes}-{self.anio}"
+        return f"Meta de {self.alumno} - {self.material} ({self.cantidad_meta})"

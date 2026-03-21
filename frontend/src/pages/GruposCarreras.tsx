@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { GraduationCap, Users, Plus, CheckCircle, AlertCircle, BookOpen } from "lucide-react";
-import { getUsers, getCarreras, createCarrera, type User, type Carrera } from "../services/userService";
+import { GraduationCap, Users, Plus, CheckCircle, AlertCircle } from "lucide-react";
+import { getUsers, getCarreras, type User, type Carrera } from "../services/userService";
 import { getGrupos, createGrupo, type Grupo } from "../services/reciclajeService";
 
 export default function GruposCarreras() {
@@ -11,8 +11,6 @@ export default function GruposCarreras() {
   const [loading, setLoading] = useState(true);
 
   // Formularios y Mensajes
-  const [carreraForm, setCarreraForm] = useState({ nombre: "" });
-  const [carreraMsg, setCarreraMsg] = useState({ text: "", type: "" });
 
   const [grupoForm, setGrupoForm] = useState({ nombre: "", carrera_id: "", tutor_id: "" });
   const [grupoMsg, setGrupoMsg] = useState({ text: "", type: "" });
@@ -40,22 +38,6 @@ export default function GruposCarreras() {
     fetchData();
   }, []);
 
-  // Función para crear Carrera
-  const handleCarreraSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!carreraForm.nombre) return;
-    setCarreraMsg({ text: "Guardando...", type: "loading" });
-
-    try {
-      await createCarrera({ nombre: carreraForm.nombre });
-      setCarreraMsg({ text: "¡Carrera creada con éxito!", type: "success" });
-      setCarreraForm({ nombre: "" });
-      fetchData(); // Recargamos para que aparezca en el select de Grupos
-      setTimeout(() => setCarreraMsg({ text: "", type: "" }), 3000);
-    } catch (error) {
-      setCarreraMsg({ text: "Error al crear la carrera.", type: "error" });
-    }
-  };
 
   // Función para crear Grupo
   const handleGrupoSubmit = async (e: React.FormEvent) => {
@@ -96,63 +78,8 @@ export default function GruposCarreras() {
         <p className="text-gray-500 mt-1">Estructura la escuela, crea nuevas disciplinas y asigna tutores a sus grupos.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 gap-8">
         
-        {/* PANEL: CREAR CARRERA */}
-        <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden">
-          <div className="absolute -right-6 -top-6 text-primary opacity-5">
-            <BookOpen className="w-40 h-40" />
-          </div>
-          
-          <div className="relative z-10 flex items-center gap-3 mb-6">
-            <div className="p-3 bg-primary/10 rounded-xl text-primary">
-              <BookOpen className="w-6 h-6" strokeWidth={2} />
-            </div>
-            <h3 className="text-xl font-bold text-textMain">Nueva Carrera</h3>
-          </div>
-
-          <form onSubmit={handleCarreraSubmit} className="relative z-10 space-y-4">
-            <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Nombre de la Carrera</label>
-              <input 
-                type="text" 
-                required
-                value={carreraForm.nombre}
-                onChange={(e) => setCarreraForm({...carreraForm, nombre: e.target.value})}
-                placeholder=""
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary outline-none text-sm bg-gray-50/50 transition-all" 
-              />
-            </div>
-            
-            {carreraMsg.text && (
-              <div className={`p-3 rounded-xl text-sm font-bold flex items-center gap-2 ${carreraMsg.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
-                {carreraMsg.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-                {carreraMsg.text}
-              </div>
-            )}
-
-            <button 
-              type="submit" 
-              disabled={!carreraForm.nombre || carreraMsg.type === 'loading'}
-              className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              <Plus className="w-5 h-5" />
-              Guardar Carrera
-            </button>
-          </form>
-
-          {/* Lista rápida de carreras */}
-          <div className="mt-8 pt-6 border-t border-gray-100">
-            <p className="text-xs font-bold text-gray-500 uppercase mb-3">Carreras Actuales ({carreras.length})</p>
-            <div className="flex flex-wrap gap-2">
-              {carreras.map(c => (
-                <span key={c.id} className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-lg border border-gray-200">
-                  {c.nombre}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
 
         {/* PANEL: CREAR GRUPO Y ASIGNAR TUTOR */}
         <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden">

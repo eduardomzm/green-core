@@ -1,7 +1,15 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { NAVIGATION } from '../../config/navigation';
-import { Leaf, X } from 'lucide-react';
+import { Leaf, X, Settings } from 'lucide-react';
+
+const AVATARS: Record<string, string> = {
+  default: '/avatars/avatar_bin.png',
+  leaf: '/avatars/avatar_leaf.png',
+  earth: '/avatars/avatar_earth.png',
+  sprout: '/avatars/avatar_sprout.png',
+  water: '/avatars/avatar_water.png',
+};
 
 export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const { user } = useAuth();
@@ -48,16 +56,34 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
         })}
       </nav>
 
+      {/* Perfil del usuario → navega a la página de perfil */}
       <div className="p-4 border-t border-gray-50">
-        <div className="flex items-center gap-3 px-3 py-2">
-          <div className="w-8 h-8 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-xs font-semibold text-gray-600 uppercase">
-            { user?.username?.charAt(0) || "U"}
+        <Link
+          to="/dashboard/perfil"
+          onClick={onClose}
+          className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all group cursor-pointer ${
+            location.pathname === '/dashboard/perfil' ? 'bg-primary/5 shadow-sm ring-1 ring-primary/10' : 'hover:bg-gray-50'
+          }`}
+        >
+          <div className="w-8 h-8 rounded-full overflow-hidden border border-primary/20 flex-shrink-0 transition-all group-hover:ring-4 group-hover:ring-primary/10">
+            <img 
+              src={AVATARS[user?.avatar || 'default']} 
+              alt="Avatar"
+              className="w-full h-full object-cover"
+            />
           </div>
-          <div className="flex flex-col min-w-0">
-            <span className="text-sm font-semibold text-gray-900 truncate">{user?.username}</span>
+          <div className="flex flex-col min-w-0 flex-1">
+            <span className={`text-sm font-semibold truncate transition-colors ${
+              location.pathname === '/dashboard/perfil' ? 'text-primary' : 'text-gray-900'
+            }`}>
+              {user?.username}
+            </span>
             <span className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">{user?.role}</span>
           </div>
-        </div>
+          <Settings className={`w-4 h-4 transition-colors ${
+            location.pathname === '/dashboard/perfil' ? 'text-primary' : 'text-gray-300 group-hover:text-gray-500'
+          }`} />
+        </Link>
       </div>
     </aside>
   );

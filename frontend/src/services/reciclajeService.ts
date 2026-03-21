@@ -72,15 +72,36 @@ export const getRankingHistorial = async (
   anio: number
 ): Promise<RankingsResponse> => {
 
-  const response = await api.get('rankings/historial/', {
-    params: { mes, anio }
-  })
+export const createGrupo = async (data: { nombre: string, carrera: number, tutor: number, activo: boolean }) => {
+  const response = await api.post('grupos/', data);
+  return response.data;
+};
 
-  return response.data
-
+export interface Deposito {
+  id: number;
+  alumno: number;
+  alumno_info: any;
+  operador: number;
+  operador_info: any;
+  material: number;
+  material_nombre: string;
+  cantidad: number;
+  fecha: string;
 }
 
-export const getMiGrupoTutor = async () => {
-  const response = await api.get('reciclaje/mi-grupo/');
+export interface PaginatedDepositos {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Deposito[];
+}
+
+export const getDepositos = async (params: any = {}): Promise<PaginatedDepositos> => {
+  const response = await api.get('depositos/', { params });
+  return response.data;
+};
+
+export const asignarMetaAlumno = async (data: { alumno_id: number; material_id: number; cantidad_meta: number }) => {
+  const response = await api.post('asignar-meta-alumno/', data);
   return response.data;
 };

@@ -75,39 +75,15 @@ export const Landing = () => {
             </p>
           </div>
 
-          <div>
-            <h4 className="font-semibold text-lg mb-4">
-              Navegación
-            </h4>
-
-            <ul className="space-y-3 text-gray-400">
-
-              <li>
-                <a href="#impacto" className="hover:text-green-400 transition">
-                  Impacto ambiental
-                </a>
-              </li>
-
-              <li>
-                <a href="#materiales" className="hover:text-green-400 transition">
-                  Materiales
-                </a>
-              </li>
-
-              <li>
-                <a href="#funciona" className="hover:text-green-400 transition">
-                  Cómo funciona
-                </a>
-              </li>
-
-              <li>
-                <a href="#timeline" className="hover:text-green-400 transition">
-                  Proceso de reciclaje
-                </a>
-              </li>
-
+          <div className="flex items-center gap-6 space-y-5 text-2x1" >
+            <ul>
+            <a href="/terminos" className="text-sm text-gray-500 hover:text-primary transition-colors font-medium">
+              <li>Términos y Condiciones</li>
+            </a>
+            <a href="/privacidad" className="text-sm text-gray-500 hover:text-primary transition-colors font-medium">
+              <li>Política de Privacidad</li>
+            </a>
             </ul>
-
           </div>
 
           <div>
