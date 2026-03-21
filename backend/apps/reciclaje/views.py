@@ -361,7 +361,7 @@ class RankingsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        generar_ranking_mensual()
+        
         
         timeframe = request.query_params.get('timeframe', 'actual')
         
