@@ -8,13 +8,22 @@ import TimeframeSelector from "../pages/rankings/TimeframeSelector";
 import StatsCards from "../pages/rankings/StatsCards";
 import TopRecicladores from "../pages/rankings/TopRecicladores";
 import ImpactoAmbiental from "../pages/rankings/ImpactoAmbientalP";
+import RankingHistorySelector from "../pages/rankings/RankingsHistorySelector";
+import RankingTable from "../pages/rankings/RankingTable";
 
-type TimeframeType = "general" | "mensual";
+type TimeframeType = "actual" | "mensual";
 
 export default function Rankings() {
 
   const [data, setData] = useState<RankingsResponse | null>(null);
-  const [timeframe, setTimeframe] = useState<TimeframeType>("general");
+  const [timeframe, setTimeframe] = useState<TimeframeType>("actual");
+  const [selectedMonth, setSelectedMonth] = useState<string>(() => {
+    const now = new Date();
+    now.setMonth(now.getMonth() - 1);
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    return `${yyyy}-${mm}`;
+  });
   const [activeFilter, setActiveFilter] = useState("alumnos");
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
@@ -22,7 +31,16 @@ export default function Rankings() {
 
     const fetchData = async () => {
       try {
-        const result = await getRankings(timeframe);
+        let result;
+
+        if (mesHistorial) {
+          result = await getRankingHistorial(
+            mesHistorial,
+            new Date().getFullYear()
+          );
+        } else {
+          result = await getRankings(timeframe, timeframe === 'mensual' ? selectedMonth : undefined);
+        }
         setData(result);
         setLastUpdated(new Date());
       } catch (error) {
@@ -38,7 +56,7 @@ export default function Rankings() {
 
     return () => clearInterval(interval);
 
-  }, [timeframe]);
+  }, [timeframe, selectedMonth, mesHistorial]);
 
 
   /*CALCULAR DATOS PARA TARJETAS*/
@@ -98,13 +116,15 @@ export default function Rankings() {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
 
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between items-stretch sm:items-start gap-4 sm:gap-0 w-full">
 
         <RankingsHeader lastUpdated={lastUpdated} />
 
         <TimeframeSelector
           timeframe={timeframe}
           setTimeframe={setTimeframe}
+          selectedMonth={selectedMonth}
+          setSelectedMonth={setSelectedMonth}
         />
 
       </div>
@@ -118,7 +138,9 @@ export default function Rankings() {
       />
 
       {/* TOP 3 RECICLADORES */}
-      <TopRecicladores alumnos={data?.top_alumnos || []} />
+      <TopRecicladores alumnos={(data?.top_alumnos || []).slice(0, 3)} />
+
+      <RankingTable alumnos={(data?.top_alumnos || []).slice(3, 10)} />
 
       {/* SECCIÓN DEL RANKING */}
       <div className="bg-white p-6 rounded-xl shadow-sm">
@@ -128,7 +150,9 @@ export default function Rankings() {
           setActiveFilter={setActiveFilter}
         />
 
-        <RankingsChart chartData={chartData} />
+        <div className="mt-8">
+          <RankingsChart chartData={chartData.slice(0, 3)} />
+        </div>
 
       </div>
 

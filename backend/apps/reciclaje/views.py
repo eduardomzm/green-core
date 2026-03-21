@@ -361,14 +361,43 @@ class RankingsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        timeframe = request.query_params.get('timeframe', 'general')
+        generar_ranking_mensual()
         
-        depositos = Deposito.objects.all()
+        timeframe = request.query_params.get('timeframe', 'actual')
+        
+        depositos = Deposito.objects.select_related(
+            "alumno", "material"
+        ).prefetch_related(
+            "alumno__alumnogrupo"
+        )
 
-        if timeframe == 'mensual':
+        if timeframe == 'actual':
             now = timezone.now()
             fecha_inicio = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
             depositos = depositos.filter(fecha__gte=fecha_inicio)
+            
+        elif timeframe == 'mensual':
+            now = timezone.now()
+            month_param = request.query_params.get('month')
+            
+            if month_param:
+                try:
+                    year, month = map(int, month_param.split('-'))
+                    fecha_inicio = now.replace(year=year, month=month, day=1, hour=0, minute=0, second=0, microsecond=0)
+                except ValueError:
+                    fecha_inicio = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            else:
+                if now.month == 1:
+                    fecha_inicio = now.replace(year=now.year - 1, month=12, day=1, hour=0, minute=0, second=0, microsecond=0)
+                else:
+                    fecha_inicio = now.replace(month=now.month - 1, day=1, hour=0, minute=0, second=0, microsecond=0)
+
+            if fecha_inicio.month == 12:
+                fecha_fin = fecha_inicio.replace(year=fecha_inicio.year + 1, month=1)
+            else:
+                fecha_fin = fecha_inicio.replace(month=fecha_inicio.month + 1)
+                
+            depositos = depositos.filter(fecha__gte=fecha_inicio, fecha__lt=fecha_fin)
 
         top_alumnos = (
             depositos
