@@ -126,6 +126,7 @@ export const getDepositos = async (params: any = {}): Promise<PaginatedDepositos
 
 export const asignarMetaAlumno = async (data: { alumno_id: number; material_id: number; cantidad_meta: number }) => {
   const response = await api.post('asignar-meta-alumno/', data);
+  return response.data;
 };
 
 export const getMedallasDisponibles = async () => {
