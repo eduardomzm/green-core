@@ -2,8 +2,38 @@ import botella from "../../assets/img/botella_animada.jpg";
 import carton from "../../assets/img/carton_animada.jpg";
 import lata from "../../assets/img/lata_animada.jpg";
 import { motion } from "framer-motion";
+import { Sparkles, Leaf, Droplet } from "lucide-react";
 
 export default function Materiales() {
+
+    const renderParticles = (Icon: any, colorClass: String) => {
+        return (
+            <div className="absolute inset-0 z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700 overflow-hidden">
+                {[...Array(6)].map((_, i) => (
+                    <motion.div
+                        key={i}
+                        animate={{ 
+                            y: [50, -100 - Math.random() * 50],
+                            x: [(Math.random() - 0.5) * 50, (Math.random() - 0.5) * 50],
+                            opacity: [0, 1, 0],
+                            rotate: [0, 360],
+                            scale: [0.5, Math.random() * 1.5 + 0.5, 0.5]
+                        }}
+                        transition={{ 
+                            duration: 2 + Math.random() * 3, 
+                            repeat: Infinity, 
+                            delay: Math.random() * 2,
+                            ease: "easeOut"
+                        }}
+                        className={`absolute ${colorClass}`}
+                        style={{ left: `${Math.random() * 80 + 10}%`, top: `${80 + Math.random() * 20}%` }}
+                    >
+                        <Icon className="w-5 h-5" />
+                    </motion.div>
+                ))}
+            </div>
+        );
+    };
 
     return (
 
@@ -38,9 +68,11 @@ export default function Materiales() {
                 className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-110 group-hover:opacity-40"
             />
 
-            <div className="absolute inset-0 flex flex-col justify-end p-8 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-orange-50/90 to-transparent">
+            <div className="absolute inset-0 flex flex-col justify-end p-8 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-orange-50/90 to-transparent z-10">
 
-                <h3 className="text-3xl font-extrabold mb-2 text-accent">
+                {renderParticles(Droplet, "text-orange-400")}
+
+                <h3 className="text-3xl font-extrabold mb-2 text-accent relative z-10">
                 Botellas
                 </h3>
 
@@ -67,9 +99,11 @@ export default function Materiales() {
                 className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-110 group-hover:opacity-40"
             />
 
-            <div className="absolute inset-0 flex flex-col justify-end p-8 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-green-50/90 to-transparent">
+            <div className="absolute inset-0 flex flex-col justify-end p-8 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-green-50/90 to-transparent z-10">
 
-                <h3 className="text-3xl font-extrabold mb-2 text-primary">
+                {renderParticles(Leaf, "text-green-500")}
+
+                <h3 className="text-3xl font-extrabold mb-2 text-primary relative z-10">
                 Cartón
                 </h3>
 
@@ -96,9 +130,11 @@ export default function Materiales() {
                 className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-110 group-hover:opacity-40"
             />
 
-            <div className="absolute inset-0 flex flex-col justify-end p-8 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-blue-50/90 to-transparent">
+            <div className="absolute inset-0 flex flex-col justify-end p-8 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-blue-50/90 to-transparent z-10">
 
-                <h3 className="text-3xl font-extrabold mb-2 text-secondary">
+                {renderParticles(Sparkles, "text-secondary")}
+
+                <h3 className="text-3xl font-extrabold mb-2 text-secondary relative z-10">
                 Latas
                 </h3>
 

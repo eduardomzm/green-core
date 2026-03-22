@@ -30,11 +30,12 @@ export default function ComoFunciona() {
             transform transition-all duration-500 hover:scale-105 hover:-translate-y-2 relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-full h-1.5 bg-primary transition-all duration-500 group-hover:h-2"></div>
 
-            <div className="w-20 h-20 mx-auto bg-green-50 rounded-2xl flex items-center justify-center text-primary mb-6 transition-transform duration-500 group-hover:rotate-6">
-                <Recycle className="w-10 h-10" strokeWidth={1.5} />
+            <div className="w-20 h-20 mx-auto bg-green-50 rounded-2xl flex items-center justify-center text-primary mb-6 transition-transform duration-500 group-hover:rotate-6 relative z-10">
+                <div className="absolute inset-0 bg-primary/20 rounded-2xl scale-0 group-hover:animate-ping opacity-50 z-0"></div>
+                <Recycle className="w-10 h-10 relative z-10" strokeWidth={1.5} />
             </div>
 
-            <h4 className="text-2xl font-bold mb-3 text-textMain">
+            <h4 className="text-2xl font-bold mb-3 text-textMain relative z-10">
                 1. Lleva tus piezas
             </h4>
 
@@ -56,11 +57,12 @@ export default function ComoFunciona() {
             transform transition-all duration-500 hover:scale-105 hover:-translate-y-2 relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-full h-1.5 bg-secondary transition-all duration-500 group-hover:h-2"></div>
 
-            <div className="w-20 h-20 mx-auto bg-blue-50 rounded-2xl flex items-center justify-center text-secondary mb-6 transition-transform duration-500 group-hover:scale-110">
-                <FileText className="w-10 h-10" strokeWidth={1.5} />
+            <div className="w-20 h-20 mx-auto bg-blue-50 rounded-2xl flex items-center justify-center text-secondary mb-6 transition-transform duration-500 group-hover:scale-110 relative z-10">
+                <div className="absolute inset-0 bg-secondary/20 rounded-2xl scale-0 group-hover:animate-ping opacity-50 z-0"></div>
+                <FileText className="w-10 h-10 relative z-10" strokeWidth={1.5} />
             </div>
 
-            <h4 className="text-2xl font-bold mb-3 text-textMain">
+            <h4 className="text-2xl font-bold mb-3 text-textMain relative z-10">
                 2. Registra tu aporte
             </h4>
 
@@ -82,11 +84,12 @@ export default function ComoFunciona() {
             transform transition-all duration-500 hover:scale-105 hover:-translate-y-2 relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-full h-1.5 bg-accent transition-all duration-500 group-hover:h-2"></div>
 
-            <div className="w-20 h-20 mx-auto bg-orange-50 rounded-2xl flex items-center justify-center text-accent mb-6 transition-transform duration-500 group-hover:-rotate-6">
-                <Trophy className="w-10 h-10" strokeWidth={1.5} />
+            <div className="w-20 h-20 mx-auto bg-orange-50 rounded-2xl flex items-center justify-center text-accent mb-6 transition-transform duration-500 group-hover:-rotate-6 relative z-10">
+                <div className="absolute inset-0 bg-accent/20 rounded-2xl scale-0 group-hover:animate-ping opacity-50 z-0"></div>
+                <Trophy className="w-10 h-10 relative z-10" strokeWidth={1.5} />
             </div>
 
-            <h4 className="text-2xl font-bold mb-3 text-textMain">
+            <h4 className="text-2xl font-bold mb-3 text-textMain relative z-10">
                 3. Sube en el Ranking
             </h4>
 

@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Leaf, Sparkles } from "lucide-react";
 import ImpactoAmbiental from "./home/impacto_ambienal";
 import TimelineReciclaje from "./home/timeline_reciclaje";
 import Materiales from "./home/materiales";
@@ -47,6 +48,34 @@ export const Landing = () => {
           className="absolute bottom-1/4 left-1/2 w-64 h-64 md:w-96 md:h-96 bg-accent/20 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 pointer-events-none"
         />
 
+        {/* Partículas Flotantes Decorativas (Hojas y Destellos) */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          {[...Array(12)].map((_, i) => (
+            <motion.div
+              key={i}
+              animate={{
+                y: [0, -150 - Math.random() * 100],
+                x: [0, (Math.random() - 0.5) * 300],
+                rotate: [0, 360],
+                opacity: [0, 0.4, 0]
+              }}
+              transition={{
+                duration: 8 + Math.random() * 8,
+                repeat: Infinity,
+                delay: Math.random() * 5,
+                ease: "linear"
+              }}
+              className="absolute"
+              style={{
+                top: `${80 + Math.random() * 20}%`,
+                left: `${Math.random() * 100}%`,
+              }}
+            >
+              {i % 2 === 0 ? <Leaf className="w-6 h-6 text-primary/40" /> : <Sparkles className="w-5 h-5 text-yellow-500/50" />}
+            </motion.div>
+          ))}
+        </div>
+
         {/* Contenedor del Logo Levitando (Sin Recortes, con Glassmorphism) */}
         <motion.div 
           initial={{ opacity: 0, y: 50 }}
@@ -90,14 +119,20 @@ export const Landing = () => {
       <main className="pt-24">
 
         {/* --- BANNER AMARILLO --- */}
-        <section className="bg-yellow-500 py-20 px-4 text-center">
+        <motion.section 
+          initial={{ opacity: 0, scale: 0.95, y: 50 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="bg-yellow-500 py-20 px-4 text-center"
+        >
           <div className="max-w-4xl mx-auto">
 
             <h2 className="text-5xl md:text-6xl font-extrabold text-white mb-6 tracking-tight">
               Recicla, compite y haz tu <span className="text-white">Universidad más verde</span>
             </h2>
 
-            <p className="text-xl text-white opacity-80 mb-10 max-w-2xl mx-auto">
+            <p className="text-xl text-white opacity-90 mb-10 max-w-2xl mx-auto">
               Green Core es el Sistema de Reciclaje Universitario. Registra tus aportes,
               revisa tus estadísticas y ayuda a tu carrera a liderar el ranking semanal.
               Conoce el impacto ambiental en la tierra de estos residuos y ayuda a crear conciencia
@@ -105,7 +140,7 @@ export const Landing = () => {
             </p>
 
           </div>
-        </section>
+        </motion.section>
 
         {/* --- SECCIONES --- */}
         <ImpactoAmbiental />
@@ -139,10 +174,10 @@ export const Landing = () => {
 
           <div className="flex items-center gap-6 space-y-5 text-2x1" >
             <ul>
-            <a href="/terminos" className="text-sm text-gray-500 hover:text-primary transition-colors font-medium">
+            <a href="/terminos" className="text-gray-400 hover:text-primary transition-colors font-medium">
               <li>Términos y Condiciones</li>
             </a>
-            <a href="/privacidad" className="text-sm text-gray-500 hover:text-primary transition-colors font-medium">
+            <a href="/privacidad" className="text-gray-400 hover:text-primary transition-colors font-medium">
               <li>Política de Privacidad</li>
             </a>
             </ul>
