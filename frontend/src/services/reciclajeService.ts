@@ -129,6 +129,11 @@ export const asignarMetaAlumno = async (data: { alumno_id: number; material_id: 
   return response.data;
 };
 
+export const cancelarMetaAlumno = async (meta_id: number) => {
+  const response = await api.delete(`cancelar-meta-alumno/${meta_id}/`);
+  return response.data;
+};
+
 export const getMedallasDisponibles = async () => {
   const response = await api.get('medallas-disponibles/');
   return response.data;
