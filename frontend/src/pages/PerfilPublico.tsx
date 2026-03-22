@@ -189,6 +189,26 @@ export default function PerfilPublico() {
         </div>
       </div>
 
+      {/* Stats Section (Alumnos) */}
+      {isAlumno && (
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-6 relative z-10">
+          <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center group hover:border-green-300 transition-colors overflow-hidden relative">
+            <div className="absolute inset-0 bg-green-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <span className="text-4xl font-black text-green-600 mb-2 drop-shadow-sm relative z-10 group-hover:scale-110 transition-transform">
+              {profile.total_piezas || 0}
+            </span>
+            <span className="text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-widest relative z-10">Piezas Recicladas</span>
+          </div>
+          <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center group hover:border-blue-300 transition-colors overflow-hidden relative">
+            <div className="absolute inset-0 bg-blue-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <span className="text-4xl font-black text-blue-600 mb-2 drop-shadow-sm relative z-10 group-hover:scale-110 transition-transform">
+              {profile.total_depositos || 0}
+            </span>
+            <span className="text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-widest relative z-10">Depósitos Realizados</span>
+          </div>
+        </div>
+      )}
+
       {/* Gamification Section (Only for Alumnos) */}
       {isAlumno && (
         <div className="grid grid-cols-1 gap-6">

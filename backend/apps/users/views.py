@@ -2,7 +2,8 @@ from django.shortcuts import render
 from rest_framework import viewsets, filters
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
-from django.db.models import Q
+from django.db.models import Q, Sum, Count
+from apps.reciclaje.models import Deposito
 from .models import User, Carrera, AlumnoPerfil, AlumnoGrupo, Notificacion, ConexionUsuario
 from .serializers import (
     UserSerializer,
@@ -129,11 +130,20 @@ class MeView(APIView):
 
         seguidores_count = 0
         siguiendo_count = 0
+        total_depositos = 0
+        total_piezas = 0
 
         if user.role == 'ALUMNO':
             try:
                 seguidores_count = user.seguidores.count()
                 siguiendo_count = user.seguidos.count()
+
+                agregado = Deposito.objects.filter(alumno=user).aggregate(
+                    total_depositos=Count('id'),
+                    total_piezas=Sum('cantidad')
+                )
+                total_depositos = agregado['total_depositos'] or 0
+                total_piezas = agregado['total_piezas'] or 0
 
                 perfil = user.alumnoperfil
                 # Actualizar campos sociales si se proporcionan
@@ -184,6 +194,8 @@ class MeView(APIView):
             "medallas": medallas,
             "seguidores_count": seguidores_count,
             "siguiendo_count": siguiendo_count,
+            "total_depositos": total_depositos,
+            "total_piezas": total_piezas,
         })
 
 
@@ -251,9 +263,18 @@ class PublicProfileView(APIView):
         facebook = ""
         nivel = 1
         medallas = []
+        total_depositos = 0
+        total_piezas = 0
 
         if user.role == 'ALUMNO':
             try:
+                agregado = Deposito.objects.filter(alumno=user).aggregate(
+                    total_depositos=Count('id'),
+                    total_piezas=Sum('cantidad')
+                )
+                total_depositos = agregado['total_depositos'] or 0
+                total_piezas = agregado['total_piezas'] or 0
+            
                 perfil = getattr(user, 'alumnoperfil', None)
                 if perfil:
                     biografia = perfil.biografia
@@ -287,6 +308,8 @@ class PublicProfileView(APIView):
             "facebook": facebook,
             "nivel": nivel,
             "medallas": medallas,
+            "total_depositos": total_depositos,
+            "total_piezas": total_piezas,
             "seguidores_count": seguidores_count,
             "siguiendo_count": siguiendo_count,
             "lo_sigo": lo_sigo,
