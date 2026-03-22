@@ -104,3 +104,13 @@ export const getGrupos = async (): Promise<Grupo[]> => {
     const response = await api.get('grupos/');
     return response.data;
 };
+
+export const buscarAlumnos = async (query: string) => {
+  const response = await api.get(`users/buscar/?q=${query}`);
+  return response.data;
+};
+
+export const toggleSeguir = async (username: string) => {
+  const response = await api.post(`users/perfil/${username}/seguir/`);
+  return response.data;
+};

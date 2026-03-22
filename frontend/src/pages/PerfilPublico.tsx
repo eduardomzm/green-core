@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getPublicProfile } from "../services/userService";
+import { getPublicProfile, toggleSeguir } from "../services/userService";
 import type { User } from "../types/auth.types";
+import { useAuth } from "../hooks/useAuth";
 import { User as UserIcon, Award, Instagram, Twitter, Facebook, ChevronLeft, ShieldCheck } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 
@@ -22,7 +23,8 @@ const AVATARS = [
 
 export default function PerfilPublico() {
   const { username } = useParams<{ username: string }>();
-  const [profile, setProfile] = useState<User | null>(null);
+  const { user: currentUser } = useAuth();
+  const [profile, setProfile] = useState<any>(null); // Use any to bypass strict User type for new fields
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,6 +44,24 @@ export default function PerfilPublico() {
 
     fetchProfile();
   }, [username]);
+
+  const handleToggleSeguir = async () => {
+    if (!profile || !username) return;
+    try {
+      const res = await toggleSeguir(username);
+      setProfile((prev: any) => {
+        if (!prev) return prev;
+        const isFollowingNow = res.status === 'followed';
+        return {
+          ...prev,
+          lo_sigo: isFollowingNow,
+          seguidores_count: prev.seguidores_count + (isFollowingNow ? 1 : -1)
+        };
+      });
+    } catch (e) {
+      console.error("Error al seguir/dejar de seguir", e);
+    }
+  };
 
   if (loading) {
     return (
@@ -66,7 +86,8 @@ export default function PerfilPublico() {
 
   const avatarUrl = AVATARS.find(a => a.id === profile.avatar)?.url || AVATARS[0].url;
   const isAlumno = profile.role === 'ALUMNO';
-  const roleLabel = { ADMIN: "Administrador", TUTOR: "Tutor", ALUMNO: "Estudiante", OPERADOR: "Operador" }[profile.role] || profile.role;
+  const roleKey = profile.role as 'ADMIN' | 'TUTOR' | 'ALUMNO' | 'OPERADOR';
+  const roleLabel = { ADMIN: "Administrador", TUTOR: "Tutor", ALUMNO: "Estudiante", OPERADOR: "Operador" }[roleKey] || profile.role;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in zoom-in-95 duration-500 pb-20">
@@ -111,7 +132,33 @@ export default function PerfilPublico() {
               <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-bold tracking-wider uppercase">
                 {roleLabel}
               </span>
+              
+              {isAlumno && (
+                <>
+                  <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold tracking-wider">
+                    {profile.seguidores_count || 0} Seguidores
+                  </span>
+                  <span className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-bold tracking-wider">
+                    {profile.siguiendo_count || 0} Seguidos
+                  </span>
+                </>
+              )}
             </div>
+
+            {isAlumno && currentUser?.username !== profile.username && currentUser?.role === 'ALUMNO' && (
+              <div className="flex justify-center md:justify-start pt-2">
+                <button 
+                  onClick={handleToggleSeguir}
+                  className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${
+                    profile.lo_sigo 
+                      ? 'bg-gray-100 hover:bg-red-50 text-gray-700 hover:text-red-600' 
+                      : 'bg-primary hover:bg-primary/90 text-white shadow-md shadow-primary/20 hover:shadow-primary/40'
+                  }`}
+                >
+                  {profile.lo_sigo ? 'Dejar de seguir' : 'Seguir'}
+                </button>
+              </div>
+            )}
 
             {isAlumno && profile.biografia && (
               <p className="text-gray-600 text-sm leading-relaxed max-w-2xl bg-gray-50/50 p-4 rounded-2xl border border-gray-100/50">
