@@ -1,9 +1,11 @@
+import { motion } from "framer-motion";
 import ImpactoAmbiental from "./home/impacto_ambienal";
 import TimelineReciclaje from "./home/timeline_reciclaje";
 import Materiales from "./home/materiales";
 import ComoFunciona from "./home/como_funciona";
 import Simulador from "./home/simulador";
 import Navbar from "../components/layout/Navbar";
+import logo from "../assets/img/logo.jpeg";
 
 export const Landing = () => {
 
@@ -13,16 +15,76 @@ export const Landing = () => {
 
       <Navbar />
 
-      {/* --- VIDEO HERO --- */}
-      <div className="w-full mt-28 overflow-hidden">
-        <video
-          src="/assets/img/VIDEOBANNER-GREENCORE.mp4"
-          className="w-full h-auto object-cover"
-          autoPlay
-          loop
-          muted
-          playsInline
+      {/* --- HERO ANIMADO CON FRAMER MOTION --- */}
+      <div className="w-full pt-32 pb-20 min-h-[85vh] flex flex-col items-center justify-center relative overflow-hidden bg-background">
+        
+        {/* Blobs de Fondo Brillantes (Framer Motion) */}
+        <motion.div 
+          animate={{
+            scale: [1, 1.2, 1],
+            x: [0, 50, 0],
+            y: [0, -30, 0]
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/4 left-1/4 md:left-1/3 w-64 h-64 md:w-96 md:h-96 bg-primary/20 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 pointer-events-none"
         />
+        <motion.div 
+          animate={{
+            scale: [1, 1.1, 1],
+            x: [0, -50, 0],
+            y: [0, 40, 0]
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute top-1/3 right-1/4 md:right-1/3 w-64 h-64 md:w-96 md:h-96 bg-secondary/20 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 pointer-events-none"
+        />
+        <motion.div 
+          animate={{
+            scale: [1, 1.3, 1],
+            x: [0, 40, 0],
+            y: [0, 60, 0]
+          }}
+          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="absolute bottom-1/4 left-1/2 w-64 h-64 md:w-96 md:h-96 bg-accent/20 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 pointer-events-none"
+        />
+
+        {/* Contenedor del Logo Levitando (Sin Recortes, con Glassmorphism) */}
+        <motion.div 
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+          className="relative z-10"
+        >
+          <motion.div
+            animate={{ y: [-15, 15, -15] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="p-4 md:p-6 bg-white/40 backdrop-blur-xl border border-white/60 shadow-[0_20px_60px_rgba(45,106,79,0.25)] rounded-3xl group"
+          >
+            <img 
+              src={logo} 
+              alt="Green Core Logo" 
+              className="w-72 md:w-[32rem] h-auto object-contain rounded-2xl transform transition-transform duration-700 group-hover:scale-105"
+            />
+          </motion.div>
+        </motion.div>
+
+        {/* Texto Decorativo Animado */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
+          className="mt-16 text-center z-10"
+        >
+          <p className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent font-extrabold tracking-widest uppercase text-xl md:text-3xl mb-4 drop-shadow-sm">
+            Súmate a la Revolución Verde
+          </p>
+          <motion.div 
+            animate={{ width: ["0%", "100%", "0%"] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            className="h-1.5 bg-gradient-to-r from-primary via-secondary to-accent mx-auto rounded-full"
+            style={{ width: "100px" }}
+          />
+        </motion.div>
+
       </div>
 
       <main className="pt-24">

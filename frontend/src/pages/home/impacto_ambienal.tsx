@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { motion } from "framer-motion";
 
 export default function ImpactoAmbiental() {
 
@@ -87,12 +88,17 @@ useEffect(() => {
         <div className="grid md:grid-cols-3 gap-10 mb-24">
 
             {/* PLÁSTICO */}
-            <div className="bg-white rounded-2xl p-10 shadow-md border-t-4 border-secondary text-center
-            transform transition-all duration-300
-            hover:scale-110 hover:-translate-y-3
-            hover:shadow-[0_20px_40px_rgba(59,130,246,0.55)]">
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="bg-white rounded-3xl p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 text-center
+              transform transition-all duration-500 hover:-translate-y-2 relative overflow-hidden group"
+            >
+            <div className="absolute top-0 left-0 w-full h-1.5 bg-secondary transition-all duration-500 group-hover:h-2"></div>
 
-            <h4 className="text-5xl font-extrabold text-secondary mb-4">
+            <h4 className="text-5xl font-extrabold text-secondary mb-4 group-hover:scale-110 transition-transform duration-500">
                 {plastic.toLocaleString()}
             </h4>
 
@@ -100,15 +106,20 @@ useEffect(() => {
                 toneladas de plástico generadas al año en México
             </p>
 
-            </div>
+            </motion.div>
 
             {/* RECICLAJE */}
-            <div className="bg-white rounded-2xl p-10 shadow-md border-t-4 border-primary text-center
-            transform transition-all duration-300
-            hover:scale-110 hover:-translate-y-3
-            hover:shadow-[0_20px_40px_rgba(34,197,94,0.55)]">
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="bg-white rounded-3xl p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 text-center
+              transform transition-all duration-500 hover:-translate-y-2 relative overflow-hidden group"
+            >
+            <div className="absolute top-0 left-0 w-full h-1.5 bg-primary transition-all duration-500 group-hover:h-2"></div>
 
-            <h4 className="text-5xl font-extrabold text-primary mb-4">
+            <h4 className="text-5xl font-extrabold text-primary mb-4 group-hover:scale-110 transition-transform duration-500">
                 {recycle}%
             </h4>
 
@@ -116,15 +127,20 @@ useEffect(() => {
                 de residuos reciclables realmente se reciclan
             </p>
 
-            </div>
+            </motion.div>
 
             {/* AÑOS */}
-            <div className="bg-white rounded-2xl p-10 shadow-md border-t-4 border-accent text-center
-            transform transition-all duration-300
-            hover:scale-110 hover:-translate-y-3
-            hover:shadow-[0_20px_40px_rgba(249,115,22,0.55)]">
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="bg-white rounded-3xl p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 text-center
+              transform transition-all duration-500 hover:-translate-y-2 relative overflow-hidden group"
+            >
+            <div className="absolute top-0 left-0 w-full h-1.5 bg-accent transition-all duration-500 group-hover:h-2"></div>
 
-            <h4 className="text-5xl font-extrabold text-accent mb-4">
+            <h4 className="text-5xl font-extrabold text-accent mb-4 group-hover:scale-110 transition-transform duration-500">
                 {years}
             </h4>
 
@@ -132,11 +148,17 @@ useEffect(() => {
                 años tarda una botella en degradarse
             </p>
 
-            </div>
+            </motion.div>
         </div>
 
         {/* GRAFICAS */}
-        <div className="grid md:grid-cols-2 gap-16 items-center">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8 }}
+          className="grid md:grid-cols-2 gap-16 items-center"
+        >
         {/* GRAFICA CIRCULAR */}
         <div className="flex flex-col items-center">
         <div className="relative w-60 h-60">
@@ -207,7 +229,7 @@ useEffect(() => {
         </div>
         </div>
         </div>
-        </div>
+        </motion.div>
         {/* MENSAJE FINAL */}
         <div className="mt-24 text-center">
         <h4 className="text-3xl font-bold text-primary mb-6">

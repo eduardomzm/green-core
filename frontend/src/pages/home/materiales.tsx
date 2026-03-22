@@ -1,6 +1,7 @@
 import botella from "../../assets/img/botella_animada.jpg";
 import carton from "../../assets/img/carton_animada.jpg";
 import lata from "../../assets/img/lata_animada.jpg";
+import { motion } from "framer-motion";
 
 export default function Materiales() {
 
@@ -23,73 +24,91 @@ export default function Materiales() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
 
             {/* Tarjeta Botella */}
-            <div className="relative group overflow-hidden rounded-2xl cursor-pointer transform transition-all duration-300 hover:scale-105 hover:-translate-y-2 hover:shadow-[0_15px_35px_rgba(249,115,22,0.5)]">
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="relative group overflow-hidden rounded-3xl cursor-pointer transform transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_35px_rgba(249,115,22,0.3)] shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
+            >
 
             <img
                 src={botella}
                 alt="Botellas reciclables"
-                className="w-full h-64 object-cover transition-opacity duration-500 group-hover:opacity-30"
+                className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-110 group-hover:opacity-40"
             />
 
-            <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 px-6">
+            <div className="absolute inset-0 flex flex-col justify-end p-8 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-orange-50/90 to-transparent">
 
-                <h3 className="text-2xl font-bold mb-2">
+                <h3 className="text-3xl font-extrabold mb-2 text-accent">
                 Botellas
                 </h3>
 
-                <p>
+                <p className="font-medium text-gray-800">
                 Las botellas PET pueden reciclarse y convertirse en nuevos envases o fibras textiles.
                 </p>
 
             </div>
 
-            </div>
+            </motion.div>
 
             {/* Tarjeta Cartón */}
-            <div className="relative group overflow-hidden rounded-2xl cursor-pointer transform transition-all duration-300 hover:scale-105 hover:-translate-y-2 hover:shadow-[0_15px_35px_rgba(34,197,94,0.5)]">
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="relative group overflow-hidden rounded-3xl cursor-pointer transform transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_35px_rgba(34,197,94,0.3)] shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
+            >
 
             <img
                 src={carton}
                 alt="Cartón reciclable"
-                className="w-full h-64 object-cover transition-opacity duration-500 group-hover:opacity-30"
+                className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-110 group-hover:opacity-40"
             />
 
-            <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 px-6">
+            <div className="absolute inset-0 flex flex-col justify-end p-8 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-green-50/90 to-transparent">
 
-                <h3 className="text-2xl font-bold mb-2">
+                <h3 className="text-3xl font-extrabold mb-2 text-primary">
                 Cartón
                 </h3>
 
-                <p>
+                <p className="font-medium text-gray-800">
                 El cartón puede reutilizarse para crear nuevos empaques y reducir la tala de árboles.
                 </p>
 
             </div>
 
-            </div>
+            </motion.div>
 
             {/* Tarjeta Lata */}
-            <div className="relative group overflow-hidden rounded-2xl cursor-pointer transform transition-all duration-300 hover:scale-105 hover:-translate-y-2 hover:shadow-[0_15px_35px_rgba(59,130,246,0.5)]">
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="relative group overflow-hidden rounded-3xl cursor-pointer transform transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_35px_rgba(59,130,246,0.3)] shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
+            >
 
             <img
                 src={lata}
                 alt="Latas reciclables"
-                className="w-full h-64 object-cover transition-opacity duration-500 group-hover:opacity-30"
+                className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-110 group-hover:opacity-40"
             />
 
-            <div className="absolute inset-0 flex flex-col justify-center items-center text-center text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 px-6">
+            <div className="absolute inset-0 flex flex-col justify-end p-8 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-blue-50/90 to-transparent">
 
-                <h3 className="text-2xl font-bold mb-2">
+                <h3 className="text-3xl font-extrabold mb-2 text-secondary">
                 Latas
                 </h3>
 
-                <p>
+                <p className="font-medium text-gray-800">
                 El aluminio puede reciclarse infinitamente sin perder sus propiedades.
                 </p>
 
             </div>
 
-            </div>
+            </motion.div>
 
         </div>
 

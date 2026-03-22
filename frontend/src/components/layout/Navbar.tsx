@@ -41,40 +41,40 @@ export default function Navbar() {
         </button>
       </div>
 
-    
-      <div className="hidden lg:flex gap-8 items-center font-semibold">
-        <a href="#impacto" className="px-6 py-3 text-primary font-bold hover:text-secondary transition-colors">
-          Impacto Ambiental
-        </a>
-        <a href="#timeline" className="px-6 py-3 text-primary font-bold hover:text-secondary transition-colors">
-          Proceso
-        </a>
-        <a href="#materiales" className="px-6 py-3 text-primary font-bold hover:text-secondary transition-colors">
-          Materiales
-        </a>
-        <a href="#funciona" className="px-6 py-3 text-primary font-bold hover:text-secondary transition-colors">
-          Cómo funciona
-        </a>
-        <a href="#simulador" className="px-6 py-3 text-primary font-bold hover:text-secondary transition-colors">
-          Simulador
-        </a>
+      <div className="hidden lg:flex flex-1 justify-end items-center gap-10 font-semibold">
+        {/* Enlaces de Navegación */}
+        <div className="flex items-center gap-6">
+          <a href="#impacto" className="text-primary font-bold hover:text-secondary transition-colors">
+            Impacto Ambiental
+          </a>
+          <a href="#timeline" className="text-primary font-bold hover:text-secondary transition-colors">
+            Proceso
+          </a>
+          <a href="#materiales" className="text-primary font-bold hover:text-secondary transition-colors">
+            Materiales
+          </a>
+          <a href="#funciona" className="text-primary font-bold hover:text-secondary transition-colors">
+            Cómo funciona
+          </a>
+          <a href="#simulador" className="text-primary font-bold hover:text-secondary transition-colors">
+            Simulador
+          </a>
+        </div>
 
-      
-        <Link to="/login">
-          <button className="px-6 py-3 text-primary font-bold hover:text-secondary transition-colors">
-            Iniciar sesión
-          </button>
-        </Link>
-
-       
-        <Link to="/registro">
-          <button className="px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-secondary transition-all">
-            Registrarse
-          </button>
-        </Link>
+        {/* Zona de Botones (Separados de la navegación, pero juntos entre sí) */}
+        <div className="flex items-center gap-3 pl-6 border-l w-lborder-gray-200">
+          <Link to="/login">
+            <button className="px-5 py-2.5 text-primary border-2 border-primary/20 bg-white font-bold rounded-xl hover:bg-green-50 hover:border-primary/40 transition-all">
+              Iniciar sesión
+            </button>
+          </Link>
+          <Link to="/registro">
+            <button className="px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-secondary transition-all shadow-[0_4px_14px_0_rgb(34,197,94,0.39)] hover:shadow-[0_6px_20px_rgba(34,197,94,0.23)] hover:-translate-y-0.5 transform">
+              Registrarse
+            </button>
+          </Link>
+        </div>
       </div>
-
-
       {isOpen && (
         <div className="absolute top-full left-0 w-full bg-white/95 backdrop-blur-md shadow-xl border-t border-gray-100 lg:hidden flex flex-col items-center py-6 gap-2 animate-in slide-in-from-top-2">
           
