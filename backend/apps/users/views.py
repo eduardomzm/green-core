@@ -127,8 +127,14 @@ class MeView(APIView):
         nivel = 1
         medallas = []
 
+        seguidores_count = 0
+        siguiendo_count = 0
+
         if user.role == 'ALUMNO':
             try:
+                seguidores_count = user.seguidores.count()
+                siguiendo_count = user.seguidos.count()
+
                 perfil = user.alumnoperfil
                 # Actualizar campos sociales si se proporcionan
                 modificado = False
@@ -176,9 +182,62 @@ class MeView(APIView):
             "facebook": facebook,
             "nivel": nivel,
             "medallas": medallas,
+            "seguidores_count": seguidores_count,
+            "siguiendo_count": siguiendo_count,
         })
 
 
+class MisSeguidoresView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        if request.user.role != 'ALUMNO':
+            return Response({"detail": "Solo los alumnos tienen seguidores."}, status=403)
+        
+        relaciones = ConexionUsuario.objects.filter(seguido=request.user).select_related('seguidor', 'seguidor__alumnoperfil')
+        data = []
+        for rel in relaciones:
+            seguidor = rel.seguidor
+            carrera = ""
+            if hasattr(seguidor, 'alumnoperfil') and seguidor.alumnoperfil.carrera:
+                carrera = seguidor.alumnoperfil.carrera.nombre
+                
+            data.append({
+                "username": seguidor.username,
+                "first_name": seguidor.first_name,
+                "primer_apellido": seguidor.primer_apellido,
+                "avatar": seguidor.avatar,
+                "carrera": carrera,
+                "timestamp": rel.timestamp
+            })
+            
+        return Response(data)
+
+class MisSiguiendoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        if request.user.role != 'ALUMNO':
+            return Response({"detail": "Solo los alumnos siguen a otros."}, status=403)
+            
+        relaciones = ConexionUsuario.objects.filter(seguidor=request.user).select_related('seguido', 'seguido__alumnoperfil')
+        data = []
+        for rel in relaciones:
+            seguido = rel.seguido
+            carrera = ""
+            if hasattr(seguido, 'alumnoperfil') and seguido.alumnoperfil.carrera:
+                carrera = seguido.alumnoperfil.carrera.nombre
+                
+            data.append({
+                "username": seguido.username,
+                "first_name": seguido.first_name,
+                "primer_apellido": seguido.primer_apellido,
+                "avatar": seguido.avatar,
+                "carrera": carrera,
+                "timestamp": rel.timestamp
+            })
+            
+        return Response(data)
 
 class PublicProfileView(APIView):
     permission_classes = [IsAuthenticated]

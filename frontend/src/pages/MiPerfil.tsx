@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { User as UserIcon, Save, AlertCircle, CheckCircle, Pencil, Share2, Instagram, Twitter, Facebook, X } from "lucide-react";
+import { User as UserIcon, Save, AlertCircle, CheckCircle, Pencil, Share2, Instagram, Twitter, Facebook, X, Users, Award } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { updateMe } from "../services/userService";
+import { updateMe, getMisSeguidores, getMisSiguiendo, toggleSeguir } from "../services/userService";
 
 interface FormState {
   biografia: string;
@@ -31,6 +32,12 @@ export default function MiPerfil() {
   const [selectedAvatar, setSelectedAvatar] = useState(user?.avatar || 'default');
   const [tempAvatar, setTempAvatar] = useState(user?.avatar || 'default');
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Estados para Seguidores / Seguiendo
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [showFollowing, setShowFollowing] = useState(false);
+  const [followersList, setFollowersList] = useState<any[]>([]);
+  const [followingList, setFollowingList] = useState<any[]>([]);
 
   const [msg, setMsg] = useState<{ text: string; type: "success" | "error" | "" }>({ text: "", type: "" });
   const [saving, setSaving] = useState(false);
@@ -87,6 +94,36 @@ export default function MiPerfil() {
     setIsModalOpen(false);
   };
 
+  const loadFollowers = async () => {
+    try {
+      const data = await getMisSeguidores();
+      setFollowersList(data);
+      setShowFollowers(true);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const loadFollowing = async () => {
+    try {
+      const data = await getMisSiguiendo();
+      setFollowingList(data);
+      setShowFollowing(true);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleUnfollow = async (username: string) => {
+    try {
+      await toggleSeguir(username);
+      setFollowingList(prev => prev.filter(u => u.username !== username));
+      await refreshUser(); // Update siguiendo_count
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const avatarUrl = AVATARS.find(a => a.id === selectedAvatar)?.url || AVATARS[0].url;
 
   return (
@@ -126,8 +163,50 @@ export default function MiPerfil() {
           <p className="text-sm font-semibold text-gray-500 mt-1">
             @{user?.username}
           </p>
+          
+          <div className="flex items-center justify-center gap-6 mt-6">
+            <div 
+              className="flex flex-col items-center cursor-pointer group"
+              onClick={loadFollowers}
+            >
+              <span className="text-2xl font-black text-gray-900 group-hover:text-primary transition-colors">
+                {user?.seguidores_count || 0}
+              </span>
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest group-hover:text-gray-600 transition-colors">Seguidores</span>
+            </div>
+            <div className="w-px h-8 bg-gray-200"></div>
+            <div 
+              className="flex flex-col items-center cursor-pointer group"
+              onClick={loadFollowing}
+            >
+              <span className="text-2xl font-black text-gray-900 group-hover:text-primary transition-colors">
+                {user?.siguiendo_count || 0}
+              </span>
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest group-hover:text-gray-600 transition-colors">Seguidos</span>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Seccion Medallas */}
+      {user?.medallas && user.medallas.length > 0 && (
+        <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 relative z-10">
+          <h3 className="text-xl font-bold text-gray-900 flex items-center gap-3 mb-6">
+            <div className="p-2.5 bg-yellow-50 text-yellow-500 rounded-xl">
+              <Award className="w-5 h-5" />
+            </div>
+            Mis Medallas
+          </h3>
+          <div className="flex flex-wrap gap-4">
+            {user.medallas.map((m: any) => (
+              <div key={m.id} className="group relative flex flex-col items-center justify-center bg-gray-50 border border-gray-100 rounded-2xl p-4 min-w-[100px] hover:border-yellow-300 hover:bg-yellow-50/50 transition-colors cursor-default">
+                <span className="text-4xl drop-shadow-md group-hover:scale-110 transition-transform">{m.medalla.icono_lucide}</span>
+                <span className="text-xs font-bold text-gray-600 mt-2 text-center break-words max-w-[80px] leading-tight group-hover:text-yellow-700">{m.medalla.nombre}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Public Profile Section */}
       <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 relative z-10">
@@ -291,6 +370,92 @@ export default function MiPerfil() {
                   Confirmar Selección
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE SEGUIDORES */}
+      {showFollowers && (
+        <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[100] flex justify-center items-center p-4 animate-in fade-in duration-300">
+          <div className="bg-white rounded-[2rem] w-full max-w-md shadow-2xl relative animate-in zoom-in-95 duration-300 overflow-hidden flex flex-col max-h-[80vh]">
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-white z-10">
+              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <Users className="w-5 h-5 text-primary" />
+                Seguidores
+              </h3>
+              <button onClick={() => setShowFollowers(false)} className="p-2 text-gray-400 hover:bg-gray-100 rounded-full transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="overflow-y-auto p-4 flex-1">
+              {followersList.length === 0 ? (
+                <div className="text-center py-10">
+                  <p className="text-gray-500 font-medium">Aún no tienes seguidores.</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {followersList.map((u) => (
+                    <div key={u.username} className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
+                      <Link to={`/dashboard/perfil/${u.username}`} className="flex items-center gap-3 group flex-1" onClick={() => setShowFollowers(false)}>
+                        <img src={AVATARS.find(a => a.id === u.avatar)?.url || AVATARS[0].url} alt="avatar" className="w-12 h-12 rounded-full border border-gray-200 group-hover:border-primary transition-colors object-cover" />
+                        <div>
+                          <p className="font-bold text-sm text-gray-900 group-hover:text-primary transition-colors leading-tight">
+                            {u.first_name || u.username} {u.primer_apellido || ""}
+                          </p>
+                          <p className="text-xs text-gray-500">@{u.username}</p>
+                        </div>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE SIGUIENDO */}
+      {showFollowing && (
+        <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[100] flex justify-center items-center p-4 animate-in fade-in duration-300">
+          <div className="bg-white rounded-[2rem] w-full max-w-md shadow-2xl relative animate-in zoom-in-95 duration-300 overflow-hidden flex flex-col max-h-[80vh]">
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-white z-10">
+              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <Users className="w-5 h-5 text-secondary" />
+                Siguiendo
+              </h3>
+              <button onClick={() => setShowFollowing(false)} className="p-2 text-gray-400 hover:bg-gray-100 rounded-full transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="overflow-y-auto p-4 flex-1">
+              {followingList.length === 0 ? (
+                <div className="text-center py-10">
+                  <p className="text-gray-500 font-medium">No sigues a nadie aún.</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {followingList.map((u) => (
+                    <div key={u.username} className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
+                      <Link to={`/dashboard/perfil/${u.username}`} className="flex items-center gap-3 group flex-1" onClick={() => setShowFollowing(false)}>
+                        <img src={AVATARS.find(a => a.id === u.avatar)?.url || AVATARS[0].url} alt="avatar" className="w-12 h-12 rounded-full border border-gray-200 group-hover:border-primary transition-colors object-cover" />
+                        <div>
+                          <p className="font-bold text-sm text-gray-900 group-hover:text-primary transition-colors leading-tight">
+                            {u.first_name || u.username} {u.primer_apellido || ""}
+                          </p>
+                          <p className="text-xs text-gray-500">@{u.username}</p>
+                        </div>
+                      </Link>
+                      <button 
+                        onClick={() => handleUnfollow(u.username)}
+                        className="px-4 py-2 bg-gray-100 hover:bg-red-50 text-gray-600 hover:text-red-600 font-bold text-xs rounded-xl transition-colors border border-transparent hover:border-red-100"
+                      >
+                        Dejar de seguir
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

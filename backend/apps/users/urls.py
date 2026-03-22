@@ -10,7 +10,9 @@ from .views import (
     PublicProfileView,
     NotificacionViewSet,
     BuscarAlumnosView,
-    ToggleSeguirView
+    ToggleSeguirView,
+    MisSeguidoresView,
+    MisSiguiendoView
 )
 
 router = DefaultRouter()
@@ -23,6 +25,8 @@ router.register(r'notificaciones', NotificacionViewSet, basename='notificacion')
 urlpatterns = [
     path('users/registro/alumno/', RegistroAlumnoView.as_view(), name='registro_alumno'),
     path('users/me/', MeView.as_view(), name='me'),
+    path('users/me/seguidores/', MisSeguidoresView.as_view(), name='mis_seguidores'),
+    path('users/me/siguiendo/', MisSiguiendoView.as_view(), name='mis_siguiendo'),
     path('users/buscar/', BuscarAlumnosView.as_view(), name='buscar_alumnos'),
     path('users/perfil/<str:username>/', PublicProfileView.as_view(), name='perfil_publico'),
     path('users/perfil/<str:username>/seguir/', ToggleSeguirView.as_view(), name='toggle_seguir'),

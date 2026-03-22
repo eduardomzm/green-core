@@ -114,3 +114,13 @@ export const toggleSeguir = async (username: string) => {
   const response = await api.post(`users/perfil/${username}/seguir/`);
   return response.data;
 };
+
+export const getMisSeguidores = async () => {
+  const response = await api.get('users/me/seguidores/');
+  return response.data;
+};
+
+export const getMisSiguiendo = async () => {
+  const response = await api.get('users/me/siguiendo/');
+  return response.data;
+};

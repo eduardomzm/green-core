@@ -29,6 +29,8 @@ export interface User {
   facebook?: string;
   nivel?: number;
   medallas?: MedallaAlumno[];
+  seguidores_count?: number;
+  siguiendo_count?: number;
 }
 
 export interface AuthContextType {
