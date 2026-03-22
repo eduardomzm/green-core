@@ -30,7 +30,7 @@ const OperadorDashboard = ({ data }: Props) => {
         setLoadingDatos(true);
         const [materialesData, usuariosData] = await Promise.all([
           getMateriales(),
-          getUsers()
+          getUsers({ role: 'ALUMNO', page_size: 1000 })
         ]);
         
         setMateriales(materialesData);

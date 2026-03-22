@@ -451,9 +451,12 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         """
-        Permisos: 'me' requiere estar autenticado. Todo lo demás requiere rol ADMIN.
+        Permisos: 'me' requiere estar autenticado. Todo lo demás requiere rol ADMIN, excepto
+        'list' que también lo puede hacer el OPERADOR para buscar alumnos.
         """
         if self.action == 'me':
+            return [IsAuthenticated()]
+        if self.action == 'list' and self.request.user.role == 'OPERADOR':
             return [IsAuthenticated()]
         return [IsAdminUserRole()]
 
