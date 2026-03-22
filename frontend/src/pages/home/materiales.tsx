@@ -1,8 +1,5 @@
-import botella from "../../assets/img/botella_animada.jpg";
-import carton from "../../assets/img/carton_animada.jpg";
-import lata from "../../assets/img/lata_animada.jpg";
 import { motion } from "framer-motion";
-import { Sparkles, Leaf, Droplet } from "lucide-react";
+import { Sparkles, Leaf, Droplets, Package, Milk, Cylinder } from "lucide-react";
 
 export default function Materiales() {
 
@@ -62,15 +59,13 @@ export default function Materiales() {
               className="relative group overflow-hidden rounded-3xl cursor-pointer transform transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_35px_rgba(249,115,22,0.3)] shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
             >
 
-            <img
-                src={botella}
-                alt="Botellas reciclables"
-                className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-110 group-hover:opacity-40"
-            />
+            <div className="w-full h-80 bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center transition-transform duration-700 group-hover:scale-110">
+                <Milk className="w-32 h-32 text-orange-500 opacity-80" strokeWidth={1} />
+            </div>
 
             <div className="absolute inset-0 flex flex-col justify-end p-8 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-orange-50/90 to-transparent z-10">
 
-                {renderParticles(Droplet, "text-orange-400")}
+                {renderParticles(Droplets, "text-orange-400")}
 
                 <h3 className="text-3xl font-extrabold mb-2 text-accent relative z-10">
                 Botellas
@@ -93,11 +88,9 @@ export default function Materiales() {
               className="relative group overflow-hidden rounded-3xl cursor-pointer transform transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_35px_rgba(34,197,94,0.3)] shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
             >
 
-            <img
-                src={carton}
-                alt="Cartón reciclable"
-                className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-110 group-hover:opacity-40"
-            />
+            <div className="w-full h-80 bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center transition-transform duration-700 group-hover:scale-110">
+                <Package className="w-32 h-32 text-green-600 opacity-80" strokeWidth={1} />
+            </div>
 
             <div className="absolute inset-0 flex flex-col justify-end p-8 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-green-50/90 to-transparent z-10">
 
@@ -124,11 +117,9 @@ export default function Materiales() {
               className="relative group overflow-hidden rounded-3xl cursor-pointer transform transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_35px_rgba(59,130,246,0.3)] shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
             >
 
-            <img
-                src={lata}
-                alt="Latas reciclables"
-                className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-110 group-hover:opacity-40"
-            />
+            <div className="w-full h-80 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center transition-transform duration-700 group-hover:scale-110">
+                <Cylinder className="w-32 h-32 text-blue-600 opacity-80" strokeWidth={1} />
+            </div>
 
             <div className="absolute inset-0 flex flex-col justify-end p-8 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-blue-50/90 to-transparent z-10">
 

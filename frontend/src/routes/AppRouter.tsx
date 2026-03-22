@@ -19,7 +19,7 @@ import Privacidad from "../pages/Privacidad";
 import OlvidarContrasena from "../pages/OlvidarContrasena";
 import RestablecerContrasena from "../pages/RestablecerContrasena";
 import Perfil from "../pages/Perfil";
-import MiPerfil from "../pages/MiPerfil";
+import MiPerfil from "../pages/MiPerfil.tsx";
 import PerfilPublico from "../pages/PerfilPublico";
 
 const AppRouter = () => {
