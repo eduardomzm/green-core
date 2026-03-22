@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { Recycle, Truck, Factory, Globe } from "lucide-react";
 
 export default function TimelineReciclaje() {
 
@@ -59,9 +60,9 @@ useEffect(() => {
                 ${timelineVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
             >
 
-                <div className="w-20 h-20 mx-auto rounded-full bg-green-100 flex items-center justify-center text-4xl mb-6
-                transition-transform duration-300 group-hover:scale-110">
-                ♻
+                <div className="w-24 h-24 mx-auto rounded-full bg-green-100 flex items-center justify-center text-primary mb-6
+                transition-transform duration-500 group-hover:scale-110 shadow-sm border-4 border-white relative z-10">
+                    <Recycle className="w-10 h-10" strokeWidth={1.5} />
                 </div>
 
                 <h4 className="text-xl font-bold mb-3">
@@ -77,13 +78,13 @@ useEffect(() => {
 
             {/* Paso 2 */}
             <div
-                className={`text-center group transition-all duration-700
+                className={`text-center group transition-all duration-700 delay-150
                 ${timelineVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
             >
 
-                <div className="w-20 h-20 mx-auto rounded-full bg-blue-100 flex items-center justify-center text-4xl mb-6
-                transition-transform duration-300 group-hover:scale-110">
-                🚚
+                <div className="w-24 h-24 mx-auto rounded-full bg-blue-100 flex items-center justify-center text-secondary mb-6
+                transition-transform duration-500 group-hover:scale-110 shadow-sm border-4 border-white relative z-10">
+                    <Truck className="w-10 h-10" strokeWidth={1.5} />
                 </div>
 
                 <h4 className="text-xl font-bold mb-3">
@@ -99,13 +100,13 @@ useEffect(() => {
 
             {/* Paso 3 */}
             <div
-                className={`text-center group transition-all duration-700
+                className={`text-center group transition-all duration-700 delay-300
                 ${timelineVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
             >
 
-                <div className="w-20 h-20 mx-auto rounded-full bg-orange-100 flex items-center justify-center text-4xl mb-6
-                transition-transform duration-300 group-hover:scale-110">
-                🏭
+                <div className="w-24 h-24 mx-auto rounded-full bg-orange-100 flex items-center justify-center text-accent mb-6
+                transition-transform duration-500 group-hover:scale-110 shadow-sm border-4 border-white relative z-10">
+                    <Factory className="w-10 h-10" strokeWidth={1.5} />
                 </div>
 
                 <h4 className="text-xl font-bold mb-3">
@@ -121,13 +122,13 @@ useEffect(() => {
 
             {/* Paso 4 */}
             <div
-                className={`text-center group transition-all duration-700
+                className={`text-center group transition-all duration-700 delay-500
                 ${timelineVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
             >
 
-                <div className="w-20 h-20 mx-auto rounded-full bg-green-200 flex items-center justify-center text-4xl mb-6
-                transition-transform duration-300 group-hover:scale-110">
-                🌎
+                <div className="w-24 h-24 mx-auto rounded-full bg-green-200 flex items-center justify-center text-green-800 mb-6
+                transition-transform duration-500 group-hover:scale-110 shadow-sm border-4 border-white relative z-10">
+                    <Globe className="w-10 h-10" strokeWidth={1.5} />
                 </div>
 
                 <h4 className="text-xl font-bold mb-3">
