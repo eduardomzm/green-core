@@ -6,16 +6,22 @@ import api from "../services/api";
 export default function OlvidarContrasena() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("loading");
+    setErrorMessage("");
     try {
-    
       await api.post("password_reset/", { email });
       setStatus("success");
-    } catch (error) {
-    
+    } catch (error: any) {
+      console.error("Error en recuperar contrasena:", error);
+      setStatus("error");
+      setErrorMessage(
+        error.response?.data?.detail || 
+        error.response?.data?.email?.[0] || 
+        "Hubo un problema al enviar el correo. Por favor, intenta de nuevo."
+      );
     }
   };
 
@@ -42,6 +48,13 @@ export default function OlvidarContrasena() {
             <p className="text-gray-500 mb-6 text-sm">
               Ingresa el correo electrónico asociado a tu cuenta y te enviaremos las instrucciones para crear una nueva contraseña.
             </p>
+
+            {status === "error" && (
+              <div className="bg-red-50 border border-red-100 p-4 rounded-xl mb-6">
+                <p className="text-red-700 text-sm font-medium">{errorMessage}</p>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Correo Electrónico</label>

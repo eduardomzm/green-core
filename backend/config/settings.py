@@ -216,11 +216,12 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 EMAIL_BACKEND = os.getenv(
     "EMAIL_BACKEND",
-    "anymail.backends.sendinblue.EmailBackend"
+    "anymail.backends.brevo.EmailBackend"
 )
 
 ANYMAIL = {
-    "SENDINBLUE_API_KEY": os.getenv("SENDINBLUE_API_KEY"),
+    "BREVO_API_KEY": os.getenv("BREVO_API_KEY", os.getenv("SENDINBLUE_API_KEY")),
+    "SENDINBLUE_API_KEY": os.getenv("SENDINBLUE_API_KEY", os.getenv("BREVO_API_KEY")),
 }
 
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "soporte@greencore.com.mx")
