@@ -504,21 +504,35 @@ class MiGrupoTutorView(APIView):
 
         def alumno_to_data(ag):
             try:
-                
                 matricula = getattr(ag.alumno, 'matricula', None)
                 if not matricula and hasattr(ag.alumno, 'alumnoperfil'):
                     matricula = ag.alumno.alumnoperfil.matricula
                 
-               
                 nombre = getattr(ag.alumno, 'first_name', '')
-                apellido = getattr(ag.alumno, 'last_name', getattr(ag.alumno, 'primer_apellido', ''))
+                apellido = getattr(ag.alumno, 'primer_apellido', '')
+                if not apellido or apellido == 'None':
+                    apellido = ''
                 nombre_completo = f"{nombre} {apellido}".strip()
                 
+                # Obtener metas activas del alumno
+                metas_qs = MetaAlumno.objects.filter(alumno=ag.alumno).select_related('material')
+                metas_data = []
+                for meta in metas_qs:
+                    metas_data.append({
+                        "id": meta.id,
+                        "material_id": meta.material.id,
+                        "material_nombre": meta.material.nombre,
+                        "cantidad_meta": meta.cantidad_meta,
+                        "creada_en": meta.creada_en,
+                    })
+
                 return {
                     "id": ag.alumno.id,
                     "nombre": nombre_completo if nombre_completo else ag.alumno.username,
                     "matricula": matricula or 'Sin matrícula',
                     "username": ag.alumno.username,
+                    "avatar": ag.alumno.avatar,
+                    "metas": metas_data,
                 }
             except Exception as e:
                 return {
@@ -526,20 +540,38 @@ class MiGrupoTutorView(APIView):
                     "nombre": ag.alumno.username,
                     "matricula": "Sin matrícula",
                     "username": ag.alumno.username,
+                    "avatar": "default",
+                    "metas": []
                 }
 
         alumnos_activos = []
         solicitudes_ingreso = []
         solicitudes_salida = []
 
+        alumnos_ids_activos = []
+
         for ag in alumnos_grupo:
             data = alumno_to_data(ag)
             if ag.estado == "ACTIVO":
                 alumnos_activos.append(data)
+                alumnos_ids_activos.append(ag.alumno.id)
             elif ag.estado == "PENDIENTE_INGRESO":
                 solicitudes_ingreso.append(data)
             elif ag.estado == "PENDIENTE_SALIDA":
                 solicitudes_salida.append(data)
+
+        actividad_data = []
+        depositos_recientes = Deposito.objects.filter(alumno_id__in=alumnos_ids_activos).select_related('alumno', 'material').order_by('-fecha')[:30]
+        for dep in depositos_recientes:
+            actividad_data.append({
+                "id": dep.id,
+                "alumno_username": dep.alumno.username,
+                "alumno_nombre": dep.alumno.first_name,
+                "alumno_avatar": dep.alumno.avatar,
+                "material_nombre": dep.material.nombre,
+                "cantidad": dep.cantidad,
+                "fecha": dep.fecha
+            })
 
         return Response({
             "id": grupo.id,
@@ -549,7 +581,32 @@ class MiGrupoTutorView(APIView):
             "alumnos_activos": alumnos_activos,
             "solicitudes_ingreso": solicitudes_ingreso,
             "solicitudes_salida": solicitudes_salida,
+            "actividad_reciente": actividad_data,
         })
+
+class CancelarMetaAlumnoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, meta_id):
+        user = request.user
+        if user.role != 'TUTOR':
+            return Response({'error': 'Solo los tutores pueden cancelar metas.'}, status=403)
+            
+        meta = MetaAlumno.objects.filter(id=meta_id).first()
+        if not meta:
+            return Response({'error': 'Meta no encontrada.'}, status=404)
+            
+        # Optional: verify if the meta belongs to an alumno of this tutor's group
+        grupo = Grupo.objects.filter(tutor=user).first()
+        if not grupo:
+            return Response({'error': 'No tienes un grupo asignado.'}, status=404)
+            
+        is_in_group = AlumnoGrupo.objects.filter(alumno=meta.alumno, grupo=grupo, estado="ACTIVO").exists()
+        if not is_in_group:
+            return Response({'error': 'El alumno no pertenece a tu grupo o no está activo.'}, status=403)
+            
+        meta.delete()
+        return Response({'mensaje': 'Meta cancelada exitosamente.'})
 class UnirseGrupoView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -668,6 +725,48 @@ class MiGrupoAlumnoView(APIView):
             return Response({"grupo": None, "estado": None})
 
         grupo = ag.grupo
+        
+        tutor_data = None
+        companeros_data = []
+        actividad_data = []
+
+        if ag.estado == "ACTIVO":
+            tutor = grupo.tutor
+            tutor_data = {
+                "id": tutor.id,
+                "nombre": tutor.first_name,
+                "apellidos": tutor.primer_apellido,
+                "avatar": tutor.avatar,
+                "email": tutor.email
+            }
+            
+            companeros = AlumnoGrupo.objects.filter(grupo=grupo, estado="ACTIVO").exclude(alumno=user).select_related('alumno')
+            for comp in companeros:
+                nivel = 1
+                if hasattr(comp.alumno, 'alumnoperfil'):
+                    nivel = comp.alumno.alumnoperfil.nivel
+                companeros_data.append({
+                    "id": comp.alumno.id,
+                    "username": comp.alumno.username,
+                    "nombre": comp.alumno.first_name,
+                    "apellidos": comp.alumno.primer_apellido,
+                    "avatar": comp.alumno.avatar,
+                    "nivel": nivel
+                })
+                
+            alumnos_ids = AlumnoGrupo.objects.filter(grupo=grupo, estado="ACTIVO").values_list('alumno_id', flat=True)
+            depositos_recientes = Deposito.objects.filter(alumno_id__in=alumnos_ids).select_related('alumno', 'material').order_by('-fecha')[:30]
+            for dep in depositos_recientes:
+                actividad_data.append({
+                    "id": dep.id,
+                    "alumno_username": dep.alumno.username,
+                    "alumno_nombre": dep.alumno.first_name,
+                    "alumno_avatar": dep.alumno.avatar,
+                    "material_nombre": dep.material.nombre,
+                    "cantidad": dep.cantidad,
+                    "fecha": dep.fecha
+                })
+
         return Response({
             "grupo": {
                 "id": grupo.id,
@@ -675,8 +774,11 @@ class MiGrupoAlumnoView(APIView):
                 "codigo_invitacion": grupo.codigo_invitacion,
                 "carrera": getattr(grupo.carrera, "nombre", "Sin carrera") if grupo.carrera else "Sin carrera",
                 "tutor": grupo.tutor_id,
+                "tutor_info": tutor_data
             },
             "estado": ag.estado,
+            "companeros": companeros_data,
+            "actividad_reciente": actividad_data
         })
 
 
