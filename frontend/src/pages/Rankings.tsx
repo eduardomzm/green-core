@@ -5,12 +5,12 @@ import { Award, Loader2, X } from "lucide-react";
 
 import RankingsHeader from "../pages/rankings/RankingsHeader";
 import RankingsFilters from "../pages/rankings/RankingsFilter";
-import RankingsChart from "../pages/rankings/RankingsChart";
 import TimeframeSelector from "../pages/rankings/TimeframeSelector";
 import StatsCards from "../pages/rankings/StatsCards";
-import TopRecicladores from "../pages/rankings/TopRecicladores";
 import ImpactoAmbiental from "../pages/rankings/ImpactoAmbientalP";
-import RankingTable from "../pages/rankings/RankingTable";
+
+import TopPodium from "../pages/rankings/TopPodium";
+import RankingList from "../pages/rankings/RankingList";
 
 type TimeframeType = "actual" | "mensual";
 
@@ -111,7 +111,8 @@ export default function Rankings() {
 
       case "alumnos":
         return data.top_alumnos.map((item) => ({
-          name: item.alumno__first_name || item.alumno__username,
+          name: item.alumno__first_name ? `${item.alumno__first_name} ${item.alumno__primer_apellido || ''}`.trim() : item.alumno__username,
+          username: item.alumno__username,
           value: item.total_piezas
         }));
 
@@ -174,22 +175,22 @@ export default function Rankings() {
         materialTop={materialTop}
       />
 
-      {/* TOP 3 RECICLADORES */}
-      <TopRecicladores alumnos={(data?.top_alumnos || []).slice(0, 3)} />
-
-      <RankingTable alumnos={(data?.top_alumnos || []).slice(3, 10)} />
-
-      {/* SECCIÓN DEL RANKING */}
-      <div className="bg-white p-6 rounded-xl shadow-sm">
-
-        <RankingsFilters
-          activeFilter={activeFilter}
-          setActiveFilter={setActiveFilter}
-        />
-
-        <div className="mt-8">
-          <RankingsChart chartData={chartData.slice(0, 3)} />
+      {/* SECCIÓN UNIFICADA DEL RANKING */}
+      <div className="bg-white/50 backdrop-blur-sm p-4 sm:p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+        
+        <div className="flex flex-col items-center mb-8">
+            <h2 className="text-2xl font-black text-gray-800 mb-6">Tabla de Posiciones</h2>
+            <RankingsFilters
+            activeFilter={activeFilter}
+            setActiveFilter={setActiveFilter}
+            />
         </div>
+
+        {/* TOP 3 RECICLADORES (PODIO DINÁMICO) */}
+        <TopPodium data={chartData.slice(0, 3)} />
+
+        {/* LISTA DEL 4 AL 10 */}
+        <RankingList data={chartData.slice(3, 10)} startIndex={4} />
 
       </div>
 
