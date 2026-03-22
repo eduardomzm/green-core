@@ -7,6 +7,7 @@ import { Modal } from '../components/common/Modal';
 import { TERMINOS_CONTENT, PRIVACIDAD_CONTENT } from '../constants/legalContent';
 import { parseBackendErrors } from '../utils/errorUtils';
 import type { FieldErrors } from '../utils/errorUtils';
+import { CheckCircle } from 'lucide-react';
 
 
 
@@ -34,6 +35,8 @@ export const Registro = () => {
 
   const [showTerminos, setShowTerminos] = useState(false);
   const [showPrivacidad, setShowPrivacidad] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -93,8 +96,8 @@ export const Registro = () => {
 
     try {
       const response = await registerAlumno(formData);
-      alert(response.mensaje || '¡Registro exitoso!');
-      navigate('/login');
+      setSuccessMessage(response.mensaje || '¡Tu cuenta ha sido creada exitosamente! Ahora puedes iniciar sesión y comenzar a reciclar.');
+      setShowSuccessModal(true);
     } catch (error: any) {
       const errorData = error.response?.data;
       const parsedErrors = parseBackendErrors(errorData);
@@ -315,6 +318,31 @@ export const Registro = () => {
         title="Política de Privacidad"
       >
         {PRIVACIDAD_CONTENT}
+      </Modal>
+
+      <Modal
+        isOpen={showSuccessModal}
+        onClose={() => {
+          setShowSuccessModal(false);
+          navigate('/login');
+        }}
+        title="¡Bienvenido a Green Core!"
+      >
+        <div className="flex flex-col items-center justify-center py-6 text-center space-y-4">
+          <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center text-primary mb-2 shadow-inner">
+            <CheckCircle className="w-12 h-12" />
+          </div>
+          <p className="text-gray-600 text-lg font-medium px-4">{successMessage}</p>
+          <button
+            onClick={() => {
+              setShowSuccessModal(false);
+              navigate('/login');
+            }}
+            className="w-full mt-6 bg-primary hover:bg-secondary text-white font-bold py-4 rounded-xl transition-colors shadow-md"
+          >
+            Iniciar Sesión
+          </button>
+        </div>
       </Modal>
 
     </div>
