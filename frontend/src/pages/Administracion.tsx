@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getMateriales, createMaterial, createMeta, type Material } from "../services/reciclajeService";
+import { getMateriales, createMaterial, createMeta, getMetasSistema, type Material, type MetaSistema } from "../services/reciclajeService";
 import { getCarreras, createCarrera, type Carrera } from "../services/userService";
 import { Settings, Plus, Target, BookOpen } from "lucide-react";
 
@@ -10,8 +10,9 @@ const Administracion = () => {
   const [materialForm, setMaterialForm] = useState({ nombre: "", unidad: "pieza" });
   const [materialMsg, setMaterialMsg] = useState({ text: "", type: "" });
 
-  const [metaForm, setMetaForm] = useState({ nombre: "", cantidad_meta: "" });
+  const [metaForm, setMetaForm] = useState({ nombre: "", material: "", cantidad_meta: "" });
   const [metaMsg, setMetaMsg] = useState({ text: "", type: "" });
+  const [metasSistema, setMetasSistema] = useState<MetaSistema[]>([]);
 
   const [carreras, setCarreras] = useState<Carrera[]>([]);
   const [carreraForm, setCarreraForm] = useState({ nombre: "", abreviatura: "" });
@@ -21,12 +22,14 @@ const Administracion = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [materialesData, carrerasData] = await Promise.all([
+        const [materialesData, carrerasData, metasData] = await Promise.all([
           getMateriales(),
-          getCarreras()
+          getCarreras(),
+          getMetasSistema()
         ]);
         setMateriales(materialesData);
         setCarreras(carrerasData);
+        setMetasSistema(metasData.filter((m: MetaSistema) => m.activa));
       } catch (error) {
         console.error("Error al cargar datos", error);
       } finally {
@@ -53,17 +56,21 @@ const Administracion = () => {
   };
 
   const handleMetaSubmit = async () => {
-    if (!metaForm.nombre || !metaForm.cantidad_meta) return;
+    if (!metaForm.nombre || !metaForm.cantidad_meta || !metaForm.material) return;
     setMetaMsg({ text: "Configurando...", type: "loading" });
 
     try {
       await createMeta({
         nombre: metaForm.nombre,
+        material: parseInt(metaForm.material),
         cantidad_meta: parseInt(metaForm.cantidad_meta),
         activa: true
       });
       setMetaMsg({ text: "¡Meta global actualizada! ", type: "success" });
-      setMetaForm({ nombre: "", cantidad_meta: "" });
+      setMetaForm({ nombre: "", material: "", cantidad_meta: "" });
+      
+      const metasData = await getMetasSistema();
+      setMetasSistema(metasData.filter((m: MetaSistema) => m.activa));
 
       setTimeout(() => setMetaMsg({ text: "", type: "" }), 3000);
     } catch (error) {
@@ -194,6 +201,19 @@ const Administracion = () => {
               />
             </div>
             <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Material</label>
+              <select
+                value={metaForm.material}
+                onChange={(e) => setMetaForm({ ...metaForm, material: e.target.value })}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent outline-none text-sm bg-background/50 appearance-none"
+              >
+                <option value="">Seleccione un material...</option>
+                {materiales.map(m => (
+                  <option key={m.id} value={m.id}>{m.nombre} ({m.unidad})</option>
+                ))}
+              </select>
+            </div>
+            <div>
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Cantidad a lograr (piezas/kg)</label>
               <input
                 type="number"
@@ -207,15 +227,34 @@ const Administracion = () => {
             <button
               type="button"
               onClick={handleMetaSubmit}
-              disabled={!metaForm.nombre || !metaForm.cantidad_meta || metaMsg.type === 'loading'}
+              disabled={!metaForm.nombre || !metaForm.cantidad_meta || !metaForm.material || metaMsg.type === 'loading'}
               className="w-full bg-accent hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl shadow-sm transition-colors text-sm mt-2"
             >
               Activar Nueva Meta
             </button>
             <p className="text-[10px] text-gray-400 mt-4 leading-relaxed italic">
-              * Al activar una nueva meta, la meta anterior se desactivará automáticamente.
+              * Al activar una nueva meta para un material, si existiera una anterior, esta se desactivará automáticamente.
             </p>
           </form>
+
+          <div className="mt-8 pt-6 border-t border-gray-50">
+            <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Metas Activas por Material</h4>
+            <div className="flex flex-col gap-2">
+              {metasSistema.length > 0 ? metasSistema.map(m => (
+                <div key={m.id} className="p-3 bg-orange-50/50 rounded-xl border border-orange-100 flex justify-between items-center">
+                  <div>
+                    <span className="text-xs font-bold text-orange-600 uppercase block">{m.material_nombre}</span>
+                    <span className="text-sm font-bold text-gray-800">{m.nombre}</span>
+                  </div>
+                  <span className="text-sm font-black text-accent bg-orange-100 px-3 py-1 rounded-lg">
+                    {m.cantidad_meta.toLocaleString()} pts
+                  </span>
+                </div>
+              )) : (
+                <p className="text-xs font-medium text-gray-400 italic">No hay metas activas configuradas.</p>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Nueva Carrera */}

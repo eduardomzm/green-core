@@ -36,9 +36,11 @@ class DepositoSerializer(serializers.ModelSerializer):
         read_only_fields = ['operador']
 
 class MetaSistemaSerializer(serializers.ModelSerializer):
+    material_nombre = serializers.CharField(source='material.nombre', read_only=True)
+
     class Meta:
         model = MetaSistema
-        fields = '__all__'
+        fields = ['id', 'nombre', 'material', 'material_nombre', 'cantidad_meta', 'activa']
 
 
 class MetaAlumnoSerializer(serializers.ModelSerializer):

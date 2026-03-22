@@ -28,8 +28,22 @@ export const createDeposito = async (data: Partial<Deposito>) => {
   return response.data;
 };
 
-export const createMeta = async (data: { nombre: string; cantidad_meta: number; activa: boolean }) => {
+export interface MetaSistema {
+  id: number;
+  nombre: string;
+  material: number;
+  material_nombre: string;
+  cantidad_meta: number;
+  activa: boolean;
+}
+
+export const createMeta = async (data: { nombre: string; material: number; cantidad_meta: number; activa: boolean }) => {
   const response = await api.post('metas/', data);
+  return response.data;
+};
+
+export const getMetasSistema = async (): Promise<MetaSistema[]> => {
+  const response = await api.get('metas/');
   return response.data;
 };
 

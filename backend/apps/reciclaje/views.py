@@ -22,7 +22,7 @@ from .serializers import (
                 MetaSistemaSerializer,
                 MetaAlumnoSerializer,
 )
-from apps.users.models import User
+from apps.users.models import User, Notificacion
 from .permissions import IsAdmin
 
 
@@ -116,13 +116,21 @@ class MetaSistemaViewSet(viewsets.ModelViewSet):
         return [IsAuthenticated(), IsAdmin()]
 
     def perform_create(self, serializer):
+        material = serializer.validated_data.get('material', None)
         if serializer.validated_data.get('activa', True):
-            MetaSistema.objects.update(activa=False)
+            if material:
+                MetaSistema.objects.filter(material=material).update(activa=False)
+            else:
+                MetaSistema.objects.filter(material__isnull=True).update(activa=False)
         serializer.save()
 
     def perform_update(self, serializer):
+        material = serializer.validated_data.get('material', None)
         if serializer.validated_data.get('activa', True):
-            MetaSistema.objects.update(activa=False)
+            if material:
+                MetaSistema.objects.filter(material=material).update(activa=False)
+            else:
+                MetaSistema.objects.filter(material__isnull=True).update(activa=False)
         serializer.save()    
 
 
@@ -651,6 +659,14 @@ class UnirseGrupoView(APIView):
             }
         )
         
+        Notificacion.objects.create(
+            usuario=grupo.tutor,
+            titulo="Nueva Solicitud de Ingreso",
+            mensaje=f"El alumno {user.first_name} {user.primer_apellido} (@{user.username}) quiere unirse a tu grupo.",
+            tipo='INFO',
+            enlace='/dashboard/mi-grupo'
+        )
+
         return Response({"mensaje": f"Solicitud enviada para unirte a {grupo.nombre}."})
 
 
@@ -674,6 +690,15 @@ class SolicitarSalidaGrupoView(APIView):
 
         ag.estado = "PENDIENTE_SALIDA"
         ag.save(update_fields=["estado"])
+
+        Notificacion.objects.create(
+            usuario=ag.grupo.tutor,
+            titulo="Solicitud de Abandono",
+            mensaje=f"El alumno {user.first_name} {user.primer_apellido} (@{user.username}) ha solicitado salir de tu grupo.",
+            tipo='WARNING',
+            enlace='/dashboard/mi-grupo'
+        )
+
         return Response({"mensaje": "Tu solicitud de salida fue enviada al tutor."})
 
 
@@ -702,6 +727,15 @@ class AutorizarIngresoGrupoView(APIView):
 
         ag.estado = "ACTIVO"
         ag.save(update_fields=["estado"])
+
+        Notificacion.objects.create(
+            usuario=ag.alumno,
+            titulo="¡Bienvenido al grupo!",
+            mensaje=f"El tutor {user.first_name} ha aprobado tu ingreso al grupo {grupo.nombre}.",
+            tipo='SUCCESS',
+            enlace='/dashboard/mi-grupo'
+        )
+
         return Response({"mensaje": "Ingreso autorizado."})
 
 
@@ -728,7 +762,19 @@ class AutorizarSalidaGrupoView(APIView):
         if ag.estado != "PENDIENTE_SALIDA":
             return Response({"error": "La solicitud no está pendiente de salida."}, status=400)
 
+        
+        alumno_notificado = ag.alumno
+        grupo_nombre = grupo.nombre
         ag.delete()
+
+        Notificacion.objects.create(
+            usuario=alumno_notificado,
+            titulo="Salida de Grupo Aprobada",
+            mensaje=f"El tutor {user.first_name} ha aprobado tu salida del grupo {grupo_nombre}.",
+            tipo='INFO',
+            enlace='/dashboard/mi-grupo/unirse'
+        )
+
         return Response({"mensaje": "Salida autorizada. El alumno ya no pertenece al grupo."})
 
 
@@ -752,7 +798,18 @@ class RechazarIngresoGrupoView(APIView):
         if not ag or ag.estado != "PENDIENTE_INGRESO":
             return Response({"error": "Solicitud no encontrada o no está pendiente de ingreso."}, status=400)
 
+        alumno_notificado = ag.alumno
+        grupo_nombre = grupo.nombre
         ag.delete()
+
+        Notificacion.objects.create(
+            usuario=alumno_notificado,
+            titulo="Solicitud de Ingreso Rechazada",
+            mensaje=f"El tutor {user.first_name} ha denegado tu ingreso al grupo {grupo_nombre}.",
+            tipo='WARNING',
+            enlace='/dashboard/mi-grupo/unirse'
+        )
+
         return Response({"mensaje": "Ingreso rechazado. La solicitud ha sido eliminada."})
 
 
@@ -778,6 +835,15 @@ class RechazarSalidaGrupoView(APIView):
 
         ag.estado = "ACTIVO"
         ag.save(update_fields=["estado"])
+
+        Notificacion.objects.create(
+            usuario=ag.alumno,
+            titulo="Solicitud de Abandono Denegada",
+            mensaje=f"El tutor {user.first_name} ha rechazado tu petición de salida del grupo {grupo.nombre}.",
+            tipo='WARNING',
+            enlace='/dashboard/mi-grupo'
+        )
+
         return Response({"mensaje": "Salida rechazada. El alumno vuelve a estar activo en el grupo."})
 
 
