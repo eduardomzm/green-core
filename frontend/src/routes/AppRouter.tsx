@@ -19,6 +19,7 @@ import Privacidad from "../pages/Privacidad";
 import OlvidarContrasena from "../pages/OlvidarContrasena";
 import RestablecerContrasena from "../pages/RestablecerContrasena";
 import Perfil from "../pages/Perfil";
+import MiPerfil from "../pages/MiPerfil";
 import PerfilPublico from "../pages/PerfilPublico";
 
 const AppRouter = () => {
@@ -57,6 +58,7 @@ const AppRouter = () => {
           <Route path="mi-grupo" element={<MiGrupo />} />
           <Route path="mi-grupo/unirse" element={<UnirseMiGrupo />} />
           <Route path="perfil" element={<Perfil />} />
+          <Route path="mi-perfil" element={<MiPerfil />} />
           <Route path="perfil/:username" element={<PerfilPublico />} />
         </Route>
 

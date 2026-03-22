@@ -8,11 +8,13 @@ import {
   UsersRound,
   GraduationCap,
   Key,
-  Settings
+  Settings,
+  UserCircle
 } from "lucide-react";
 
 export const NAVIGATION = [
   { name: 'Inicio', path: '/dashboard', icon: LayoutDashboard, roles: ['ADMIN', 'OPERADOR', 'ALUMNO', 'TUTOR'] },
+  { name: 'Mi Perfil', path: '/dashboard/mi-perfil', icon: UserCircle, roles: ['ALUMNO'] },
   { name: 'Depósitos', path: '/dashboard/depositos', icon: Recycle, roles: ['ADMIN'] },
   { name: 'Administración', path: '/dashboard/administracion', icon: Settings, roles: ['ADMIN'] },
   { name: 'Mi Grupo', path: '/dashboard/mi-grupo', icon: UsersRound, roles: ['TUTOR'] },
