@@ -87,14 +87,10 @@ export const Registro = () => {
       return;
     }
 
-    // Validación de Matricula (solo letras y números, max 12)
-    const matriculaRegex = /^[a-zA-Z0-9]+$/;
-    if (formData.matricula.length > 12) {
-      setErrors({ matricula: ["La matrícula no puede tener más de 12 caracteres."] });
-      return;
-    }
+    // Validación de Matricula (5 números, 4 letras, 3 números)
+    const matriculaRegex = /^\d{5}[A-Z]{4}\d{3}$/;
     if (!matriculaRegex.test(formData.matricula)) {
-      setErrors({ matricula: ["La matrícula no puede contener caracteres especiales."] });
+      setErrors({ matricula: ["Formato de matrícula inválido."] });
       return;
     }
 
@@ -257,7 +253,7 @@ export const Registro = () => {
 
           {/* CASILLAS LEGALES (OBLIGATORIAS) */}
           <div className={`space-y-3 mt-6 mb-8 p-4 rounded-xl border transition-colors ${legalError ? 'bg-red-50/50 border-red-300' : 'bg-gray-50 border-gray-100'}`}>
-            
+
             {legalError && (
               <p className="text-red-500 text-xs font-bold mb-3 flex items-center gap-1.5 animate-in fade-in slide-in-from-top-2">
                 <AlertCircle className="w-4 h-4" /> Es indispensable aceptar los acuerdos legales antes de continuar.

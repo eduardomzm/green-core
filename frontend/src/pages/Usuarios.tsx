@@ -121,6 +121,14 @@ const Usuarios = () => {
     e.preventDefault();
     setModalError("");
 
+    if (formData.role === "ALUMNO") {
+      const matriculaRegex = /^\d{5}[A-Z]{4}\d{3}$/;
+      if (!matriculaRegex.test(formData.matricula)) {
+        setModalError("Formato de matrícula inválido.");
+        return;
+      }
+    }
+
     try {
       if (editingUser) {
         const dataToUpdate = { ...formData };
@@ -387,8 +395,9 @@ const Usuarios = () => {
 
                   {formData.role === "ALUMNO" && (
                     <div className="animate-fade-in-up">
-                      <label className="block text-xs font-bold text-accent uppercase mb-1">Matrícula (Obligatoria)</label>
+                      <label className="block text-xs font-bold text-accent uppercase mb-1">Matrícula (Ej: 12345ABCD123)</label>
                       <input type="text" name="matricula" value={formData.matricula} onChange={handleChange} required
+                        placeholder="11111AAAA111"
                         className="w-full px-4 py-2.5 rounded-xl border border-orange-200 focus:ring-2 focus:ring-accent outline-none transition-all text-sm bg-orange-50/30" />
                     </div>
                   )}

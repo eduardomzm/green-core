@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import User, Carrera, AlumnoPerfil, AlumnoGrupo, Notificacion
 from django.db import transaction
+import re
+from django.core.validators import RegexValidator
 
 class UserSerializer(serializers.ModelSerializer):
     # Declaramos la matrícula como un campo calculado
@@ -79,6 +81,13 @@ class RegistroAlumnoSerializer(serializers.Serializer):
         return value
 
     def validate_matricula(self, value):
+        # Validador de formato: 5 números, 4 letras mayúsculas, 3 números
+        matricula_regex = r'^\d{5}[A-Z]{4}\d{3}$'
+        if not re.match(matricula_regex, value):
+            raise serializers.ValidationError(
+                "Formato de matrícula inválido."
+            )
+        
         if AlumnoPerfil.objects.filter(matricula=value).exists():
             raise serializers.ValidationError("Esta matrícula ya está registrada.")
         return value
@@ -123,11 +132,19 @@ class AdminUserManagementSerializer(serializers.ModelSerializer):
         role = data.get('role')
         if not role and self.instance:
             role = self.instance.role
-            
-        if role == User.Roles.ALUMNO and not data.get('matricula'):
-            if not self.instance or not hasattr(self.instance, 'alumnoperfil'):
-                 raise serializers.ValidationError({"matricula": "La matrícula es obligatoria para cuentas de Alumno."})
-        
+
+        if role == User.Roles.ALUMNO:
+            matricula = data.get('matricula')
+            if not matricula:
+                if not self.instance or not hasattr(self.instance, 'alumnoperfil'):
+                    raise serializers.ValidationError({"matricula": "La matrícula es obligatoria para cuentas de Alumno."})
+            else:
+                matricula_regex = r'^\d{5}[A-Z]{4}\d{3}$'
+                if not re.match(matricula_regex, matricula):
+                    raise serializers.ValidationError({
+                        "matricula": "Formato de matrícula inválido."
+                    })
+
         return data
 
     def create(self, validated_data):
@@ -177,4 +194,4 @@ class NotificacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notificacion
         fields = '__all__'
-        read_only_fields = ['usuario', 'fecha_creacion']
+        read_only_fields = ['usuario', 'fecha_creacion']
