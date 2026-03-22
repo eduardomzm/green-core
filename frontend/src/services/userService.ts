@@ -16,6 +16,11 @@ export const updateMe = async (data: {
   return response.data;
 };
 
+export const getPublicProfile = async (username: string) => {
+  const response = await api.get(`users/perfil/${username}/`);
+  return response.data;
+};
+
 export interface User {
   id: number;
   username: string;

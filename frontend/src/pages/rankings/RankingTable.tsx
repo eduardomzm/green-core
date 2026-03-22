@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 
 
 type Alumno = {
@@ -40,7 +41,9 @@ export default function RankingTable({ alumnos }: Props) {
                                         </div>
                                     </td>
                                     <td className="py-5 px-2 sm:px-4">
-                                        <span className="text-gray-900 font-semibold text-lg">{name}</span>
+                                        <Link to={`/perfil/${item.alumno__username}`} className="text-gray-900 font-semibold text-lg hover:text-primary transition-colors">
+                                            {name}
+                                        </Link>
                                     </td>
                                     <td className="py-5 px-4 sm:px-6 text-right">
                                         <span className="inline-block px-4 py-1.5 bg-green-50 border border-green-100 text-green-700 rounded-full font-bold text-base shadow-sm">

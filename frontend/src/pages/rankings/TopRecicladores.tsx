@@ -1,4 +1,5 @@
 import { Trophy } from "lucide-react";
+import { Link } from "react-router-dom";
 
 type Alumno = {
     alumno__first_name: string;
@@ -64,10 +65,10 @@ export default function TopRecicladores({ alumnos }: Props) {
                             <Trophy size={26} />
                         </div>
 
-                        {/* NOMBRE */}
-                        <h3 className="font-semibold text-gray-800">
+                        {/* NOMBRE ENLACE */}
+                        <Link to={`/perfil/${alumno.alumno__username}`} className="font-semibold text-gray-800 hover:text-primary transition-colors block">
                             {name}
-                        </h3>
+                        </Link>
 
                         {/* PIEZAS */}
                         <p className="text-sm text-gray-500 mt-1">
