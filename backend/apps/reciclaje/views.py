@@ -22,6 +22,8 @@ from .serializers import (
                 MetaSistemaSerializer,
                 MetaAlumnoSerializer,
 )
+from apps.users.models import User
+from .permissions import IsAdmin
 
 
 class DepositoViewSet(viewsets.ModelViewSet):
@@ -708,3 +710,69 @@ class AsignarMetaAlumnoView(APIView):
         )
         serializer = MetaAlumnoSerializer(meta)
         return Response(serializer.data, status=201)
+
+
+class CorteMensualView(APIView):
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    def post(self, request):
+        user = request.user
+        medalla_id = request.data.get('medalla_id')
+        mes = request.data.get('mes')  # e.g., '2026-03' o 'Marzo 2026'
+
+        if not medalla_id or not mes:
+            return Response({'error': 'medalla_id y mes son requeridos.'}, status=400)
+
+        from .models import Medalla, MedallaAlumno
+        try:
+            medalla = Medalla.objects.get(id=medalla_id)
+        except Medalla.DoesNotExist:
+            return Response({'error': 'Medalla no encontrada.'}, status=404)
+
+        # Determinar inicio y fin del mes actual (o el provisto)
+        now = timezone.now()
+        fecha_inicio = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        if fecha_inicio.month == 12:
+            fecha_fin = fecha_inicio.replace(year=fecha_inicio.year + 1, month=1)
+        else:
+            fecha_fin = fecha_inicio.replace(month=fecha_inicio.month + 1)
+
+        # Obtener los top 3 alumnos del mes
+        top_alumnos = (
+            Deposito.objects
+            .filter(fecha__gte=fecha_inicio, fecha__lt=fecha_fin)
+            .values('alumno_id')
+            .annotate(total_piezas=Sum('cantidad'))
+            .order_by('-total_piezas')[:3]
+        )
+
+        premiados = []
+        for index, item in enumerate(top_alumnos):
+            alumno_id = item['alumno_id']
+            # Asignar medalla si no la tiene para ese mes
+            if not MedallaAlumno.objects.filter(alumno_id=alumno_id, medalla=medalla, mes_obtenida=mes).exists():
+                MedallaAlumno.objects.create(
+                    alumno_id=alumno_id,
+                    medalla=medalla,
+                    mes_obtenida=mes
+                )
+                premiados.append(alumno_id)
+
+        # Devolver respuesta con éxito
+        alumnos_premiados = User.objects.filter(id__in=premiados).values('id', 'username', 'first_name', 'primer_apellido')
+        
+        return Response({
+            'mensaje': 'Corte mensual exitoso. Medallas entregadas.',
+            'top_3_encontrados': len(top_alumnos),
+            'medallas_entregadas': len(premiados),
+            'premiados': list(alumnos_premiados)
+        }, status=200)
+
+class MedallasDisponiblesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        from .models import Medalla
+        from .serializers import MedallaSerializer
+        medallas = Medalla.objects.all()
+        return Response(MedallaSerializer(medallas, many=True).data)

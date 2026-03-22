@@ -7,6 +7,7 @@ from .views import (
     AlumnoGrupoViewSet,
     RegistroAlumnoView,
     MeView,
+    PublicProfileView
 )
 
 router = DefaultRouter()
@@ -18,5 +19,6 @@ router.register(r'alumno-grupos', AlumnoGrupoViewSet)
 urlpatterns = [
     path('users/registro/alumno/', RegistroAlumnoView.as_view(), name='registro_alumno'),
     path('users/me/', MeView.as_view(), name='me'),
+    path('users/perfil/<str:username>/', PublicProfileView.as_view(), name='perfil_publico'),
     path('', include(router.urls)),
 ]

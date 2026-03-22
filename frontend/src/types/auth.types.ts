@@ -1,3 +1,18 @@
+export interface Medalla {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  icono_lucide: string;
+}
+
+export interface MedallaAlumno {
+  id: number;
+  alumno: number;
+  medalla: Medalla;
+  mes_obtenida: string;
+  fecha_otorgada: string;
+}
+
 export interface User {
   id: number;
   username: string;
@@ -8,6 +23,12 @@ export interface User {
   role: "ADMIN" | "OPERADOR" | "ALUMNO" | "TUTOR";
   matricula?: string | null;
   avatar: string;
+  biografia?: string;
+  instagram?: string;
+  twitter?: string;
+  facebook?: string;
+  nivel?: number;
+  medallas?: MedallaAlumno[];
 }
 
 export interface AuthContextType {

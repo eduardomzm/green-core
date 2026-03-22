@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { User as UserIcon, Mail, Lock, Eye, EyeOff, Save, AlertCircle, CheckCircle, Info, Settings } from "lucide-react";
+import { User as UserIcon, Mail, Lock, Eye, EyeOff, Save, AlertCircle, CheckCircle, Info, Settings, Share2, Instagram, Twitter, Facebook } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { updateMe } from "../services/userService";
 
@@ -9,6 +9,10 @@ interface FormState {
   contrasena_actual: string;
   nueva_contrasena: string;
   repetir_contrasena: string;
+  biografia: string;
+  instagram: string;
+  twitter: string;
+  facebook: string;
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -35,6 +39,10 @@ export default function Perfil() {
     contrasena_actual: "",
     nueva_contrasena: "",
     repetir_contrasena: "",
+    biografia: "",
+    instagram: "",
+    twitter: "",
+    facebook: "",
   });
 
   const [selectedAvatar, setSelectedAvatar] = useState(user?.avatar || 'default');
@@ -54,6 +62,10 @@ export default function Perfil() {
         contrasena_actual: "",
         nueva_contrasena: "",
         repetir_contrasena: "",
+        biografia: user.biografia || "",
+        instagram: user.instagram || "",
+        twitter: user.twitter || "",
+        facebook: user.facebook || "",
       });
       setSelectedAvatar(user.avatar || 'default');
     }
@@ -74,6 +86,13 @@ export default function Perfil() {
       payload.contrasena_actual = form.contrasena_actual;
       payload.nueva_contrasena = form.nueva_contrasena;
       payload.repetir_contrasena = form.repetir_contrasena;
+    }
+
+    if (user?.role === 'ALUMNO') {
+      if (form.biografia !== user?.biografia) payload.biografia = form.biografia;
+      if (form.instagram !== user?.instagram) payload.instagram = form.instagram;
+      if (form.twitter !== user?.twitter) payload.twitter = form.twitter;
+      if (form.facebook !== user?.facebook) payload.facebook = form.facebook;
     }
 
     if (Object.keys(payload).length === 0) {
@@ -363,6 +382,57 @@ export default function Perfil() {
               </button>
             </div>
           </div>
+
+          {/* Sección Perfil Social (Solo Alumnos) */}
+          {user?.role === 'ALUMNO' && (
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 relative">
+              <h3 className="text-lg font-bold text-textMain flex items-center gap-2 mb-6">
+                <Share2 className="w-5 h-5 text-blue-500" />
+                Perfil Público
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-1.5 md:col-span-2">
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">Biografía</label>
+                  <textarea
+                    value={form.biografia}
+                    onChange={e => setForm({ ...form, biografia: e.target.value })}
+                    placeholder="Cuéntanos sobre ti..."
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background/30 resize-none h-24"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1"><Instagram className="w-3 h-3" /> Instagram</label>
+                  <input
+                    type="text"
+                    value={form.instagram}
+                    onChange={e => setForm({ ...form, instagram: e.target.value })}
+                    placeholder="@usuario"
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background/30"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1"><Twitter className="w-3 h-3" /> Twitter</label>
+                  <input
+                    type="text"
+                    value={form.twitter}
+                    onChange={e => setForm({ ...form, twitter: e.target.value })}
+                    placeholder="@usuario"
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background/30"
+                  />
+                </div>
+                <div className="space-y-1.5 md:col-span-2">
+                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1"><Facebook className="w-3 h-3" /> Enlace de Facebook</label>
+                  <input
+                    type="url"
+                    value={form.facebook}
+                    onChange={e => setForm({ ...form, facebook: e.target.value })}
+                    placeholder="https://facebook.com/usuario"
+                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm outline-none transition-all focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background/30"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

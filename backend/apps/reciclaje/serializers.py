@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Grupo, Material, Deposito, MetaSistema, MetaAlumno
+from .models import Grupo, Material, Deposito, MetaSistema, MetaAlumno, Medalla, MedallaAlumno
 from apps.users.serializers import UserSimpleSerializer
 
 
@@ -47,4 +47,17 @@ class MetaAlumnoSerializer(serializers.ModelSerializer):
     class Meta:
         model = MetaAlumno
         fields = ['id', 'alumno', 'material', 'material_nombre', 'cantidad_meta', 'asignada_por', 'creada_en']
-        read_only_fields = ['asignada_por', 'creada_en']
+        read_only_fields = ['asignada_por', 'creada_en']
+
+class MedallaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Medalla
+        fields = '__all__'
+
+class MedallaAlumnoSerializer(serializers.ModelSerializer):
+    medalla = MedallaSerializer(read_only=True)
+    
+    class Meta:
+        model = MedallaAlumno
+        fields = ['id', 'alumno', 'medalla', 'mes_obtenida', 'fecha_otorgada']
+        read_only_fields = ['alumno', 'medalla', 'mes_obtenida', 'fecha_otorgada']

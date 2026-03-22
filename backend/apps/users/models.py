@@ -53,6 +53,13 @@ class AlumnoPerfil(models.Model):
     matricula = models.CharField(max_length=30, unique=True)
     activo = models.BooleanField(default=True)
 
+    # Campos de perfil público / gamificación
+    biografia = models.TextField(blank=True)
+    instagram = models.CharField(max_length=100, blank=True)
+    twitter = models.CharField(max_length=100, blank=True)
+    facebook = models.URLField(blank=True)
+    nivel = models.IntegerField(default=1)
+
     def __str__(self):
         return self.matricula
 

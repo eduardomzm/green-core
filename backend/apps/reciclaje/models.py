@@ -99,3 +99,27 @@ class MetaAlumno(models.Model):
 
     def __str__(self):
         return f"Meta de {self.alumno} - {self.material} ({self.cantidad_meta})"
+
+
+class Medalla(models.Model):
+    nombre = models.CharField(max_length=100)
+    descripcion = models.TextField()
+    icono_lucide = models.CharField(max_length=50, default='Award', help_text="Nombre del icono de Lucide (ej: Award, Star, Crown)")
+
+    def __str__(self):
+        return self.nombre
+
+
+class MedallaAlumno(models.Model):
+    alumno = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='medallas',
+        limit_choices_to={'role': 'ALUMNO'}
+    )
+    medalla = models.ForeignKey(Medalla, on_delete=models.CASCADE)
+    mes_obtenida = models.CharField(max_length=20, help_text="Formato YYYY-MM o Nombre del Mes")
+    fecha_otorgada = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.alumno} - {self.medalla.nombre} ({self.mes_obtenida})"

@@ -16,7 +16,10 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework import status
 from rest_framework.decorators import action
+from django.shortcuts import get_object_or_404
 from .permissions import IsAdminUserRole
+from apps.reciclaje.models import MedallaAlumno
+from apps.reciclaje.serializers import MedallaAlumnoSerializer
 
 class UserPagination(PageNumberPagination):
     page_size = 10
@@ -34,9 +37,25 @@ class MeView(APIView):
     def get(self, request):
         user = request.user
         matricula = None
+        biografia = ""
+        instagram = ""
+        twitter = ""
+        facebook = ""
+        nivel = 1
+        medallas = []
+
         if user.role == 'ALUMNO':
             try:
-                matricula = user.alumnoperfil.matricula
+                perfil = user.alumnoperfil
+                matricula = perfil.matricula
+                biografia = perfil.biografia
+                instagram = perfil.instagram
+                twitter = perfil.twitter
+                facebook = perfil.facebook
+                nivel = perfil.nivel
+                
+                user_medallas = MedallaAlumno.objects.filter(alumno=user).select_related('medalla').order_by('-fecha_otorgada')
+                medallas = MedallaAlumnoSerializer(user_medallas, many=True).data
             except Exception:
                 pass
 
@@ -50,6 +69,12 @@ class MeView(APIView):
             "role": user.role,
             "matricula": matricula,
             "avatar": user.avatar,
+            "biografia": biografia,
+            "instagram": instagram,
+            "twitter": twitter,
+            "facebook": facebook,
+            "nivel": nivel,
+            "medallas": medallas,
         })
 
     def patch(self, request):
@@ -90,10 +115,46 @@ class MeView(APIView):
 
         user.save()
 
+        user.save()
+
         matricula = None
+        biografia = ""
+        instagram = ""
+        twitter = ""
+        facebook = ""
+        nivel = 1
+        medallas = []
+
         if user.role == 'ALUMNO':
             try:
-                matricula = user.alumnoperfil.matricula
+                perfil = user.alumnoperfil
+                # Actualizar campos sociales si se proporcionan
+                modificado = False
+                if 'biografia' in data:
+                    perfil.biografia = data['biografia']
+                    modificado = True
+                if 'instagram' in data:
+                    perfil.instagram = data['instagram']
+                    modificado = True
+                if 'twitter' in data:
+                    perfil.twitter = data['twitter']
+                    modificado = True
+                if 'facebook' in data:
+                    perfil.facebook = data['facebook']
+                    modificado = True
+                
+                if modificado:
+                    perfil.save()
+
+                matricula = perfil.matricula
+                biografia = perfil.biografia
+                instagram = perfil.instagram
+                twitter = perfil.twitter
+                facebook = perfil.facebook
+                nivel = perfil.nivel
+                
+                user_medallas = MedallaAlumno.objects.filter(alumno=user).select_related('medalla').order_by('-fecha_otorgada')
+                medallas = MedallaAlumnoSerializer(user_medallas, many=True).data
             except Exception:
                 pass
 
@@ -107,8 +168,58 @@ class MeView(APIView):
             "role": user.role,
             "matricula": matricula,
             "avatar": user.avatar,
+            "biografia": biografia,
+            "instagram": instagram,
+            "twitter": twitter,
+            "facebook": facebook,
+            "nivel": nivel,
+            "medallas": medallas,
         })
 
+
+
+class PublicProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        
+        biografia = ""
+        instagram = ""
+        twitter = ""
+        facebook = ""
+        nivel = 1
+        medallas = []
+
+        if user.role == 'ALUMNO':
+            try:
+                perfil = getattr(user, 'alumnoperfil', None)
+                if perfil:
+                    biografia = perfil.biografia
+                    instagram = perfil.instagram
+                    twitter = perfil.twitter
+                    facebook = perfil.facebook
+                    nivel = perfil.nivel
+                
+                user_medallas = MedallaAlumno.objects.filter(alumno=user).select_related('medalla').order_by('-fecha_otorgada')
+                medallas = MedallaAlumnoSerializer(user_medallas, many=True).data
+            except Exception:
+                pass
+
+        return Response({
+            "username": user.username,
+            "first_name": user.first_name,
+            "primer_apellido": user.primer_apellido,
+            "segundo_apellido": user.segundo_apellido,
+            "role": user.role,
+            "avatar": user.avatar,
+            "biografia": biografia,
+            "instagram": instagram,
+            "twitter": twitter,
+            "facebook": facebook,
+            "nivel": nivel,
+            "medallas": medallas,
+        })
 
 
 class CarreraViewSet(viewsets.ModelViewSet):
