@@ -2,7 +2,8 @@ from django.shortcuts import render
 from rest_framework import viewsets, filters
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
-from .models import User, Carrera, AlumnoPerfil, AlumnoGrupo
+from django.db.models import Q
+from .models import User, Carrera, AlumnoPerfil, AlumnoGrupo, Notificacion, ConexionUsuario
 from .serializers import (
     UserSerializer,
     CarreraSerializer,
@@ -207,6 +208,13 @@ class PublicProfileView(APIView):
             except Exception:
                 pass
 
+        # Seguidores
+        seguidores_count = user.seguidores.count()
+        siguiendo_count = user.siguiendo.count()
+        lo_sigo = False
+        if request.user.is_authenticated and request.user.role == 'ALUMNO':
+            lo_sigo = ConexionUsuario.objects.filter(seguidor=request.user, seguido=user).exists()
+
         return Response({
             "username": user.username,
             "first_name": user.first_name,
@@ -220,7 +228,73 @@ class PublicProfileView(APIView):
             "facebook": facebook,
             "nivel": nivel,
             "medallas": medallas,
+            "seguidores_count": seguidores_count,
+            "siguiendo_count": siguiendo_count,
+            "lo_sigo": lo_sigo,
         })
+
+class BuscarAlumnosView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        query = request.query_params.get('q', '').strip()
+        if not query:
+            return Response([])
+
+        # Solo buscar alumnos
+        busqueda = Q(role='ALUMNO') & (
+            Q(username__icontains=query) |
+            Q(first_name__icontains=query) |
+            Q(primer_apellido__icontains=query)
+        )
+        # Excluir al propio usuario
+        alumnos = User.objects.filter(busqueda).exclude(id=request.user.id)[:10]
+        
+        resultados = []
+        for al in alumnos:
+            carrera_nombre = ""
+            try:
+                if hasattr(al, 'alumnogrupo') and al.alumnogrupo is not None:
+                    carrera_nombre = al.alumnogrupo.grupo.carrera.nombre
+            except Exception:
+                pass
+
+            resultados.append({
+                "username": al.username,
+                "first_name": al.first_name,
+                "primer_apellido": al.primer_apellido,
+                "avatar": al.avatar,
+                "carrera": carrera_nombre
+            })
+            
+        return Response(resultados)
+
+class ToggleSeguirView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, username):
+        if request.user.role != 'ALUMNO':
+            return Response({"error": "Solo alumnos pueden seguir."}, status=403)
+            
+        seguido = get_object_or_404(User, username=username, role='ALUMNO')
+        if request.user == seguido:
+            return Response({"error": "No puedes seguirte a ti mismo."}, status=400)
+            
+        perfil, created = ConexionUsuario.objects.get_or_create(seguidor=request.user, seguido=seguido)
+        
+        if not created:
+            perfil.delete() # Dejar de seguir
+            return Response({"status": "unfollowed"})
+        else:
+            # Enviar notificación de que tiene un nuevo seguidor
+            Notificacion.objects.create(
+                usuario=seguido,
+                titulo="¡Nuevo seguidor!",
+                mensaje=f"A {request.user.first_name} ({request.user.username}) le ha interesado tu perfil y ahora te sigue.",
+                tipo="INFO",
+                enlace=f"/perfil/{request.user.username}"
+            )
+            return Response({"status": "followed"})
 
 
 class CarreraViewSet(viewsets.ModelViewSet):

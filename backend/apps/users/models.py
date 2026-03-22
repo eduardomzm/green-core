@@ -121,4 +121,40 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
         from_email=None, 
         recipient_list=[reset_password_token.user.email]
     )
-    
+
+class Notificacion(models.Model):
+    TIPO_CHOICES = [
+        ('INFO', 'Información'),
+        ('WARNING', 'Advertencia'),
+        ('SUCCESS', 'Éxito'),
+        ('SYSTEM', 'Sistema'),
+        ('ACHIEVEMENT', 'Logro/Trofeo'),
+    ]
+
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notificaciones')
+    titulo = models.CharField(max_length=255)
+    mensaje = models.TextField()
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES, default='INFO')
+    leida = models.BooleanField(default=False)
+    enlace = models.CharField(max_length=255, blank=True, null=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'notificacion'
+        ordering = ['-fecha_creacion']
+
+    def __str__(self):
+        return f"Notificación: {self.titulo} - {self.usuario.username}"
+
+class ConexionUsuario(models.Model):
+    seguidor = models.ForeignKey(User, related_name='siguiendo', on_delete=models.CASCADE)
+    seguido = models.ForeignKey(User, related_name='seguidores', on_delete=models.CASCADE)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'conexion_usuario'
+        unique_together = ('seguidor', 'seguido')
+        ordering = ['-fecha_creacion']
+
+    def __str__(self):
+        return f"{self.seguidor.username} sigue a {self.seguido.username}"
