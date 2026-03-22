@@ -453,6 +453,13 @@ class RankingsView(APIView):
             "top_materiales": list(top_materiales),
         })
 
+from rest_framework.pagination import PageNumberPagination
+
+class MisDepositosPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
 class MisDepositosView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -468,21 +475,34 @@ class MisDepositosView(APIView):
         depositos = (
             Deposito.objects
             .filter(alumno=user)
-            .select_related('operador')
+            .select_related('operador', 'material')
             .order_by('-fecha')
         )
 
+        material_id = request.query_params.get('material')
+        if material_id:
+            depositos = depositos.filter(material_id=material_id)
+        
+        fecha = request.query_params.get('fecha')
+        if fecha:
+            depositos = depositos.filter(fecha__date=fecha)
+
+        paginator = MisDepositosPagination()
+        paginated_depositos = paginator.paginate_queryset(depositos, request)
+
         data = [
             {
+                "id": deposito.id,
                 "fecha": deposito.fecha,
                 "cantidad": deposito.cantidad,
-                "operador": deposito.operador.username
+                "operador": deposito.operador.username,
+                "material_nombre": deposito.material.nombre
             }
-            for deposito in depositos
+            for deposito in paginated_depositos
         ]
 
-        return Response(data)
-    
+        return paginator.get_paginated_response(data)
+
 
 class MiGrupoTutorView(APIView):
     permission_classes = [IsAuthenticated]
@@ -710,6 +730,55 @@ class AutorizarSalidaGrupoView(APIView):
 
         ag.delete()
         return Response({"mensaje": "Salida autorizada. El alumno ya no pertenece al grupo."})
+
+
+class RechazarIngresoGrupoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        if user.role != "TUTOR":
+            return Response({"error": "Solo tutores pueden rechazar ingreso."}, status=403)
+
+        alumno_id = request.data.get("alumno_id")
+        if not alumno_id:
+            return Response({"error": "alumno_id es requerido."}, status=400)
+
+        grupo = Grupo.objects.filter(tutor=user).first()
+        if not grupo:
+            return Response({"error": "No tienes un grupo asignado."}, status=404)
+
+        ag = AlumnoGrupo.objects.filter(alumno_id=alumno_id, grupo=grupo).first()
+        if not ag or ag.estado != "PENDIENTE_INGRESO":
+            return Response({"error": "Solicitud no encontrada o no está pendiente de ingreso."}, status=400)
+
+        ag.delete()
+        return Response({"mensaje": "Ingreso rechazado. La solicitud ha sido eliminada."})
+
+
+class RechazarSalidaGrupoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        if user.role != "TUTOR":
+            return Response({"error": "Solo tutores pueden rechazar salida."}, status=403)
+
+        alumno_id = request.data.get("alumno_id")
+        if not alumno_id:
+            return Response({"error": "alumno_id es requerido."}, status=400)
+
+        grupo = Grupo.objects.filter(tutor=user).first()
+        if not grupo:
+            return Response({"error": "No tienes un grupo asignado."}, status=404)
+
+        ag = AlumnoGrupo.objects.filter(alumno_id=alumno_id, grupo=grupo).first()
+        if not ag or ag.estado != "PENDIENTE_SALIDA":
+            return Response({"error": "Solicitud no encontrada o no está pendiente de salida."}, status=400)
+
+        ag.estado = "ACTIVO"
+        ag.save(update_fields=["estado"])
+        return Response({"mensaje": "Salida rechazada. El alumno vuelve a estar activo en el grupo."})
 
 
 class MiGrupoAlumnoView(APIView):

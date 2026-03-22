@@ -18,7 +18,12 @@ export const createMaterial = async (data: { nombre: string; unidad: string }) =
   return response.data;
 };
 
-export const createDeposito = async (data: { alumno: number; material: number; cantidad: number }) => {
+export const getMisDepositos = async (params?: Record<string, string | number>) => {
+  const response = await api.get('mis-depositos/', { params });
+  return response.data;
+};
+
+export const createDeposito = async (data: Partial<Deposito>) => {
   const response = await api.post('depositos/', data);
   return response.data;
 };
@@ -72,6 +77,16 @@ export const autorizarIngresoGrupo = async (alumno_id: number) => {
 export const autorizarSalidaGrupo = async (alumno_id: number) => {
     const response = await api.post('autorizar-salida-grupo/', { alumno_id });
     return response.data;
+};
+
+export const rechazarIngresoGrupo = async (alumnoId: number) => {
+  const response = await api.post('rechazar-ingreso-grupo/', { alumno_id: alumnoId });
+  return response.data;
+};
+
+export const rechazarSalidaGrupo = async (alumnoId: number) => {
+  const response = await api.post('rechazar-salida-grupo/', { alumno_id: alumnoId });
+  return response.data;
 };
 
 export interface Grupo {

@@ -30,6 +30,7 @@ export default function UnirseMiGrupo() {
   // Modals para compañeros y actividad
   const [showCompanerosModal, setShowCompanerosModal] = useState(false);
   const [showActividadModal, setShowActividadModal] = useState(false);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
 
   const fetchMiGrupoAlumno = async () => {
     try {
@@ -282,7 +283,7 @@ export default function UnirseMiGrupo() {
             <div className="flex flex-col items-center gap-3">
               <button
                 disabled={loadingJoin}
-                onClick={handleSolicitarSalida}
+                onClick={() => setShowExitConfirm(true)}
                 className="flex items-center gap-2 text-red-500 hover:text-white bg-red-50 hover:bg-red-500 font-bold py-3 px-6 rounded-2xl transition-all border border-red-100 hover:shadow-lg hover:shadow-red-500/30 disabled:opacity-50"
               >
                 <LogOut className="w-5 h-5" />
@@ -487,6 +488,42 @@ export default function UnirseMiGrupo() {
           </div>
         </div>
       )}
+
+      {/* MODAL CONFIRMAR SALIDA */}
+      {showExitConfirm && (
+        <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[100] flex justify-center items-center p-4 animate-in fade-in duration-300">
+          <div className="bg-white rounded-[2rem] w-full max-w-sm shadow-2xl relative animate-in zoom-in-95 duration-300 p-8 text-center">
+            <div className="w-16 h-16 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center mx-auto mb-6 transform -rotate-6 border-4 border-white shadow-lg">
+              <LogOut className="w-8 h-8" strokeWidth={2.5} />
+            </div>
+            <h3 className="text-2xl font-black text-gray-900 mb-2">
+              ¿Abandonar grupo?
+            </h3>
+            <p className="text-gray-500 text-sm mb-8 font-medium">
+              El tutor tendrá que aprobar tu solicitud de salida antes de que puedas unirte a otro grupo diferente.
+            </p>
+            
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setShowExitConfirm(false)}
+                className="flex-1 py-3 px-4 rounded-xl border-2 border-gray-100 text-gray-500 font-bold hover:bg-gray-50 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={() => {
+                  setShowExitConfirm(false);
+                  handleSolicitarSalida();
+                }}
+                className="flex-1 py-3 px-4 rounded-xl bg-red-500 text-white font-bold hover:bg-red-600 transition-colors shadow-lg shadow-red-500/30"
+              >
+                Sí, solicitar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
 
     </div>
   );

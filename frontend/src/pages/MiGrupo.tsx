@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Users, Copy, CheckCircle, Target, UserX, UserCheck, X, Activity, ChevronRight, User as UserIcon, ExternalLink, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { autorizarIngresoGrupo, autorizarSalidaGrupo, getMiGrupoTutor, getMateriales, asignarMetaAlumno, cancelarMetaAlumno, type Material } from "../services/reciclajeService";
+import { autorizarIngresoGrupo, autorizarSalidaGrupo, rechazarIngresoGrupo, rechazarSalidaGrupo, getMiGrupoTutor, getMateriales, asignarMetaAlumno, cancelarMetaAlumno, type Material } from "../services/reciclajeService";
 
 const AVATARS = [
   { id: 'default', url: '/src/assets/img/logo.jpeg' },
@@ -67,6 +67,28 @@ export default function MiGrupo() {
       navigator.clipboard.writeText(grupoData.codigo_invitacion);
       setCopiado(true);
       setTimeout(() => setCopiado(false), 2000);
+    }
+  };
+
+  const rechazarIngreso = async (alumno_id: number) => {
+    try {
+      if (!window.confirm("¿Seguro que deseas rechazar esta solicitud de ingreso?")) return;
+      await rechazarIngresoGrupo(alumno_id);
+      const data = await getMiGrupoTutor();
+      setGrupoData(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const rechazarSalida = async (alumno_id: number) => {
+    try {
+      if (!window.confirm("¿Seguro que deseas rechazar esta solicitud de salida?")) return;
+      await rechazarSalidaGrupo(alumno_id);
+      const data = await getMiGrupoTutor();
+      setGrupoData(data);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -179,23 +201,41 @@ export default function MiGrupo() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
                         {alumno.tipo === 'INGRESO' ? (
-                          <button
-                            onClick={() => autorizarIngreso(alumno.id)}
-                            className="flex items-center gap-2 text-sm font-bold text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-xl transition-colors shadow-sm"
-                          >
-                            <UserCheck className="w-4 h-4" />
-                            Autorizar
-                          </button>
+                          <>
+                            <button
+                              onClick={() => rechazarIngreso(alumno.id)}
+                              className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+                              title="Rechazar Ingreso"
+                            >
+                              <X className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={() => autorizarIngreso(alumno.id)}
+                              className="flex items-center gap-2 text-sm font-bold text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-xl transition-colors shadow-sm"
+                            >
+                              <UserCheck className="w-4 h-4" />
+                              Autorizar
+                            </button>
+                          </>
                         ) : (
-                          <button
-                            onClick={() => autorizarSalida(alumno.id)}
-                            className="flex items-center gap-2 text-sm font-bold text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl transition-colors shadow-sm"
-                          >
-                            <UserX className="w-4 h-4" />
-                            Autorizar salida
-                          </button>
+                          <>
+                            <button
+                              onClick={() => rechazarSalida(alumno.id)}
+                              className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+                              title="Rechazar Salida"
+                            >
+                              <X className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={() => autorizarSalida(alumno.id)}
+                              className="flex items-center gap-2 text-sm font-bold text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl transition-colors shadow-sm"
+                            >
+                              <UserX className="w-4 h-4" />
+                              Autorizar salida
+                            </button>
+                          </>
                         )}
                       </div>
                     </div>
