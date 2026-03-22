@@ -1,27 +1,27 @@
-# ♻️ GreenCore
+# GreenCore
 
 **Plataforma Integral de Gestión y Gamificación de Reciclaje Escolar**
 
 GreenCore es un sistema SaaS (Software as a Service) diseñado para conectar alumnos, tutores y administradores en un ecosistema competitivo y ecológico. A través de la gamificación, reportes automatizados y perfiles públicos, GreenCore incentiva el reciclaje en instituciones educativas.
 
-🌍 **En vivo:** [www.greencore.com.mx](https://www.greencore.com.mx)
+ **En vivo:** [www.greencore.com.mx](https://www.greencore.com.mx)
 
 ---
 
-## ✨ Características Principales
+##  Características Principales
 
-### 👨‍🎓 Para el Alumno (Gamificación y Registro)
+###  Para el Alumno (Gamificación y Registro)
 * **Dashboard Personal:** Registro de depósitos de reciclaje y monitoreo de metas asignadas.
 * **Perfiles Públicos Interactivos:** Vistas 3D personalizables con enlaces a redes sociales y biografía.
 * **Vitrina de Trofeos:** Sistema de medallas temáticas otorgadas mensualmente al Top 3 de recicladores.
 * **Rankings en Tiempo Real:** Tabla de posiciones mensual para fomentar la competencia sana.
 
-### 👨‍🏫 Para el Tutor (Gestión de Grupos)
+###  Para el Tutor (Gestión de Grupos)
 * **Gestión de Solicitudes:** Sistema de aprobación y rechazo para ingresos y abandonos de alumnos en sus grupos.
 * **Asignación de Metas:** Capacidad de establecer objetivos de reciclaje específicos para alumnos individuales.
 * **Monitoreo:** Seguimiento del rendimiento y depósitos de su grupo a cargo.
 
-### 👑 Para el Administrador (Control Total)
+###  Para el Administrador (Control Total)
 * **Panel Analítico (Dashboard):** Métricas en tiempo real de últimos depósitos y usuarios registrados.
 * **Motor de Cortes Mensuales:** Botón de acción para cerrar el mes, calcular el Top 3 y repartir medallas automáticamente.
 * **Reportes Exportables:** Generación y descarga de reportes detallados en PDF por mes específico.
@@ -29,7 +29,7 @@ GreenCore es un sistema SaaS (Software as a Service) diseñado para conectar alu
 
 ---
 
-## 💻 Stack Tecnológico
+##  Stack Tecnológico
 
 El proyecto está construido con una arquitectura separada (Decoupled Architecture) para máxima escalabilidad:
 
