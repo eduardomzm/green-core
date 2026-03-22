@@ -1,8 +1,11 @@
 import axios from "axios";
 
+const isProduction = import.meta.env.PROD;
+const devUrl = "http://localhost:8000/api/";
+const prodUrl = "https://greencore-api-83ow.onrender.com/api/";
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000/api/",
-  // timeout: 10000, // Opcional: 10 segundos para fallar si el server no responde
+  baseURL: import.meta.env.VITE_API_URL || (isProduction ? prodUrl : devUrl),
 });
 
 api.interceptors.request.use((config) => {
