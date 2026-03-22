@@ -1,4 +1,7 @@
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -115,12 +118,19 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
                  f"Equipo Green Core"
 
     
-    send_mail(
-        subject=email_subject,
-        message=email_body,
-        from_email=None, 
-        recipient_list=[reset_password_token.user.email]
-    )
+    try:
+        send_mail(
+            subject=email_subject,
+            message=email_body,
+            from_email=None, 
+            recipient_list=[reset_password_token.user.email],
+            fail_silently=False
+        )
+        logger.info(f"Correo de recuperación enviado exitosamente a {reset_password_token.user.email}")
+    except Exception as e:
+        logger.error(f"Error al enviar correo de recuperación a {reset_password_token.user.email}: {str(e)}")
+        # Re-lanzamos el error para que sepamos qué falló, o podemos manejarlo
+        raise e
 
 class Notificacion(models.Model):
     TIPO_CHOICES = [
