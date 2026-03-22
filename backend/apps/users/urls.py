@@ -7,7 +7,8 @@ from .views import (
     AlumnoGrupoViewSet,
     RegistroAlumnoView,
     MeView,
-    PublicProfileView
+    PublicProfileView,
+    NotificacionViewSet
 )
 
 router = DefaultRouter()
@@ -15,6 +16,7 @@ router.register(r'users', UserViewSet, basename='user')
 router.register(r'carreras', CarreraViewSet, basename='carrera')
 router.register(r'alumno-perfiles', AlumnoPerfilViewSet, basename='alumno-perfil')
 router.register(r'alumno-grupos', AlumnoGrupoViewSet)
+router.register(r'notificaciones', NotificacionViewSet, basename='notificacion')
 
 urlpatterns = [
     path('users/registro/alumno/', RegistroAlumnoView.as_view(), name='registro_alumno'),

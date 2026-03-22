@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Carrera, AlumnoPerfil, AlumnoGrupo
+from .models import User, Carrera, AlumnoPerfil, AlumnoGrupo, Notificacion
 from django.db import transaction
 
 class UserSerializer(serializers.ModelSerializer):
@@ -171,5 +171,10 @@ class AdminUserManagementSerializer(serializers.ModelSerializer):
             else:
                 # Si el rol ya no es ALUMNO, opcionalmente borrar el perfil
                 AlumnoPerfil.objects.filter(usuario=instance).delete()
-
         return instance
+
+class NotificacionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notificacion
+        fields = '__all__'
+        read_only_fields = ['usuario', 'fecha_creacion']

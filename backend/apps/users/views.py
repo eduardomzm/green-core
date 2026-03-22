@@ -9,7 +9,8 @@ from .serializers import (
     AlumnoPerfilSerializer,
     AlumnoGrupoSerializer,
     RegistroAlumnoSerializer,
-    AdminUserManagementSerializer)
+    AdminUserManagementSerializer,
+    NotificacionSerializer)
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -316,3 +317,26 @@ class UserViewSet(viewsets.ModelViewSet):
         """
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
+
+class NotificacionViewSet(viewsets.ModelViewSet):
+    serializer_class = NotificacionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return self.request.user.notificaciones.all()
+
+    def perform_create(self, serializer):
+        serializer.save(usuario=self.request.user)
+
+    @action(detail=True, methods=['patch'])
+    def marcar_leida(self, request, pk=None):
+        notificacion = self.get_object()
+        notificacion.leida = True
+        notificacion.save()
+        return Response({"status": "Notificación marcada como leída"})
+
+    @action(detail=False, methods=['post'])
+    def marcar_todas_leidas(self, request):
+        notificaciones = self.get_queryset().filter(leida=False)
+        notificaciones.update(leida=True)
+        return Response({"status": "Todas las notificaciones marcadas como leídas"})
