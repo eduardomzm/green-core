@@ -1,5 +1,7 @@
-import { useState, useMemo } from "react";
-import { Search, Filter, Calendar, Recycle, User, Target } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { Search, Filter, Calendar, Recycle, User, Target, Users } from "lucide-react";
+import { Link } from "react-router-dom";
+import { buscarAlumnos } from "../../services/userService";
 import type { DashboardResponse, DepositoHistorial } from "../../types/dashboard.types";
 
 interface Props {
@@ -14,6 +16,30 @@ const MOCK_DEPOSITOS: DepositoHistorial[] = [
 const AlumnoDashboard = ({ data }: Props) => {
   const [filtroMaterial, setFiltroMaterial] = useState<string>("");
   const [filtroFecha, setFiltroFecha] = useState<string>("");
+  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      if (searchQuery.trim().length > 2) {
+        setIsSearching(true);
+        try {
+          const results = await buscarAlumnos(searchQuery);
+          setSearchResults(results);
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setIsSearching(false);
+        }
+      } else {
+        setSearchResults([]);
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
 
   const depositos = data.ultimos_depositos || MOCK_DEPOSITOS;
 
@@ -31,6 +57,58 @@ const AlumnoDashboard = ({ data }: Props) => {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       
+      {/* BUSCADOR DE ALUMNOS */}
+      <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm relative z-20">
+        <h2 className="text-lg font-bold text-textMain mb-4 flex items-center gap-2">
+          <Users className="w-5 h-5 text-blue-500" strokeWidth={2} />
+          Buscar Estudiantes
+        </h2>
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            placeholder="Escribe el nombre o usuario de otro alumno..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="block w-full pl-11 pr-10 py-3.5 border border-gray-200 rounded-2xl text-sm text-textMain focus:ring-blue-500 focus:border-blue-500 bg-gray-50/50 hover:bg-white transition-colors outline-none"
+          />
+          {isSearching && (
+            <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+              <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
+        </div>
+
+        {/* Dropdown de resultados */}
+        {searchResults.length > 0 && searchQuery.trim().length > 2 && (
+          <div className="absolute top-full left-6 right-6 mt-2 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
+            <ul className="max-h-80 overflow-y-auto divide-y divide-gray-50">
+              {searchResults.map((res: any) => (
+                <li key={res.username}>
+                  <Link 
+                    to={`/dashboard/perfil/${res.username}`}
+                    className="flex items-center gap-4 p-4 hover:bg-blue-50/50 transition-colors group"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform border border-gray-200">
+                      {/* Aquí idealmente renderizas dinámicamente si tienes AVATARS exportado, sino un placeholder */}
+                      <User className="w-full h-full p-2 text-gray-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                        {res.first_name} {res.primer_apellido}
+                      </h4>
+                      <p className="text-xs font-medium text-gray-500">@{res.username} {res.carrera ? `• ${res.carrera}` : ''}</p>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
       {/* META GLOBAL */}
       <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-8">
         <div className="flex-shrink-0 p-5 bg-green-50 rounded-2xl">

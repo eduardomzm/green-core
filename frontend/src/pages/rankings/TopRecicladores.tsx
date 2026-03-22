@@ -66,7 +66,7 @@ export default function TopRecicladores({ alumnos }: Props) {
                         </div>
 
                         {/* NOMBRE ENLACE */}
-                        <Link to={`/perfil/${alumno.alumno__username}`} className="font-semibold text-gray-800 hover:text-primary transition-colors block">
+                        <Link to={`/dashboard/perfil/${alumno.alumno__username}`} className="font-semibold text-gray-800 hover:text-primary transition-colors block">
                             {name}
                         </Link>
 

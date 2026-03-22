@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getPublicProfile, toggleSeguir } from "../services/userService";
-import type { User } from "../types/auth.types";
 import { useAuth } from "../hooks/useAuth";
 import { User as UserIcon, Award, Instagram, Twitter, Facebook, ChevronLeft, ShieldCheck } from "lucide-react";
 import * as LucideIcons from "lucide-react";

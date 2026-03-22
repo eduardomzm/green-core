@@ -292,7 +292,7 @@ class ToggleSeguirView(APIView):
                 titulo="¡Nuevo seguidor!",
                 mensaje=f"A {request.user.first_name} ({request.user.username}) le ha interesado tu perfil y ahora te sigue.",
                 tipo="INFO",
-                enlace=f"/perfil/{request.user.username}"
+                enlace=f"/dashboard/perfil/{request.user.username}"
             )
             return Response({"status": "followed"})
 

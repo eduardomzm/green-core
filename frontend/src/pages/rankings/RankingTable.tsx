@@ -41,7 +41,7 @@ export default function RankingTable({ alumnos }: Props) {
                                         </div>
                                     </td>
                                     <td className="py-5 px-2 sm:px-4">
-                                        <Link to={`/perfil/${item.alumno__username}`} className="text-gray-900 font-semibold text-lg hover:text-primary transition-colors">
+                                        <Link to={`/dashboard/perfil/${item.alumno__username}`} className="text-gray-900 font-semibold text-lg hover:text-primary transition-colors">
                                             {name}
                                         </Link>
                                     </td>
