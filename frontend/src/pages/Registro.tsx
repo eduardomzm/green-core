@@ -7,7 +7,7 @@ import { Modal } from '../components/common/Modal';
 import { TERMINOS_CONTENT, PRIVACIDAD_CONTENT } from '../constants/legalContent';
 import { parseBackendErrors } from '../utils/errorUtils';
 import type { FieldErrors } from '../utils/errorUtils';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, AlertCircle } from 'lucide-react';
 
 
 
@@ -37,6 +37,7 @@ export const Registro = () => {
   const [showPrivacidad, setShowPrivacidad] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [legalError, setLegalError] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -72,6 +73,12 @@ export const Registro = () => {
       setErrors({ confirmPassword: ["Las contraseñas no coinciden. Por favor, verifícalas."] });
       return;
     }
+
+    if (!aceptaTerminos || !aceptaPrivacidad) {
+      setLegalError(true);
+      return;
+    }
+    setLegalError(false);
 
 
 
@@ -249,14 +256,23 @@ export const Registro = () => {
           </div>
 
           {/* CASILLAS LEGALES (OBLIGATORIAS) */}
-          <div className="space-y-3 mt-6 mb-8 bg-gray-50 p-4 rounded-xl border border-gray-100">
+          <div className={`space-y-3 mt-6 mb-8 p-4 rounded-xl border transition-colors ${legalError ? 'bg-red-50/50 border-red-300' : 'bg-gray-50 border-gray-100'}`}>
+            
+            {legalError && (
+              <p className="text-red-500 text-xs font-bold mb-3 flex items-center gap-1.5 animate-in fade-in slide-in-from-top-2">
+                <AlertCircle className="w-4 h-4" /> Es indispensable aceptar los acuerdos legales antes de continuar.
+              </p>
+            )}
+
             <label className="flex items-start gap-3 cursor-pointer group">
               <div className="flex items-center h-5 mt-0.5">
                 <input
                   type="checkbox"
-                  required
                   checked={aceptaTerminos}
-                  onChange={(e) => setAceptaTerminos(e.target.checked)}
+                  onChange={(e) => {
+                    setAceptaTerminos(e.target.checked);
+                    if (e.target.checked && aceptaPrivacidad) setLegalError(false);
+                  }}
                   className="w-4 h-4 text-primary bg-white border-gray-300 rounded focus:ring-primary focus:ring-2 cursor-pointer"
                 />
               </div>
@@ -269,9 +285,11 @@ export const Registro = () => {
               <div className="flex items-center h-5 mt-0.5">
                 <input
                   type="checkbox"
-                  required
                   checked={aceptaPrivacidad}
-                  onChange={(e) => setAceptaPrivacidad(e.target.checked)}
+                  onChange={(e) => {
+                    setAceptaPrivacidad(e.target.checked);
+                    if (aceptaTerminos && e.target.checked) setLegalError(false);
+                  }}
                   className="w-4 h-4 text-secondary bg-white border-gray-300 rounded focus:ring-secondary focus:ring-2 cursor-pointer"
                 />
               </div>
