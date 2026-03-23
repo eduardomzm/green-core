@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { User as UserIcon, Mail, Lock, Eye, EyeOff, Save, AlertCircle, CheckCircle, Info, Settings } from "lucide-react";
+import { User as UserIcon, Mail, Lock, Eye, EyeOff, Save, AlertCircle, CheckCircle, Settings } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { updateMe } from "../services/userService";
 
@@ -109,25 +109,6 @@ export default function Perfil() {
     }
   };
 
-  const ReadOnlyField = ({ label, value }: { label: string; value?: string | null }) => (
-    <div className="space-y-1.5 group relative">
-      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">{label}</label>
-      <div className="relative">
-        <input
-          disabled
-          value={value || "—"}
-          className="w-full px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-100 text-sm font-medium text-gray-400 cursor-not-allowed"
-          readOnly
-        />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-          <Info className="w-4 h-4 text-gray-300" />
-        </div>
-      </div>
-      <div className="hidden group-hover:block absolute z-20 left-0 top-full mt-1.5 bg-gray-800 text-white text-xs rounded-xl px-3 py-2 shadow-lg max-w-xs w-max pointer-events-none transition-all pulse">
-        Si necesitas cambiar este dato contacta a tu administrador
-      </div>
-    </div>
-  );
 
   return (
     <div className="p-4 md:p-8 space-y-8 animate-in fade-in duration-500">
@@ -164,30 +145,6 @@ export default function Perfil() {
         {/* Columna Izquierda: Datos Personales */}
         <div className="lg:col-span-1 space-y-8 h-fit">
           {/* Datos personales (solo lectura) */}
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative">
-            <h3 className="text-lg font-bold text-textMain mb-6 flex items-center gap-2">
-              <UserIcon className="w-5 h-5 text-primary" />
-              Información Personal
-            </h3>
-
-            <div className="space-y-5">
-              <ReadOnlyField label="Nombre" value={user?.first_name} />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <ReadOnlyField label="Primer Apellido" value={user?.primer_apellido} />
-                <ReadOnlyField label="Segundo Apellido" value={user?.segundo_apellido} />
-              </div>
-              {user?.role === "ALUMNO" && (
-                <ReadOnlyField label="Matrícula" value={user?.matricula} />
-              )}
-            </div>
-
-            <div className="mt-8 p-4 bg-blue-50/50 rounded-2xl border border-blue-100">
-              <p className="text-xs text-blue-700 leading-relaxed">
-                <Info className="w-3.5 h-3.5 inline mr-1 mb-0.5" />
-                Los datos de identidad son validados por control escolar. Para correcciones, dirígete a las oficinas administrativas.
-              </p>
-            </div>
-          </div>
 
           {/* Selección de Avatar (NO ALUMNOS) */}
           {user?.role !== 'ALUMNO' && (
