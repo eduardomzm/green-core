@@ -9,7 +9,8 @@ from django.db import models
 from django.dispatch import receiver
 from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
-from django.core.mail import send_mail  
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 
 class User(AbstractUser):
@@ -108,28 +109,35 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
         
     reset_password_url = f"https://www.greencore.com.mx/restablecer-contrasena?token={reset_password_token.key}"
 
-    # Construimos el correo
-    email_subject = "Recuperación de Contraseña - Green Core"
-    email_body = f"Hola {reset_password_token.user.first_name},\n\n" \
-                 f"Has solicitado restablecer tu contraseña en Green Core.\n" \
-                 f"Haz clic en el siguiente enlace para crear una nueva contraseña:\n\n" \
-                 f"{reset_password_url}\n\n" \
-                 f"Si no solicitaste este cambio, ignora este correo.\n\n" \
-                 f"Equipo Green Core"
+    # Contexto para el correo
+    context = {
+        'user': reset_password_token.user,
+        'reset_url': reset_password_url,
+    }
 
+    # Renderizamos el contenido HTML y texto plano
+    email_html_body = render_to_string('emails/password_reset.html', context)
     
+    email_subject = "Recuperación de Contraseña - Green Core"
+    email_text_body = f"Hola {reset_password_token.user.first_name},\n\n" \
+                     f"Has solicitado restablecer tu contraseña en Green Core.\n" \
+                     f"Haz clic en el siguiente enlace para crear una nueva contraseña:\n\n" \
+                     f"{reset_password_url}\n\n" \
+                     f"Si no solicitaste este cambio, ignora este correo.\n\n" \
+                     f"Equipo Green Core"
+
     try:
         send_mail(
             subject=email_subject,
-            message=email_body,
+            message=email_text_body,
             from_email=None, 
             recipient_list=[reset_password_token.user.email],
+            html_message=email_html_body,
             fail_silently=False
         )
         logger.info(f"Correo de recuperación enviado exitosamente a {reset_password_token.user.email}")
     except Exception as e:
         logger.error(f"Error al enviar correo de recuperación a {reset_password_token.user.email}: {str(e)}")
-        # Re-lanzamos el error para que sepamos qué falló, o podemos manejarlo
         raise e
 
 class Notificacion(models.Model):
