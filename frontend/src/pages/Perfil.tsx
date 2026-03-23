@@ -59,6 +59,23 @@ export default function Perfil() {
     }
   }, [user]);
 
+  const handleAvatarSelect = async (avatarId: string) => {
+    setSelectedAvatar(avatarId);
+    setMsg({ text: "", type: "" });
+    
+    try {
+      setSaving(true);
+      await updateMe({ avatar: avatarId });
+      await refreshUser();
+      setMsg({ text: "¡Avatar actualizado correctamente!", type: "success" });
+      setTimeout(() => setMsg({ text: "", type: "" }), 3000);
+    } catch (err: any) {
+      setMsg({ text: "Error al guardar el avatar.", type: "error" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleSubmit = async () => {
     setSaving(true);
     setErrors({});
@@ -193,7 +210,7 @@ export default function Perfil() {
                 {AVATARS.map((avatar) => (
                   <button
                     key={avatar.id}
-                    onClick={() => setSelectedAvatar(avatar.id)}
+                    onClick={() => handleAvatarSelect(avatar.id)}
                     className={`relative aspect-square rounded-2xl overflow-hidden border-2 transition-all group ${selectedAvatar === avatar.id
                       ? 'border-primary ring-4 ring-primary/10 shadow-lg'
                       : 'border-transparent hover:border-gray-200 bg-gray-50'
