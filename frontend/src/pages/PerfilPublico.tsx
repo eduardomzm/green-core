@@ -90,7 +90,7 @@ export default function PerfilPublico() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in zoom-in-95 duration-500 pb-20">
-      
+
       {/* Header Info */}
       <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 relative overflow-hidden">
         {/* Abstract background blobs */}
@@ -131,7 +131,7 @@ export default function PerfilPublico() {
               <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-bold tracking-wider uppercase">
                 {roleLabel}
               </span>
-              
+
               {isAlumno && (
                 <>
                   <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold tracking-wider">
@@ -146,13 +146,12 @@ export default function PerfilPublico() {
 
             {isAlumno && currentUser?.username !== profile.username && currentUser?.role === 'ALUMNO' && (
               <div className="flex justify-center md:justify-start pt-2">
-                <button 
+                <button
                   onClick={handleToggleSeguir}
-                  className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${
-                    profile.lo_sigo 
-                      ? 'bg-gray-100 hover:bg-red-50 text-gray-700 hover:text-red-600' 
-                      : 'bg-primary hover:bg-primary/90 text-white shadow-md shadow-primary/20 hover:shadow-primary/40'
-                  }`}
+                  className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${profile.lo_sigo
+                    ? 'bg-gray-100 hover:bg-red-50 text-gray-700 hover:text-red-600'
+                    : 'bg-primary hover:bg-primary/90 text-white shadow-md shadow-primary/20 hover:shadow-primary/40'
+                    }`}
                 >
                   {profile.lo_sigo ? 'Dejar de seguir' : 'Seguir'}
                 </button>
@@ -189,6 +188,47 @@ export default function PerfilPublico() {
         </div>
       </div>
 
+      {/* Gamification Section (Only for Alumnos) */}
+      {isAlumno && (
+        <div className="grid grid-cols-1 gap-6">
+          <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 relative overflow-hidden">
+            <h3 className="text-xl font-black text-gray-900 mb-6 flex items-center gap-3">
+              <Award className="w-6 h-6 text-yellow-500" />
+              Vitrina de Medallas
+            </h3>
+
+            {(!profile.medallas || profile.medallas.length === 0) ? (
+              <div className="text-center py-12 px-4 bg-gray-50/50 rounded-3xl border border-gray-100 border-dashed">
+                <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                  <Award className="w-8 h-8 text-gray-300" />
+                </div>
+                <h4 className="text-lg font-bold text-gray-500 mb-1">Aún no hay medallas</h4>
+                <p className="text-sm text-gray-400 max-w-sm mx-auto">Este usuario no cuenta con medallas.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {profile.medallas.map((m: any) => (
+                  <div key={m.id} className="group flex flex-col items-center p-6 bg-gradient-to-b from-yellow-50/50 to-white rounded-[2rem] border border-yellow-100 hover:border-yellow-300 hover:shadow-xl hover:shadow-yellow-500/10 transition-all duration-300 cursor-default relative overflow-hidden">
+                    <div className="absolute inset-0 bg-yellow-400 opacity-0 group-hover:opacity-[0.03] transition-opacity"></div>
+                    <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-500/30 mb-4 transform group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300">
+                      <DynamicIcon name={m.medalla.icono_lucide} className="w-8 h-8 drop-shadow-md" />
+                    </div>
+                    <p className="font-extrabold text-sm text-gray-900 text-center leading-tight mb-1">{m.medalla.nombre}</p>
+                    <p className="text-[10px] uppercase font-black tracking-widest text-orange-500/80">{m.mes_obtenida}</p>
+
+                    {/* Tooltip */}
+                    <div className="absolute pointer-events-none opacity-0 group-hover:opacity-100 z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-gray-900 text-white text-xs rounded-xl p-3 shadow-xl transition-opacity">
+                      {m.medalla.descripcion}
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Stats Section (Alumnos) */}
       {isAlumno && (
         <div className="grid grid-cols-2 md:grid-cols-2 gap-6 relative z-10">
@@ -208,47 +248,8 @@ export default function PerfilPublico() {
           </div>
         </div>
       )}
-
-      {/* Gamification Section (Only for Alumnos) */}
-      {isAlumno && (
-        <div className="grid grid-cols-1 gap-6">
-          <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 relative overflow-hidden">
-            <h3 className="text-xl font-black text-gray-900 mb-6 flex items-center gap-3">
-              <Award className="w-6 h-6 text-yellow-500" />
-              Vitrina de Trofeos
-            </h3>
-
-            {(!profile.medallas || profile.medallas.length === 0) ? (
-              <div className="text-center py-12 px-4 bg-gray-50/50 rounded-3xl border border-gray-100 border-dashed">
-                <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                  <Award className="w-8 h-8 text-gray-300" />
-                </div>
-                <h4 className="text-lg font-bold text-gray-500 mb-1">Aún no hay medallas</h4>
-                <p className="text-sm text-gray-400 max-w-sm mx-auto">Participa en las dinámicas de reciclaje para ganar medallas mensuales y destacar en la comunidad.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                {profile.medallas.map((m: any) => (
-                  <div key={m.id} className="group flex flex-col items-center p-6 bg-gradient-to-b from-yellow-50/50 to-white rounded-[2rem] border border-yellow-100 hover:border-yellow-300 hover:shadow-xl hover:shadow-yellow-500/10 transition-all duration-300 cursor-default relative overflow-hidden">
-                    <div className="absolute inset-0 bg-yellow-400 opacity-0 group-hover:opacity-[0.03] transition-opacity"></div>
-                    <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-500/30 mb-4 transform group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300">
-                      <DynamicIcon name={m.medalla.icono_lucide} className="w-8 h-8 drop-shadow-md" />
-                    </div>
-                    <p className="font-extrabold text-sm text-gray-900 text-center leading-tight mb-1">{m.medalla.nombre}</p>
-                    <p className="text-[10px] uppercase font-black tracking-widest text-orange-500/80">{m.mes_obtenida}</p>
-                    
-                    {/* Tooltip */}
-                    <div className="absolute pointer-events-none opacity-0 group-hover:opacity-100 z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-gray-900 text-white text-xs rounded-xl p-3 shadow-xl transition-opacity">
-                      {m.medalla.descripcion}
-                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
+
+
   );
 }

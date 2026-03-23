@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { User as UserIcon, Save, AlertCircle, CheckCircle, Pencil, Share2, Instagram, Twitter, Facebook, X, Users, Award } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { updateMe, getMisSeguidores, getMisSiguiendo, toggleSeguir } from "../services/userService";
@@ -10,6 +11,13 @@ interface FormState {
   twitter: string;
   facebook: string;
 }
+
+// Helper to dynamically render a Lucide icon by name
+const DynamicIcon = ({ name, className }: { name: string, className?: string }) => {
+  const IconComponent = (LucideIcons as any)[name];
+  if (!IconComponent) return <Award className={className} />;
+  return <IconComponent className={className} />;
+};
 
 const AVATARS = [
   { id: 'default', url: '/src/assets/img/logo.jpeg', label: 'Bote' },
@@ -206,23 +214,42 @@ export default function MiPerfil() {
         </div>
       </div>
 
-      {/* Seccion Medallas */}
-      {user?.medallas && user.medallas.length > 0 && (
-        <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 relative z-10">
-          <h3 className="text-xl font-bold text-gray-900 flex items-center gap-3 mb-6">
-            <div className="p-2.5 bg-yellow-50 text-yellow-500 rounded-xl">
+      {/* Seccion Medallas / Vitrina de Trofeos */}
+      {user?.role === 'ALUMNO' && (
+        <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 relative z-10 overflow-hidden">
+          {/* Decorative background for the section */}
+          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-yellow-400/5 rounded-full blur-3xl pointer-events-none"></div>
+          
+          <h3 className="text-xl font-black text-gray-900 flex items-center gap-3 mb-8">
+            <div className="p-2.5 bg-yellow-400/10 text-yellow-600 rounded-2xl rotate-3">
               <Award className="w-5 h-5" />
             </div>
-            Mis Medallas
+            Vitrina de Trofeos
           </h3>
-          <div className="flex flex-wrap gap-4">
-            {user.medallas.map((m: any) => (
-              <div key={m.id} className="group relative flex flex-col items-center justify-center bg-gray-50 border border-gray-100 rounded-2xl p-4 min-w-[100px] hover:border-yellow-300 hover:bg-yellow-50/50 transition-colors cursor-default">
-                <span className="text-4xl drop-shadow-md group-hover:scale-110 transition-transform">{m.medalla.icono_lucide}</span>
-                <span className="text-xs font-bold text-gray-600 mt-2 text-center break-words max-w-[80px] leading-tight group-hover:text-yellow-700">{m.medalla.nombre}</span>
+
+          {!user?.medallas || user.medallas.length === 0 ? (
+            <div className="text-center py-12 px-6 bg-gray-50/50 rounded-3xl border border-gray-100 border-dashed relative z-10">
+              <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                <Award className="w-8 h-8 text-gray-300" />
               </div>
-            ))}
-          </div>
+              <h4 className="text-lg font-bold text-gray-500 mb-1">Aún no hay medallas</h4>
+              <p className="text-sm text-gray-400 max-w-sm mx-auto">
+                Participa en las dinámicas de reciclaje para ganar medallas mensuales y destacar en la comunidad.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-4 relative z-10">
+              {user.medallas.map((m: any) => (
+                <div key={m.id} className="group relative flex flex-col items-center p-6 bg-gradient-to-b from-yellow-50/30 to-white rounded-[2rem] border border-yellow-100/50 hover:border-yellow-300 hover:shadow-xl hover:shadow-yellow-500/10 transition-all duration-300 cursor-default">
+                  <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-500/20 mb-4 transform group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
+                    <DynamicIcon name={m.medalla.icono_lucide} className="w-8 h-8 drop-shadow-md" />
+                  </div>
+                  <p className="font-extrabold text-sm text-gray-900 text-center leading-tight mb-1">{m.medalla.nombre}</p>
+                  <p className="text-[10px] uppercase font-black tracking-widest text-orange-500/70">{m.mes_obtenida}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
