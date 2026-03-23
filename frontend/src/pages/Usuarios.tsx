@@ -249,7 +249,6 @@ const Usuarios = () => {
                         </div>
                         <div>
                           <p className="font-bold text-textMain">{u.username}</p>
-                          <p className="text-xs text-gray-400">#{u.id}</p>
                         </div>
                       </div>
                     </td>
