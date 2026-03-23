@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Target, CheckCircle, Clock, Calendar, Filter, User } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Target, CheckCircle, Clock, Calendar, Filter, User, Plus, X, AlertCircle } from "lucide-react";
 import api from "../services/api";
+import { getMateriales, createMeta, type Material } from "../services/reciclajeService";
 
 interface Meta {
   id: number;
@@ -22,19 +23,51 @@ export default function Metas() {
   const [tab, setTab] = useState<"SISTEMA" | "ALUMNOS">("SISTEMA");
   const [filter, setFilter] = useState<"TODAS" | "CUMPLIDAS" | "PROGRESO">("TODAS");
 
+  const [materiales, setMateriales] = useState<Material[]>([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [metaForm, setMetaForm] = useState({ nombre: "", material: "", cantidad_meta: "" });
+  const [metaMsg, setMetaMsg] = useState({ text: "", type: "" });
+
   const fetchMetas = async () => {
     try {
-      setLoading(true);
-      const [resSist, resAlum] = await Promise.all([
+      if (loading) setLoading(true); // Only show global loader on initial fetch
+      const [resSist, resAlum, matData] = await Promise.all([
         api.get("metas-sistema/"),
         api.get("metas-alumnos/"),
+        getMateriales()
       ]);
       setMetasSistema(resSist.data);
       setMetasAlumnos(resAlum.data);
+      setMateriales(matData);
     } catch (error) {
       console.error("Error al cargar metas:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleMetaSubmit = async () => {
+    if (!metaForm.nombre || !metaForm.cantidad_meta || !metaForm.material) return;
+    setMetaMsg({ text: "Configurando...", type: "loading" });
+
+    try {
+      await createMeta({
+        nombre: metaForm.nombre,
+        material: parseInt(metaForm.material),
+        cantidad_meta: parseInt(metaForm.cantidad_meta),
+        activa: true
+      });
+      setMetaMsg({ text: "¡Meta global actualizada! ", type: "success" });
+      setMetaForm({ nombre: "", material: "", cantidad_meta: "" });
+      
+      await fetchMetas();
+
+      setTimeout(() => {
+        setMetaMsg({ text: "", type: "" });
+        setIsFormOpen(false);
+      }, 3000);
+    } catch (error) {
+      setMetaMsg({ text: "Error al actualizar la meta.", type: "error" });
     }
   };
 
@@ -59,7 +92,95 @@ export default function Metas() {
           </h2>
           <p className="text-gray-500 mt-1">Monitorea el cumplimiento de objetivos del sistema y de alumnos.</p>
         </div>
+
+        <button
+          onClick={() => setIsFormOpen(!isFormOpen)}
+          className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm transition-all shadow-lg ${isFormOpen ? 'bg-red-50 text-red-600 hover:bg-red-100 shadow-red-100' : 'bg-primary text-white hover:bg-green-600 shadow-primary/20'}`}
+        >
+          {isFormOpen ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+          {isFormOpen ? "Cancelar" : "Nueva Meta"}
+        </button>
       </div>
+
+      {/* New Meta Form */}
+      <AnimatePresence>
+        {isFormOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-white p-6 rounded-3xl shadow-sm border border-primary/20 relative"
+          >
+            <h3 className="text-lg font-bold text-textMain mb-6 flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <Target className="w-5 h-5 text-accent" />
+                Configurar Nueva Meta Global
+              </span>
+              {metaMsg.text && (
+                <span className={`text-xs px-3 py-1.5 rounded-xl font-bold ${metaMsg.type === 'success' ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>
+                  {metaMsg.text}
+                </span>
+              )}
+            </h3>
+            
+            <form className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">Nombre de Campaña</label>
+                <input
+                  type="text"
+                  value={metaForm.nombre}
+                  onChange={(e) => setMetaForm({ ...metaForm, nombre: e.target.value })}
+                  placeholder="Ej: Gran Recolecta"
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-100 focus:ring-2 focus:ring-primary/20 outline-none text-sm bg-gray-50/50"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">Material</label>
+                <select
+                  value={metaForm.material}
+                  onChange={(e) => setMetaForm({ ...metaForm, material: e.target.value })}
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-100 focus:ring-2 focus:ring-primary/20 outline-none text-sm bg-gray-50/50 appearance-none"
+                >
+                  <option value="">Seleccione...</option>
+                  {materiales.map((m) => (
+                    <option key={m.id} value={m.id}>{m.nombre} ({m.unidad})</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest">Cantidad Meta (pzs)</label>
+                <input
+                  type="number"
+                  value={metaForm.cantidad_meta}
+                  onChange={(e) => setMetaForm({ ...metaForm, cantidad_meta: e.target.value })}
+                  placeholder="0"
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-100 focus:ring-2 focus:ring-primary/20 outline-none text-sm bg-gray-50/50"
+                />
+              </div>
+
+              <div className="md:col-span-3 flex justify-end pt-2">
+                <button
+                  type="button"
+                  onClick={handleMetaSubmit}
+                  disabled={!metaForm.nombre || !metaForm.cantidad_meta || !metaForm.material || metaMsg.type === 'loading'}
+                  className="px-10 py-3 rounded-2xl bg-primary hover:bg-green-600 text-white font-black text-sm transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
+                >
+                  {metaMsg.type === 'loading' ? 'Procesando...' : 'Activar Nueva Meta'}
+                </button>
+              </div>
+            </form>
+
+            <div className="mt-6 flex items-center gap-2 bg-gray-50 p-3 rounded-xl border border-gray-100">
+              <AlertCircle className="w-4 h-4 text-gray-400" />
+              <p className="text-[10px] text-gray-400 italic">
+                * Al activar una nueva meta para un material, si existiera una anterior sin cumplir para ese mismo material, se mantendrá el historial pero la nueva será la prioritaria.
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Tabs & Filters */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-2 rounded-2xl border border-gray-100 shadow-sm">
