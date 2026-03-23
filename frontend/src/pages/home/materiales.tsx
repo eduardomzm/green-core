@@ -5,7 +5,12 @@ export default function Materiales() {
 
     const renderParticles = (Icon: any, colorClass: String) => {
         return (
-            <div className="absolute inset-0 z-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700 overflow-hidden">
+            <motion.div 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: false, amount: 0.5 }}
+                className="absolute inset-0 z-0 pointer-events-none md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-700 overflow-hidden"
+            >
                 {[...Array(6)].map((_, i) => (
                     <motion.div
                         key={i}
@@ -28,7 +33,7 @@ export default function Materiales() {
                         <Icon className="w-5 h-5" />
                     </motion.div>
                 ))}
-            </div>
+            </motion.div>
         );
     };
 
