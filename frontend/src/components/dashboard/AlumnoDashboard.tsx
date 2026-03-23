@@ -112,52 +112,57 @@ const AlumnoDashboard = ({ data, user }: Props) => {
         )}
       </div>
 
-      {/* TU PROGRESO PERSONAL - Solo se muestra si tiene meta del tutor */}
-      {metaAlumno && (
-        <div className="glass-panel p-8 rounded-3xl flex flex-col md:flex-row items-center gap-8 animate-in fade-in slide-in-from-top-2 duration-500">
-          <div className="flex-shrink-0 p-5 bg-green-50 rounded-2xl">
-            <Target className="w-10 h-10 text-primary" strokeWidth={2} />
-          </div>
-          <div className="flex-1 w-full">
-            <h2 className="text-lg font-bold text-textMain mb-2">Tu Progreso de Reciclaje</h2>
-            <div className="flex justify-between text-sm text-gray-500 mb-2 font-medium">
-              <span>{data.progreso.actual} piezas aportadas</span>
-              <span>Meta: {data.progreso.meta}</span>
+      {/* RACHA SEMANAL DEL MES ACTUAL */}
+      <div className="glass-panel p-8 rounded-3xl flex flex-col md:flex-row items-center gap-8 animate-in fade-in slide-in-from-top-2 duration-500">
+        <div className="flex-shrink-0 p-5 bg-orange-50 rounded-2xl">
+          <Flame className="w-10 h-10 text-orange-500 fill-orange-500" strokeWidth={2} />
+        </div>
+        <div className="flex-1 w-full">
+          <div className="flex justify-between items-end mb-4">
+            <div>
+              <h2 className="text-xl font-black text-gray-900 leading-tight">Tu Racha de Reciclaje</h2>
+              <p className="text-sm font-medium text-gray-500 mt-1">Recicla al menos una vez por semana para mantener tu racha activa.</p>
             </div>
-            <div className="w-full bg-background rounded-full h-3 overflow-hidden border border-gray-100">
-              <div 
-                className="bg-primary h-3 rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
-                style={{ width: `${Math.min(data.progreso.porcentaje, 100)}%` }}
-              >
-                <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+            <div className="text-right flex flex-col items-end">
+              <span className="text-3xl font-black text-orange-600 leading-none">{user?.racha_actual || 0}</span>
+              <span className="text-[10px] font-black text-orange-400 uppercase tracking-widest mt-1">Semanas Seguidas</span>
+            </div>
+          </div>
+
+          {/* Grilla de Semanas */}
+          <div className="grid grid-cols-5 gap-4">
+            {data.semanas_racha?.map((semana) => (
+              <div key={semana.n_semana} className="flex flex-col items-center gap-2">
+                <motion.div 
+                  initial={false}
+                  animate={semana.activa ? { 
+                    scale: [1, 1.1, 1],
+                    filter: ["drop-shadow(0 0 0px #f97316)", "drop-shadow(0 0 8px #f97316)", "drop-shadow(0 0 0px #f97316)"]
+                  } : {}}
+                  transition={{ repeat: Infinity, duration: 3 }}
+                  className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center border-2 transition-all duration-300 relative ${
+                    semana.activa 
+                      ? "bg-orange-50 border-orange-200 text-orange-500 shadow-lg shadow-orange-500/10" 
+                      : semana.es_actual 
+                        ? "bg-gray-50 border-gray-200 text-gray-300 border-dashed"
+                        : "bg-gray-50 border-gray-100 text-gray-200"
+                  }`}
+                >
+                  <Flame className={`w-6 h-6 md:w-8 md:h-8 ${semana.activa ? "fill-orange-500" : "fill-transparent opacity-30"}`} />
+                  {semana.es_actual && !semana.activa && (
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-white animate-pulse"></div>
+                  )}
+                </motion.div>
+                <div className="text-center">
+                  <span className={`text-[10px] font-black uppercase tracking-tighter ${semana.es_actual ? 'text-blue-500' : 'text-gray-400'}`}>
+                    Sem {semana.n_semana}
+                  </span>
+                </div>
               </div>
-            </div>
-            <p 
-              onClick={() => data.progreso.porcentaje >= 100 && triggerConfettiPride()}
-              className={`text-right text-xs font-bold mt-2 flex items-center justify-end gap-1 ${data.progreso.porcentaje >= 100 ? 'text-primary cursor-pointer hover:scale-110 transition-transform' : 'text-primary'}`}
-            >
-              {data.progreso.porcentaje >= 100 && <PartyPopper className="w-3 h-3" />}
-              {data.progreso.porcentaje}% Completado
-            </p>
-          </div>
-          
-          {/* Tarjeta de Racha */}
-          <div className="flex flex-col items-center justify-center p-4 bg-orange-50 rounded-2xl border border-orange-100 min-w-[120px] relative overflow-hidden group">
-            <motion.div
-              animate={{ 
-                scale: [1, 1.1, 1],
-                filter: ["drop-shadow(0 0 0px #f97316)", "drop-shadow(0 0 8px #f97316)", "drop-shadow(0 0 0px #f97316)"]
-              }}
-              transition={{ repeat: Infinity, duration: 2 }}
-              className="text-orange-500 mb-1"
-            >
-              <Flame className="w-8 h-8 fill-orange-500" />
-            </motion.div>
-            <span className="text-2xl font-black text-gray-900 leading-none">{user?.racha_actual || 0}</span>
-            <span className="text-[10px] font-bold text-orange-600 uppercase tracking-tight">Racha Semanal</span>
+            ))}
           </div>
         </div>
-      )}
+      </div>
 
       {/* META ASIGNADA POR TUTOR (si existe) */}
       {metaAlumno && (

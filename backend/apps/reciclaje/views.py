@@ -1,4 +1,5 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
+import calendar
 from urllib import request
 
 from apps.users.models import AlumnoGrupo
@@ -354,7 +355,8 @@ class DashboardView(APIView):
             "por_material": por_material,
             "ultimos_depositos": ultimos_depositos,
             "ultimos_usuarios": ultimos_usuarios,
-            "meta_alumno": self._get_meta_alumno(user)
+            "meta_alumno": self._get_meta_alumno(user),
+            "semanas_racha": self._get_semanas_racha(user)
         })
 
     def _get_meta_alumno(self, user):
@@ -373,6 +375,42 @@ class DashboardView(APIView):
             "actual": depositos_material,
             "porcentaje": porcentaje,
         }
+
+    def _get_semanas_racha(self, user):
+        if user.role != 'ALUMNO':
+            return []
+        
+        now = timezone.now()
+        year = now.year
+        month = now.month
+        
+        cal = calendar.Calendar(firstweekday=0) # Monday start like ISO
+        month_weeks = cal.monthdatescalendar(year, month)
+        
+        # Filtrar semanas que tienen al menos un día en el mes actual
+        weeks_data = []
+        for i, week in enumerate(month_weeks):
+            if any(d.month == month for d in week):
+                inicio = week[0]
+                fin = week[6]
+                
+                # Buscar si hay depósitos en este rango de fechas
+                tiene_deposito = Deposito.objects.filter(
+                    alumno=user,
+                    fecha__date__range=[inicio, fin]
+                ).exists()
+                
+                # Determinar si es la semana actual
+                es_actual = any(d == now.date() for d in week)
+                
+                weeks_data.append({
+                    "n_semana": i + 1,
+                    "inicio": inicio.isoformat(),
+                    "fin": fin.isoformat(),
+                    "activa": tiene_deposito,
+                    "es_actual": es_actual
+                })
+        return weeks_data
 
 
 class RankingsView(APIView):

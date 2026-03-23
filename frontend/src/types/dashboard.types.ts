@@ -44,6 +44,14 @@ export interface UsuarioHistorial {
   date_joined: string;
 }
 
+export interface SemanaRacha {
+  n_semana: number;
+  inicio: string;
+  fin: string;
+  activa: boolean;
+  es_actual: boolean;
+}
+
 export interface DashboardResponse {
   estadisticas: Estadisticas;
   progreso: Progreso;
@@ -51,4 +59,5 @@ export interface DashboardResponse {
   ultimos_depositos?: DepositoHistorial[];
   ultimos_usuarios?: UsuarioHistorial[];
   meta_alumno?: MetaAlumnoData | null;
+  semanas_racha?: SemanaRacha[];
 }
