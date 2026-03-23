@@ -279,13 +279,16 @@ export default function MiPerfil() {
                 <Instagram className="w-4 h-4 text-pink-500" />
                 Instagram
               </label>
-              <input
-                type="text"
-                value={form.instagram}
-                onChange={e => setForm({ ...form, instagram: e.target.value })}
-                placeholder="@usuario"
-                className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 text-sm outline-none transition-all focus:ring-4 focus:ring-pink-500/10 focus:border-pink-500 bg-gray-50 hover:bg-white"
-              />
+              <div className="relative flex items-center">
+                <span className="absolute left-5 text-gray-400 font-bold text-sm pointer-events-none">@</span>
+                <input
+                  type="text"
+                  value={form.instagram}
+                  onChange={e => setForm({ ...form, instagram: e.target.value.replace(/@/g, '') })}
+                  placeholder="usuario"
+                  className="w-full pl-10 pr-5 py-3.5 rounded-2xl border border-gray-200 text-sm outline-none transition-all focus:ring-4 focus:ring-pink-500/10 focus:border-pink-500 bg-gray-50 hover:bg-white"
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -293,13 +296,16 @@ export default function MiPerfil() {
                 <Twitter className="w-4 h-4 text-sky-500" />
                 Twitter
               </label>
-              <input
-                type="text"
-                value={form.twitter}
-                onChange={e => setForm({ ...form, twitter: e.target.value })}
-                placeholder="@usuario"
-                className="w-full px-5 py-3.5 rounded-2xl border border-gray-200 text-sm outline-none transition-all focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 bg-gray-50 hover:bg-white"
-              />
+              <div className="relative flex items-center">
+                <span className="absolute left-5 text-gray-400 font-bold text-sm pointer-events-none">@</span>
+                <input
+                  type="text"
+                  value={form.twitter}
+                  onChange={e => setForm({ ...form, twitter: e.target.value.replace(/@/g, '') })}
+                  placeholder="usuario"
+                  className="w-full pl-10 pr-5 py-3.5 rounded-2xl border border-gray-200 text-sm outline-none transition-all focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 bg-gray-50 hover:bg-white"
+                />
+              </div>
             </div>
 
             <div className="space-y-2 md:col-span-2">
