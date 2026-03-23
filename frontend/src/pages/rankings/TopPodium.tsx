@@ -65,7 +65,7 @@ export default function TopPodium({ data }: Props) {
                     {item.name}
                 </h3>
                 <p className={`mt-2 font-black text-sm sm:text-xl ${iconColor}`}>
-                    {item.value.toLocaleString()} <span className="text-[10px] sm:text-xs font-bold text-gray-500 lowercase">pts</span>
+                    {item.value.toLocaleString()} <span className="text-[10px] sm:text-xs font-bold text-gray-500 lowercase">pzs</span>
                 </p>
                 <div className={`mt-auto mb-2 text-4xl sm:text-6xl font-black ${iconColor} opacity-20 absolute bottom-0 sm:bottom-2`}>
                     {position}

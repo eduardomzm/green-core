@@ -33,7 +33,7 @@ export default function RankingList({ data, startIndex = 4 }: Props) {
                             </span>
                         </div>
                         <div className="font-black text-primary text-sm sm:text-lg bg-green-50 px-3 sm:px-4 py-1 sm:py-2 rounded-xl">
-                            {item.value.toLocaleString()} <span className="text-[10px] sm:text-xs font-bold text-green-600/70 lowercase">pts</span>
+                            {item.value.toLocaleString()} <span className="text-[10px] sm:text-xs font-bold text-green-600/70 lowercase">pzs</span>
                         </div>
                     </>
                 );

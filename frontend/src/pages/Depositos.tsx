@@ -246,7 +246,7 @@ const Depositos = () => {
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-2 tracking-wider">3. Cantidad</label>
                 <input 
-                  type="number" min="1" placeholder="Cantidad de piezas o kg"
+                  type="number" min="1" placeholder="Cantidad de piezas"
                   value={depositoForm.cantidad}
                   onChange={(e) => setDepositoForm({...depositoForm, cantidad: e.target.value})}
                   className="w-full px-5 py-3.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-secondary outline-none text-sm bg-background/50 hover:bg-white transition-colors" 

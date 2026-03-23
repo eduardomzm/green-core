@@ -68,7 +68,7 @@ const Administracion = () => {
       });
       setMetaMsg({ text: "¡Meta global actualizada! ", type: "success" });
       setMetaForm({ nombre: "", material: "", cantidad_meta: "" });
-      
+
       const metasData = await getMetasSistema();
       setMetasSistema(metasData.filter((m: MetaSistema) => m.activa));
 
@@ -135,7 +135,7 @@ const Administracion = () => {
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Nombre del Material</label>
               <input
                 type="text"
-                placeholder="Ej. PET, Aluminio, Vidrio..."
+                placeholder=""
                 value={materialForm.nombre}
                 onChange={(e) => setMaterialForm({ ...materialForm, nombre: e.target.value })}
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-secondary outline-none text-sm bg-background/50"
@@ -150,7 +150,6 @@ const Administracion = () => {
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-secondary outline-none text-sm bg-background/50 appearance-none"
               >
                 <option value="pieza">Por Pieza</option>
-                <option value="kg">Por Kilogramo</option>
               </select>
             </div>
 
@@ -194,7 +193,7 @@ const Administracion = () => {
               <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Nombre de la Campaña</label>
               <input
                 type="text"
-                placeholder="Ej. Reciclatón Octubre 2024"
+                placeholder=""
                 value={metaForm.nombre}
                 onChange={(e) => setMetaForm({ ...metaForm, nombre: e.target.value })}
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent outline-none text-sm bg-background/50"
@@ -214,7 +213,7 @@ const Administracion = () => {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Cantidad a lograr (piezas/kg)</label>
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Cantidad a lograr (piezas)</label>
               <input
                 type="number"
                 min="1"
@@ -247,7 +246,7 @@ const Administracion = () => {
                     <span className="text-sm font-bold text-gray-800">{m.nombre}</span>
                   </div>
                   <span className="text-sm font-black text-accent bg-orange-100 px-3 py-1 rounded-lg">
-                    {m.cantidad_meta.toLocaleString()} pts
+                    {m.cantidad_meta.toLocaleString()} pzs
                   </span>
                 </div>
               )) : (
