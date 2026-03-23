@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
-import { FileText, Download, Calendar, Loader2, Trophy, Users, GraduationCap } from "lucide-react";
+import { FileText, Download, Calendar, Loader2, Trophy, Users, GraduationCap, FileSpreadsheet } from "lucide-react";
 import { getRankings, type RankingsResponse } from "../services/reciclajeService";
+import { useAuth } from "../hooks/useAuth";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import * as XLSX from 'xlsx';
 
 const Estadisticas = () => {
+  const { user } = useAuth();
   const [selectedMonth, setSelectedMonth] = useState<string>(() => {
     const now = new Date();
     // Valor inicial: Mes pasado
@@ -17,6 +20,7 @@ const Estadisticas = () => {
   const [data, setData] = useState<RankingsResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [generatingExcel, setGeneratingExcel] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,6 +44,7 @@ const Estadisticas = () => {
     try {
       const doc = new jsPDF();
       const pageWidth = doc.internal.pageSize.width;
+      const title = user?.role === 'TUTOR' ? "Reporte Mensual de Grupo" : "Reporte Mensual Global";
       
       // -- HEADER --
       // Logo o Rectángulo de acento
@@ -47,13 +52,13 @@ const Estadisticas = () => {
       doc.rect(0, 0, pageWidth, 40, 'F');
       
       doc.setTextColor(255, 255, 255);
-      doc.setFontSize(24);
+      doc.setFontSize(22);
       doc.setFont("helvetica", "bold");
-      doc.text("Green Core - Reporte Mensual", 20, 25);
+      doc.text(`Green Core - ${title}`, 20, 25);
       
       doc.setFontSize(12);
       doc.setFont("helvetica", "normal");
-      doc.text(`Corte de reciclaje: ${selectedMonth}`, 20, 33);
+      doc.text(`Periodo: ${selectedMonth}`, 20, 33);
 
       let currentY = 50;
 
@@ -61,10 +66,10 @@ const Estadisticas = () => {
       doc.setTextColor(31, 41, 55); // Gray-800
       doc.setFontSize(16);
       doc.setFont("helvetica", "bold");
-      doc.text("1. Top 10 Alumnos", 20, currentY);
+      doc.text("1. Ranking de Alumnos", 20, currentY);
       currentY += 8;
 
-      const alumnosRows = (data.top_alumnos || []).slice(0, 10).map((a, index) => [
+      const alumnosRows = (data.top_alumnos || []).slice(0, 20).map((a, index) => [
         `#${index + 1}`,
         a.alumno__first_name || a.alumno__username,
         a.alumno__primer_apellido || "",
@@ -83,44 +88,44 @@ const Estadisticas = () => {
 
       currentY = (doc as any).lastAutoTable.finalY + 15;
 
-      // -- SECCIÓN 2: TOP GRUPOS --
+      // -- SECCIÓN 2: TOP GRUPOS (Solo si es Admin o hay datos) --
+      if (user?.role === 'ADMIN' || (data.top_grupos && data.top_grupos.length > 1)) {
+        doc.setFontSize(16);
+        doc.text("2. Ranking de Grupos", 20, currentY);
+        currentY += 8;
+
+        const gruposRows = (data.top_grupos || []).slice(0, 10).map((g, index) => [
+          `#${index + 1}`,
+          g.alumno__alumnogrupo__grupo__nombre || "N/A",
+          `${g.total_piezas} piezas`
+        ]);
+
+        autoTable(doc, {
+          startY: currentY,
+          head: [['Pos.', 'Nombre de Grupo', 'Total']],
+          body: gruposRows,
+          theme: 'striped',
+          headStyles: { fillColor: [37, 99, 235] }, // Blue secondary
+          styles: { fontSize: 10 },
+          margin: { left: 20, right: 20 }
+        });
+        currentY = (doc as any).lastAutoTable.finalY + 15;
+      }
+
+      // -- SECCIÓN 3: MATERIALES --
       doc.setFontSize(16);
-      doc.text("2. Top Grupos", 20, currentY);
+      doc.text(user?.role === 'TUTOR' ? "2. Desglose por Material" : "3. Desglose por Material", 20, currentY);
       currentY += 8;
 
-      const gruposRows = (data.top_grupos || []).slice(0, 10).map((g, index) => [
-        `#${index + 1}`,
-        g.alumno__alumnogrupo__grupo__nombre || "N/A",
-        `${g.total_piezas} piezas`
+      const materialRows = (data.top_materiales || []).map((m) => [
+        m.material__nombre || "N/A",
+        `${m.total_piezas} piezas`
       ]);
 
       autoTable(doc, {
         startY: currentY,
-        head: [['Pos.', 'Nombre de Grupo', 'Total']],
-        body: gruposRows,
-        theme: 'striped',
-        headStyles: { fillColor: [37, 99, 235] }, // Blue secondary
-        styles: { fontSize: 10 },
-        margin: { left: 20, right: 20 }
-      });
-
-      currentY = (doc as any).lastAutoTable.finalY + 15;
-
-      // -- SECCIÓN 3: TOP CARRERAS --
-      doc.setFontSize(16);
-      doc.text("3. Top Carreras", 20, currentY);
-      currentY += 8;
-
-      const carrerasRows = (data.top_carreras || []).slice(0, 10).map((c, index) => [
-        `#${index + 1}`,
-        c.alumno__alumnogrupo__grupo__carrera__nombre || "N/A",
-        `${c.total_piezas} piezas`
-      ]);
-
-      autoTable(doc, {
-        startY: currentY,
-        head: [['Pos.', 'Carrera', 'Total']],
-        body: carrerasRows,
+        head: [['Material', 'Total Recolectado']],
+        body: materialRows,
         theme: 'striped',
         headStyles: { fillColor: [79, 70, 229] }, // Indigo
         styles: { fontSize: 10 },
@@ -135,7 +140,7 @@ const Estadisticas = () => {
       currentY += 10;
       doc.setFontSize(10);
       doc.setFont("helvetica", "italic");
-      doc.text(`Piezas totales recibidas este mes: ${totalPiezas}`, 20, currentY);
+      doc.text(`Total de piezas recolectadas en este periodo: ${totalPiezas}`, 20, currentY);
       doc.text(`Generado el: ${new Date().toLocaleString()}`, pageWidth - 20, currentY, { align: "right" });
 
       doc.save(`Reporte_GreenCore_${selectedMonth}.pdf`);
@@ -146,6 +151,50 @@ const Estadisticas = () => {
     }
   };
 
+  const generateExcel = () => {
+    if (!data) return;
+    setGeneratingExcel(true);
+
+    try {
+      const workbook = XLSX.utils.book_new();
+
+      // Hoja de Alumnos
+      const alumnosData = (data.top_alumnos || []).map((a, index) => ({
+        Posicion: index + 1,
+        Nombre: a.alumno__first_name || a.alumno__username,
+        Apellido: a.alumno__primer_apellido || "",
+        Total_Piezas: a.total_piezas
+      }));
+      const alumnosWS = XLSX.utils.json_to_sheet(alumnosData);
+      XLSX.utils.book_append_sheet(workbook, alumnosWS, "Ranking Alumnos");
+
+      // Hoja de Grupos (Solo si es Admin)
+      if (user?.role === 'ADMIN') {
+        const gruposData = (data.top_grupos || []).map((g, index) => ({
+          Posicion: index + 1,
+          Grupo: g.alumno__alumnogrupo__grupo__nombre || "N/A",
+          Total_Piezas: g.total_piezas
+        }));
+        const gruposWS = XLSX.utils.json_to_sheet(gruposData);
+        XLSX.utils.book_append_sheet(workbook, gruposWS, "Ranking Grupos");
+      }
+
+      // Hoja de Materiales
+      const materialesData = (data.top_materiales || []).map((m) => ({
+        Material: m.material__nombre || "N/A",
+        Total_Piezas: m.total_piezas
+      }));
+      const materialesWS = XLSX.utils.json_to_sheet(materialesData);
+      XLSX.utils.book_append_sheet(workbook, materialesWS, "Resumen Materiales");
+
+      XLSX.writeFile(workbook, `Reporte_GreenCore_${selectedMonth}.xlsx`);
+    } catch (error) {
+      console.error("Error generando Excel", error);
+    } finally {
+      setGeneratingExcel(false);
+    }
+  };
+
   return (
     <div className="p-8 max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
       
@@ -153,9 +202,14 @@ const Estadisticas = () => {
         <div>
           <h1 className="text-4xl font-black text-gray-900 flex items-center gap-3">
             <FileText className="w-10 h-10 text-primary" />
-            Reportes Mensuales
+            {user?.role === 'TUTOR' ? "Reporte de Mi Grupo" : "Reportes Mensuales"}
           </h1>
-          <p className="text-gray-500 mt-2 font-medium">Genera los cortes mensuales de reciclaje en formato PDF.</p>
+          <p className="text-gray-500 mt-2 font-medium">
+            {user?.role === 'TUTOR' 
+              ? "Genera los cortes de reciclaje específicos de tus alumnos." 
+              : "Genera los cortes mensuales de reciclaje globales en formato PDF y Excel."
+            }
+          </p>
         </div>
 
         <div className="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-2">
@@ -213,25 +267,47 @@ const Estadisticas = () => {
             Este reporte incluirá el top 10 de recicladores por categoría, permitiendo llevar un control oficial de los cortes mensuales.
           </p>
 
-          <button 
-            disabled={loading || generating || !data}
-            onClick={generatePDF}
-            className={`
-              px-10 py-4 rounded-2xl font-black text-lg shadow-2xl transition-all flex items-center gap-3 mx-auto
-              ${loading || generating || !data 
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                : 'bg-primary text-white hover:bg-black hover:scale-105 active:scale-95 shadow-primary/30'
-              }
-            `}
-          >
-            {loading ? (
-              <> <Loader2 className="w-6 h-6 animate-spin" /> Cargando Datos...</>
-            ) : generating ? (
-              <> <Loader2 className="w-6 h-6 animate-spin" /> Generando PDF...</>
-            ) : (
-              <> <Download className="w-6 h-6" /> Descargar Reporte PDF</>
-            )}
-          </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button 
+              disabled={loading || generating || !data}
+              onClick={generatePDF}
+              className={`
+                px-8 py-4 rounded-2xl font-black text-lg shadow-2xl transition-all flex items-center gap-3
+                ${loading || generating || !data 
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                  : 'bg-primary text-white hover:bg-black hover:scale-105 active:scale-95 shadow-primary/30'
+                }
+              `}
+            >
+              {loading ? (
+                <> <Loader2 className="w-6 h-6 animate-spin" /> ...</>
+              ) : generating ? (
+                <> <Loader2 className="w-6 h-6 animate-spin" /> ...</>
+              ) : (
+                <> <Download className="w-6 h-6" /> Descargar PDF</>
+              )}
+            </button>
+
+            <button 
+              disabled={loading || generatingExcel || !data}
+              onClick={generateExcel}
+              className={`
+                px-8 py-4 rounded-2xl font-black text-lg shadow-2xl transition-all flex items-center gap-3
+                ${loading || generatingExcel || !data 
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                  : 'bg-blue-600 text-white hover:bg-black hover:scale-105 active:scale-95 shadow-blue-600/30'
+                }
+              `}
+            >
+              {loading ? (
+                <> <Loader2 className="w-6 h-6 animate-spin" /> ...</>
+              ) : generatingExcel ? (
+                <> <Loader2 className="w-6 h-6 animate-spin" /> ...</>
+              ) : (
+                <> <FileSpreadsheet className="w-6 h-6" /> Descargar Excel</>
+              )}
+            </button>
+          </div>
         </div>
       </div>
 

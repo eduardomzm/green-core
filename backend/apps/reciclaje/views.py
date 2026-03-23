@@ -417,6 +417,10 @@ class RankingsView(APIView):
                 
             depositos = depositos.filter(fecha__gte=fecha_inicio, fecha__lt=fecha_fin)
 
+        # Restricción para Tutores: solo ven datos de su grupo
+        if request.user.role == 'TUTOR':
+            depositos = depositos.filter(alumno__alumnogrupo__grupo__tutor=request.user)
+
         top_alumnos = (
             depositos
             .values(
