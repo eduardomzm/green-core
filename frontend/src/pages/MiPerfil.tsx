@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { User as UserIcon, Save, AlertCircle, CheckCircle, Pencil, Share2, Instagram, Twitter, Facebook, X, Users, Award, Trophy } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { Link } from "react-router-dom";
@@ -135,7 +136,12 @@ export default function MiPerfil() {
   const avatarUrl = AVATARS.find(a => a.id === selectedAvatar)?.url || AVATARS[0].url;
 
   return (
-    <div className="max-w-3xl mx-auto p-4 md:p-8 space-y-8 animate-in fade-in duration-500 pb-20">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="max-w-3xl mx-auto p-4 md:p-8 space-y-8 pb-20"
+    >
 
       {/* Hero Header with Avatar */}
       <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 relative overflow-hidden flex flex-col items-center">
@@ -165,12 +171,15 @@ export default function MiPerfil() {
           
           {/* Badge de Nivel */}
           {user?.role === 'ALUMNO' && (
-            <div 
-              className="absolute -bottom-2 -right-2 w-12 h-12 rounded-2xl border-4 border-white shadow-lg flex items-center justify-center text-white font-black text-lg transform -rotate-6 group-hover:rotate-0 transition-all duration-300 z-20 shadow-xl"
+            <motion.div 
+              initial={{ scale: 0, rotate: -30 }}
+              animate={{ scale: 1, rotate: -6 }}
+              whileHover={{ scale: 1.1, rotate: 0 }}
+              className="absolute -bottom-2 -right-2 w-12 h-12 rounded-2xl border-4 border-white shadow-lg flex items-center justify-center text-white font-black text-lg z-20 shadow-xl"
               style={{ backgroundColor: user.nivel_color || '#2D6A4F' }}
             >
               L{user.nivel || 1}
-            </div>
+            </motion.div>
           )}
         </div>
 
@@ -242,10 +251,12 @@ export default function MiPerfil() {
           </div>
           
           <div className="w-full h-4 bg-gray-100 rounded-full overflow-hidden mb-4">
-            <div 
-              className="h-full transition-all duration-1000 ease-out rounded-full shadow-[0_0_10px_rgba(0,0,0,0.1)]"
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: `${user.porcentaje_nivel || 0}%` }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+              className="h-full rounded-full shadow-[0_0_10px_rgba(0,0,0,0.1)]"
               style={{ 
-                width: `${user.porcentaje_nivel || 0}%`,
                 backgroundColor: user.nivel_color || '#2D6A4F'
               }}
             />
@@ -286,17 +297,36 @@ export default function MiPerfil() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-4 relative z-10">
+            <motion.div 
+              variants={{
+                show: { transition: { staggerChildren: 0.1 } }
+              }}
+              initial="hidden"
+              animate="show"
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-4 relative z-10"
+            >
               {user.medallas.map((m: any) => (
-                <div key={m.id} className="group relative flex flex-col items-center p-6 bg-gradient-to-b from-yellow-50/30 to-white rounded-[2rem] border border-yellow-100/50 hover:border-yellow-300 hover:shadow-xl hover:shadow-yellow-500/10 transition-all duration-300 cursor-default">
+                <motion.div 
+                  key={m.id}
+                  variants={{
+                    hidden: { opacity: 0, scale: 0.8 },
+                    show: { opacity: 1, scale: 1 }
+                  }}
+                  whileHover={{ 
+                    scale: 1.05, 
+                    rotate: -1,
+                    transition: { duration: 0.2 }
+                  }}
+                  className="group relative flex flex-col items-center p-6 bg-gradient-to-b from-yellow-50/30 to-white rounded-[2rem] border border-yellow-100/50 hover:border-yellow-300 hover:shadow-xl hover:shadow-yellow-500/10 transition-all duration-300 cursor-default"
+                >
                   <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-500/20 mb-4 transform group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
                     <DynamicIcon name={m.medalla.icono_lucide} className="w-8 h-8 drop-shadow-md" />
                   </div>
                   <p className="font-extrabold text-sm text-gray-900 text-center leading-tight mb-1">{m.medalla.nombre}</p>
                   <p className="text-[10px] uppercase font-black tracking-widest text-orange-500/70">{m.mes_obtenida}</p>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
         </div>
       )}
@@ -560,6 +590,6 @@ export default function MiPerfil() {
         </div>
       )}
 
-    </div>
+    </motion.div>
   );
 }

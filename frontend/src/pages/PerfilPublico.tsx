@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useParams, Link } from "react-router-dom";
 import { getPublicProfile, toggleSeguir } from "../services/userService";
 import { useAuth } from "../hooks/useAuth";
@@ -89,7 +90,12 @@ export default function PerfilPublico() {
   const roleLabel = { ADMIN: "Administrador", TUTOR: "Tutor", ALUMNO: "Estudiante", OPERADOR: "Operador" }[roleKey] || profile.role;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in zoom-in-95 duration-500 pb-20">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="max-w-4xl mx-auto space-y-6 pb-20"
+    >
 
       {/* Header Info */}
       <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 relative overflow-hidden">
@@ -109,9 +115,14 @@ export default function PerfilPublico() {
               <img src={avatarUrl} alt={profile.username} className="w-full h-full object-cover" />
             </div>
             {isAlumno && profile.nivel && (
-              <div className="absolute -bottom-3 -right-3 bg-gradient-to-br from-primary to-green-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center font-black text-lg shadow-lg border-4 border-white transform -rotate-6 group-hover:rotate-0 transition-all duration-300">
+              <motion.div 
+                initial={{ scale: 0, rotate: -30 }}
+                animate={{ scale: 1, rotate: -6 }}
+                whileHover={{ scale: 1.1, rotate: 0 }}
+                className="absolute -bottom-3 -right-3 bg-gradient-to-br from-primary to-green-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center font-black text-lg shadow-lg border-4 border-white z-10"
+              >
                 L{profile.nivel}
-              </div>
+              </motion.div>
             )}
           </div>
 
@@ -206,9 +217,27 @@ export default function PerfilPublico() {
                 <p className="text-sm text-gray-400 max-w-sm mx-auto">Este usuario no cuenta con medallas.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <motion.div 
+                variants={{
+                  show: { transition: { staggerChildren: 0.1 } }
+                }}
+                initial="hidden"
+                animate="show"
+                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
+              >
                 {profile.medallas.map((m: any) => (
-                  <div key={m.id} className="group flex flex-col items-center p-6 bg-gradient-to-b from-yellow-50/50 to-white rounded-[2rem] border border-yellow-100 hover:border-yellow-300 hover:shadow-xl hover:shadow-yellow-500/10 transition-all duration-300 cursor-default relative overflow-hidden">
+                  <motion.div 
+                    key={m.id}
+                    variants={{
+                      hidden: { opacity: 0, scale: 0.8 },
+                      show: { opacity: 1, scale: 1 }
+                    }}
+                    whileHover={{ 
+                      scale: 1.05, 
+                      transition: { duration: 0.2 }
+                    }}
+                    className="group flex flex-col items-center p-6 bg-gradient-to-b from-yellow-50/50 to-white rounded-[2rem] border border-yellow-100 hover:border-yellow-300 hover:shadow-xl hover:shadow-yellow-500/10 transition-all duration-300 cursor-default relative overflow-hidden"
+                  >
                     <div className="absolute inset-0 bg-yellow-400 opacity-0 group-hover:opacity-[0.03] transition-opacity"></div>
                     <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-500/30 mb-4 transform group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300">
                       <DynamicIcon name={m.medalla.icono_lucide} className="w-8 h-8 drop-shadow-md" />
@@ -217,13 +246,17 @@ export default function PerfilPublico() {
                     <p className="text-[10px] uppercase font-black tracking-widest text-orange-500/80">{m.mes_obtenida}</p>
 
                     {/* Tooltip */}
-                    <div className="absolute pointer-events-none opacity-0 group-hover:opacity-100 z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-gray-900 text-white text-xs rounded-xl p-3 shadow-xl transition-opacity">
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10 }}
+                      whileHover={{ opacity: 1, y: 0 }}
+                      className="absolute pointer-events-none z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-gray-900 text-white text-xs rounded-xl p-3 shadow-xl transition-opacity"
+                    >
                       {m.medalla.descripcion}
                       <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
-                    </div>
-                  </div>
+                    </motion.div>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             )}
           </div>
         </div>
@@ -248,8 +281,6 @@ export default function PerfilPublico() {
           </div>
         </div>
       )}
-    </div>
-
-
+    </motion.div>
   );
 }
