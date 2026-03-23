@@ -54,7 +54,7 @@ export default function Materiales() {
             <motion.div 
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
+              viewport={{ once: true, margin: "-20px" }}
               transition={{ duration: 0.6, delay: 0.1 }}
               className="relative group overflow-hidden rounded-3xl cursor-pointer transform transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_35px_rgba(249,115,22,0.3)] shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
             >
@@ -63,7 +63,12 @@ export default function Materiales() {
                 <Milk className="w-32 h-32 text-orange-500 opacity-80" strokeWidth={1} />
             </div>
 
-            <div className="absolute inset-0 flex flex-col justify-end p-8 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-orange-50/90 to-transparent z-10">
+            <motion.div 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: false, amount: 0.7 }}
+                className="absolute inset-0 flex flex-col justify-end p-8 text-black md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-orange-50/90 to-transparent z-10"
+            >
 
                 {renderParticles(Droplets, "text-orange-400")}
 
@@ -75,7 +80,7 @@ export default function Materiales() {
                 Las botellas PET pueden reciclarse y convertirse en nuevos envases o fibras textiles.
                 </p>
 
-            </div>
+            </motion.div>
 
             </motion.div>
 
@@ -83,7 +88,7 @@ export default function Materiales() {
             <motion.div 
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
+              viewport={{ once: true, margin: "-20px" }}
               transition={{ duration: 0.6, delay: 0.3 }}
               className="relative group overflow-hidden rounded-3xl cursor-pointer transform transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_35px_rgba(34,197,94,0.3)] shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
             >
@@ -92,7 +97,12 @@ export default function Materiales() {
                 <Package className="w-32 h-32 text-green-600 opacity-80" strokeWidth={1} />
             </div>
 
-            <div className="absolute inset-0 flex flex-col justify-end p-8 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-green-50/90 to-transparent z-10">
+            <motion.div 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: false, amount: 0.7 }}
+                className="absolute inset-0 flex flex-col justify-end p-8 text-black md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-green-50/90 to-transparent z-10"
+            >
 
                 {renderParticles(Leaf, "text-green-500")}
 
@@ -104,7 +114,7 @@ export default function Materiales() {
                 El cartón puede reutilizarse para crear nuevos empaques y reducir la tala de árboles.
                 </p>
 
-            </div>
+            </motion.div>
 
             </motion.div>
 
@@ -112,7 +122,7 @@ export default function Materiales() {
             <motion.div 
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
+              viewport={{ once: true, margin: "-20px" }}
               transition={{ duration: 0.6, delay: 0.5 }}
               className="relative group overflow-hidden rounded-3xl cursor-pointer transform transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_35px_rgba(59,130,246,0.3)] shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
             >
@@ -121,7 +131,12 @@ export default function Materiales() {
                 <Cylinder className="w-32 h-32 text-blue-600 opacity-80" strokeWidth={1} />
             </div>
 
-            <div className="absolute inset-0 flex flex-col justify-end p-8 text-black opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-blue-50/90 to-transparent z-10">
+            <motion.div 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: false, amount: 0.7 }}
+                className="absolute inset-0 flex flex-col justify-end p-8 text-black md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-blue-50/90 to-transparent z-10"
+            >
 
                 {renderParticles(Sparkles, "text-secondary")}
 
@@ -133,7 +148,7 @@ export default function Materiales() {
                 El aluminio puede reciclarse infinitamente sin perder sus propiedades.
                 </p>
 
-            </div>
+            </motion.div>
 
             </motion.div>
 
