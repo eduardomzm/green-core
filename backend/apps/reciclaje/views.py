@@ -380,36 +380,43 @@ class DashboardView(APIView):
         if user.role != 'ALUMNO':
             return []
         
-        now = timezone.now()
-        year = now.year
-        month = now.month
+        from datetime import date, timedelta
+        now = timezone.now().date()
         
-        cal = calendar.Calendar(firstweekday=0) # Monday start like ISO
-        month_weeks = cal.monthdatescalendar(year, month)
+        # Determinar el mes objetivo basado en el jueves de la semana actual (lógica ISO)
+        # 1=Lunes, 7=Domingo
+        dia_semana_hoy = now.isoweekday()
+        jueves_actual = now + timedelta(days=(4 - dia_semana_hoy))
+        target_year = jueves_actual.year
+        target_month = jueves_actual.month
         
-        # Filtrar semanas que tienen al menos un día en el mes actual
+        # Primer jueves del mes objetivo para encontrar la primera semana ISO
+        primer_dia_mes = date(target_year, target_month, 1)
+        # weekday(): 0=Mon, ..., 6=Sun
+        primer_jueves = primer_dia_mes + timedelta(days=(3 - primer_dia_mes.weekday() + 7) % 7)
+        
+        # Lunes de esa primera semana ISO
+        lunes_inicio = primer_jueves - timedelta(days=3)
+        
         weeks_data = []
-        for i, week in enumerate(month_weeks):
-            if any(d.month == month for d in week):
-                inicio = week[0]
-                fin = week[6]
-                
-                # Buscar si hay depósitos en este rango de fechas
-                tiene_deposito = Deposito.objects.filter(
-                    alumno=user,
-                    fecha__date__range=[inicio, fin]
-                ).exists()
-                
-                # Determinar si es la semana actual
-                es_actual = any(d == now.date() for d in week)
-                
-                weeks_data.append({
-                    "n_semana": i + 1,
-                    "inicio": inicio.isoformat(),
-                    "fin": fin.isoformat(),
-                    "activa": tiene_deposito,
-                    "es_actual": es_actual
-                })
+        for i in range(4):
+            inicio = lunes_inicio + timedelta(weeks=i)
+            fin = inicio + timedelta(days=6)
+            
+            tiene_deposito = Deposito.objects.filter(
+                alumno=user,
+                fecha__date__range=[inicio, fin]
+            ).exists()
+            
+            es_actual = inicio <= now <= fin
+            
+            weeks_data.append({
+                "n_semana": i + 1,
+                "inicio": inicio.isoformat(),
+                "fin": fin.isoformat(),
+                "activa": tiene_deposito,
+                "es_actual": es_actual
+            })
         return weeks_data
 
 

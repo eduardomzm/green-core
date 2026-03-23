@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Search, Filter, Calendar, Recycle, User, Target, Users, PartyPopper, Flame } from "lucide-react";
-import { triggerConfettiBurst, triggerConfettiPride } from "../../utils/confetti";
+import { triggerConfettiBurst } from "../../utils/confetti";
 import { Link } from "react-router-dom";
 import { buscarAlumnos } from "../../services/userService";
 import type { DashboardResponse, DepositoHistorial } from "../../types/dashboard.types";
@@ -56,6 +56,30 @@ const AlumnoDashboard = ({ data, user }: Props) => {
 
   const materialesUnicos = Array.from(new Set(depositos.map(d => d.material)));
   const metaAlumno = data.meta_alumno;
+
+  const getMonthName = () => {
+    const months = [
+      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+    const now = new Date();
+    // Alineación ISO: El jueves de la semana actual determina el mes
+    const day = now.getDay(); // 0=Dom, 1=Lun, ..., 6=Sab
+    const isoDay = day === 0 ? 7 : day;
+    const thursday = new Date(now);
+    thursday.setDate(now.getDate() + (4 - isoDay));
+    return months[thursday.getMonth()];
+  };
+
+  const formatDateRange = (inicio: string, fin: string) => {
+    const d1 = new Date(inicio + 'T00:00:00'); // Ensure local date
+    const d2 = new Date(fin + 'T00:00:00');
+    const day1 = d1.getDate().toString().padStart(2, '0');
+    const day2 = d2.getDate().toString().padStart(2, '0');
+    // Abbreviated month in Spanish
+    const month = d1.toLocaleString('es-ES', { month: 'short' }).replace('.', '');
+    return `${day1}-${day2} ${month}`;
+  };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -120,8 +144,8 @@ const AlumnoDashboard = ({ data, user }: Props) => {
         <div className="flex-1 w-full">
           <div className="flex justify-between items-end mb-4">
             <div>
-              <h2 className="text-xl font-black text-gray-900 leading-tight">Tu Racha de Reciclaje</h2>
-              <p className="text-sm font-medium text-gray-500 mt-1">Recicla al menos una vez por semana para mantener tu racha activa.</p>
+              <h2 className="text-xl font-black text-gray-900 leading-tight">Racha de {getMonthName()}</h2>
+              <p className="text-sm font-medium text-gray-500 mt-1">Mantén tu racha activa reciclando cada semana.</p>
             </div>
             <div className="text-right flex flex-col items-end">
               <span className="text-3xl font-black text-orange-600 leading-none">{user?.racha_actual || 0}</span>
@@ -129,10 +153,10 @@ const AlumnoDashboard = ({ data, user }: Props) => {
             </div>
           </div>
 
-          {/* Grilla de Semanas */}
-          <div className="grid grid-cols-5 gap-4">
+          {/* Grilla de Semanas (4 periodos fijos) */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {data.semanas_racha?.map((semana) => (
-              <div key={semana.n_semana} className="flex flex-col items-center gap-2">
+              <div key={semana.n_semana} className="flex flex-col items-center gap-2 p-3 rounded-2xl border border-transparent hover:bg-white/50 transition-colors">
                 <motion.div 
                   initial={false}
                   animate={semana.activa ? { 
@@ -140,7 +164,7 @@ const AlumnoDashboard = ({ data, user }: Props) => {
                     filter: ["drop-shadow(0 0 0px #f97316)", "drop-shadow(0 0 8px #f97316)", "drop-shadow(0 0 0px #f97316)"]
                   } : {}}
                   transition={{ repeat: Infinity, duration: 3 }}
-                  className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center border-2 transition-all duration-300 relative ${
+                  className={`w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all duration-300 relative ${
                     semana.activa 
                       ? "bg-orange-50 border-orange-200 text-orange-500 shadow-lg shadow-orange-500/10" 
                       : semana.es_actual 
@@ -148,14 +172,17 @@ const AlumnoDashboard = ({ data, user }: Props) => {
                         : "bg-gray-50 border-gray-100 text-gray-200"
                   }`}
                 >
-                  <Flame className={`w-6 h-6 md:w-8 md:h-8 ${semana.activa ? "fill-orange-500" : "fill-transparent opacity-30"}`} />
+                  <Flame className={`w-6 h-6 ${semana.activa ? "fill-orange-500" : "fill-transparent opacity-30"}`} />
                   {semana.es_actual && !semana.activa && (
                     <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-white animate-pulse"></div>
                   )}
                 </motion.div>
-                <div className="text-center">
+                <div className="text-center flex flex-col gap-0.5">
                   <span className={`text-[10px] font-black uppercase tracking-tighter ${semana.es_actual ? 'text-blue-500' : 'text-gray-400'}`}>
-                    Sem {semana.n_semana}
+                    Semana {semana.n_semana}
+                  </span>
+                  <span className="text-[9px] font-bold text-gray-400 whitespace-nowrap">
+                    {formatDateRange(semana.inicio, semana.fin)}
                   </span>
                 </div>
               </div>
