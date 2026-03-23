@@ -22,7 +22,7 @@ const DynamicIcon = ({ name, className }: { name: string, className?: string }) 
 };
 
 const AVATARS = [
-  { id: 'default', url: '/src/assets/img/logo.jpeg', label: 'Bote' },
+  { id: 'default', url: '/avatars/avatar_bin.png', label: 'Bote' },
   { id: 'leaf', url: '/avatars/avatar_leaf.png', label: 'Hoja' },
   { id: 'earth', url: '/avatars/avatar_earth.png', label: 'Tierra' },
   { id: 'sprout', url: '/avatars/avatar_sprout.png', label: 'Brote' },
@@ -99,9 +99,22 @@ export default function MiPerfil() {
     setIsModalOpen(true);
   };
 
-  const handleSaveAvatar = () => {
+  const handleSaveAvatar = async () => {
     setSelectedAvatar(tempAvatar);
     setIsModalOpen(false);
+    
+    // Save immediately to backend for better UX
+    try {
+      setSaving(true);
+      await updateMe({ avatar: tempAvatar });
+      await refreshUser();
+      setMsg({ text: "¡Avatar actualizado correctamente!", type: "success" });
+      setTimeout(() => setMsg({ text: "", type: "" }), 3000);
+    } catch (err) {
+      setMsg({ text: "Error al guardar el avatar.", type: "error" });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const loadFollowers = async () => {

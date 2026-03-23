@@ -11,6 +11,11 @@ export const updateMe = async (data: {
   contrasena_actual?: string;
   nueva_contrasena?: string;
   repetir_contrasena?: string;
+  avatar?: string;
+  biografia?: string;
+  instagram?: string;
+  twitter?: string;
+  facebook?: string;
 }) => {
   const response = await api.patch("users/me/", data);
   return response.data;

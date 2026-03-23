@@ -14,7 +14,7 @@ const DynamicIcon = ({ name, className }: { name: string, className?: string }) 
 };
 
 const AVATARS = [
-  { id: 'default', url: '/src/assets/img/logo.jpeg' },
+  { id: 'default', url: '/avatars/avatar_bin.png' },
   { id: 'leaf', url: '/avatars/avatar_leaf.png' },
   { id: 'earth', url: '/avatars/avatar_earth.png' },
   { id: 'sprout', url: '/avatars/avatar_sprout.png' },

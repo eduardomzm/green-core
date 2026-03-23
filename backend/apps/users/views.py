@@ -188,8 +188,6 @@ class MeView(APIView):
 
         user.save()
 
-        user.save()
-
         matricula = None
         nivel = 1
         medallas = []
