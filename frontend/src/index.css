@@ -22,6 +22,14 @@
   100% { transform: scale(2.2); opacity: 0; }
 }
 
+@keyframes bar {
+  from { width: 0; }
+}
+
+.animate-bar {
+  animation: bar 1.5s ease-out forwards;
+}
+
 /* Ocultar el ojito nativo de Edge/IE */
 input::-ms-reveal,
 input::-ms-clear {

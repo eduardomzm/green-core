@@ -19,7 +19,7 @@ useEffect(() => {
             setVisible(true);
             }
         },
-        { threshold: 0.3 }
+        { threshold: 0.1 }
         );
 
         if (sectionRef.current) {
@@ -65,7 +65,7 @@ useEffect(() => {
     <section
         id="impacto"
         ref={sectionRef}
-        className="py-28 px-8 bg-gradient-to-b from-white via-green-50 to-white"
+        className="py-16 md:py-28 px-4 md:px-8 bg-gradient-to-b from-white via-green-50 to-white"
     >
 
         <div className="max-w-7xl mx-auto">
@@ -91,7 +91,7 @@ useEffect(() => {
             <motion.div 
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
+              viewport={{ once: true, margin: "-20px" }}
               transition={{ duration: 0.6, delay: 0.1 }}
               className="bg-white rounded-3xl p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 text-center
               transform transition-all duration-500 hover:-translate-y-2 relative overflow-hidden group"
@@ -112,7 +112,7 @@ useEffect(() => {
             <motion.div 
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
+              viewport={{ once: true, margin: "-20px" }}
               transition={{ duration: 0.6, delay: 0.3 }}
               className="bg-white rounded-3xl p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 text-center
               transform transition-all duration-500 hover:-translate-y-2 relative overflow-hidden group"
@@ -133,7 +133,7 @@ useEffect(() => {
             <motion.div 
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
+              viewport={{ once: true, margin: "-20px" }}
               transition={{ duration: 0.6, delay: 0.5 }}
               className="bg-white rounded-3xl p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 text-center
               transform transition-all duration-500 hover:-translate-y-2 relative overflow-hidden group"
@@ -155,7 +155,7 @@ useEffect(() => {
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "-20px" }}
           transition={{ duration: 0.8 }}
           className="grid md:grid-cols-2 gap-16 items-center"
         >
