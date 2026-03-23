@@ -19,7 +19,12 @@ class UserSerializer(serializers.ModelSerializer):
             'segundo_apellido',
             'role',
             'activo',
-            'matricula'
+            'matricula',
+            'avatar',
+            'biografia',
+            'instagram',
+            'twitter',
+            'facebook'
         )
         read_only_fields = ('id',)
 

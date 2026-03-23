@@ -40,10 +40,6 @@ class MeView(APIView):
     def get(self, request):
         user = request.user
         matricula = None
-        biografia = ""
-        instagram = ""
-        twitter = ""
-        facebook = ""
         nivel = 1
         medallas = []
 
@@ -51,10 +47,6 @@ class MeView(APIView):
             try:
                 perfil = user.alumnoperfil
                 matricula = perfil.matricula
-                biografia = perfil.biografia
-                instagram = perfil.instagram
-                twitter = perfil.twitter
-                facebook = perfil.facebook
                 nivel = perfil.nivel
                 
                 user_medallas = MedallaAlumno.objects.filter(alumno=user).select_related('medalla').order_by('-fecha_otorgada')
@@ -72,10 +64,10 @@ class MeView(APIView):
             "role": user.role,
             "matricula": matricula,
             "avatar": user.avatar,
-            "biografia": biografia,
-            "instagram": instagram,
-            "twitter": twitter,
-            "facebook": facebook,
+            "biografia": user.biografia,
+            "instagram": user.instagram,
+            "twitter": user.twitter,
+            "facebook": user.facebook,
             "nivel": nivel,
             "medallas": medallas,
         })
@@ -116,15 +108,21 @@ class MeView(APIView):
                 return Response({"nueva_contrasena": ["La contraseña debe tener al menos 6 caracteres."]}, status=400)
             user.set_password(nueva)
 
+        # Actualizar campos sociales (ahora en User directamente)
+        if 'biografia' in data:
+            user.biografia = data['biografia']
+        if 'instagram' in data:
+            user.instagram = data['instagram']
+        if 'twitter' in data:
+            user.twitter = data['twitter']
+        if 'facebook' in data:
+            user.facebook = data['facebook']
+
         user.save()
 
         user.save()
 
         matricula = None
-        biografia = ""
-        instagram = ""
-        twitter = ""
-        facebook = ""
         nivel = 1
         medallas = []
 
@@ -136,7 +134,7 @@ class MeView(APIView):
         if user.role == 'ALUMNO':
             try:
                 seguidores_count = user.seguidores.count()
-                siguiendo_count = user.seguidos.count()
+                siguiendo_count = user.siguiendo.count()
 
                 agregado = Deposito.objects.filter(alumno=user).aggregate(
                     total_depositos=Count('id'),
@@ -146,29 +144,7 @@ class MeView(APIView):
                 total_piezas = agregado['total_piezas'] or 0
 
                 perfil = user.alumnoperfil
-                # Actualizar campos sociales si se proporcionan
-                modificado = False
-                if 'biografia' in data:
-                    perfil.biografia = data['biografia']
-                    modificado = True
-                if 'instagram' in data:
-                    perfil.instagram = data['instagram']
-                    modificado = True
-                if 'twitter' in data:
-                    perfil.twitter = data['twitter']
-                    modificado = True
-                if 'facebook' in data:
-                    perfil.facebook = data['facebook']
-                    modificado = True
-                
-                if modificado:
-                    perfil.save()
-
                 matricula = perfil.matricula
-                biografia = perfil.biografia
-                instagram = perfil.instagram
-                twitter = perfil.twitter
-                facebook = perfil.facebook
                 nivel = perfil.nivel
                 
                 user_medallas = MedallaAlumno.objects.filter(alumno=user).select_related('medalla').order_by('-fecha_otorgada')
@@ -186,10 +162,10 @@ class MeView(APIView):
             "role": user.role,
             "matricula": matricula,
             "avatar": user.avatar,
-            "biografia": biografia,
-            "instagram": instagram,
-            "twitter": twitter,
-            "facebook": facebook,
+            "biografia": user.biografia,
+            "instagram": user.instagram,
+            "twitter": user.twitter,
+            "facebook": user.facebook,
             "nivel": nivel,
             "medallas": medallas,
             "seguidores_count": seguidores_count,
@@ -257,10 +233,6 @@ class PublicProfileView(APIView):
     def get(self, request, username):
         user = get_object_or_404(User, username=username)
         
-        biografia = ""
-        instagram = ""
-        twitter = ""
-        facebook = ""
         nivel = 1
         medallas = []
         total_depositos = 0
@@ -277,10 +249,6 @@ class PublicProfileView(APIView):
             
                 perfil = getattr(user, 'alumnoperfil', None)
                 if perfil:
-                    biografia = perfil.biografia
-                    instagram = perfil.instagram
-                    twitter = perfil.twitter
-                    facebook = perfil.facebook
                     nivel = perfil.nivel
                 
                 user_medallas = MedallaAlumno.objects.filter(alumno=user).select_related('medalla').order_by('-fecha_otorgada')
@@ -302,10 +270,10 @@ class PublicProfileView(APIView):
             "segundo_apellido": user.segundo_apellido,
             "role": user.role,
             "avatar": user.avatar,
-            "biografia": biografia,
-            "instagram": instagram,
-            "twitter": twitter,
-            "facebook": facebook,
+            "biografia": user.biografia,
+            "instagram": user.instagram,
+            "twitter": user.twitter,
+            "facebook": user.facebook,
             "nivel": nivel,
             "medallas": medallas,
             "total_depositos": total_depositos,
