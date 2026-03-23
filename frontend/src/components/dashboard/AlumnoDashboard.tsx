@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
-import { Search, Filter, Calendar, Recycle, User, Target, Users } from "lucide-react";
+import { Search, Filter, Calendar, Recycle, User, Target, Users, PartyPopper } from "lucide-react";
+import { triggerConfettiBurst, triggerConfettiPride } from "../../utils/confetti";
 import { Link } from "react-router-dom";
 import { buscarAlumnos } from "../../services/userService";
 import type { DashboardResponse, DepositoHistorial } from "../../types/dashboard.types";
@@ -129,7 +130,13 @@ const AlumnoDashboard = ({ data }: Props) => {
                 <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
               </div>
             </div>
-            <p className="text-right text-xs font-bold text-primary mt-2">{data.progreso.porcentaje}% Completado</p>
+            <p 
+              onClick={() => data.progreso.porcentaje >= 100 && triggerConfettiPride()}
+              className={`text-right text-xs font-bold mt-2 flex items-center justify-end gap-1 ${data.progreso.porcentaje >= 100 ? 'text-primary cursor-pointer hover:scale-110 transition-transform' : 'text-primary'}`}
+            >
+              {data.progreso.porcentaje >= 100 && <PartyPopper className="w-3 h-3" />}
+              {data.progreso.porcentaje}% Completado
+            </p>
           </div>
         </div>
       )}
@@ -162,7 +169,13 @@ const AlumnoDashboard = ({ data }: Props) => {
                 <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
               </div>
             </div>
-            <p className="text-right text-xs font-bold text-accent mt-2">{metaAlumno.porcentaje}% Completado</p>
+            <p 
+              onClick={() => metaAlumno.porcentaje >= 100 && triggerConfettiBurst()}
+              className={`text-right text-xs font-bold mt-2 flex items-center justify-end gap-1 ${metaAlumno.porcentaje >= 100 ? 'text-accent cursor-pointer hover:scale-110 transition-transform' : 'text-accent'}`}
+            >
+              {metaAlumno.porcentaje >= 100 && <PartyPopper className="w-3 h-3" />}
+              {metaAlumno.porcentaje}% Completado
+            </p>
           </div>
         </div>
       )}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { User as UserIcon, Save, AlertCircle, CheckCircle, Pencil, Share2, Instagram, Twitter, Facebook, X, Users, Award, Trophy } from "lucide-react";
+import { User as UserIcon, Save, AlertCircle, CheckCircle, Pencil, Share2, Instagram, Twitter, Facebook, X, Users, Award, Trophy, PartyPopper } from "lucide-react";
+import { triggerConfettiBurst, triggerConfettiFirecrackers } from "../utils/confetti";
 import * as LucideIcons from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -267,7 +268,13 @@ export default function MiPerfil() {
             {(user.porcentaje_nivel || 0) < 100 && user.piezas_proximo_nivel ? (
               <span className="text-primary">Faltan {(user.piezas_proximo_nivel || 0) - (user.total_piezas_historico || 0)} para el siguiente nivel</span>
             ) : (
-              <span className="text-primary">¡Nivel Máximo Alcanzado!</span>
+              <button 
+                onClick={() => triggerConfettiFirecrackers()}
+                className="text-primary hover:scale-110 transition-transform flex items-center gap-1"
+              >
+                <PartyPopper className="w-3 h-3" />
+                ¡Nivel Máximo Alcanzado!
+              </button>
             )}
           </div>
         </div>
@@ -317,7 +324,8 @@ export default function MiPerfil() {
                     rotate: -1,
                     transition: { duration: 0.2 }
                   }}
-                  className="group relative flex flex-col items-center p-6 bg-gradient-to-b from-yellow-50/30 to-white rounded-[2rem] border border-yellow-100/50 hover:border-yellow-300 hover:shadow-xl hover:shadow-yellow-500/10 transition-all duration-300 cursor-default"
+                  onClick={() => triggerConfettiBurst()}
+                  className="group relative flex flex-col items-center p-6 bg-gradient-to-b from-yellow-50/30 to-white rounded-[2rem] border border-yellow-100/50 hover:border-yellow-300 hover:shadow-xl hover:shadow-yellow-500/10 transition-all duration-300 cursor-pointer"
                 >
                   <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-500/20 mb-4 transform group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
                     <DynamicIcon name={m.medalla.icono_lucide} className="w-8 h-8 drop-shadow-md" />

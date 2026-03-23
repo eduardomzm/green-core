@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { CheckCircle, Package, Clock } from "lucide-react";
+import { CheckCircle, Package, Clock, PartyPopper } from "lucide-react";
+import { triggerConfettiBurst } from "../../utils/confetti";
 import type { DashboardResponse } from "../../types/dashboard.types";
 
 // Importamos los servicios necesarios (Asegúrate de que las rutas sean correctas)
@@ -76,6 +77,7 @@ const OperadorDashboard = ({ data }: Props) => {
       });
       
       setDepositoMsg({ text: "¡Depósito registrado con éxito! ", type: "success" });
+      triggerConfettiBurst();
       setDepositoForm({ material_id: "", cantidad: "" });
       setMatriculaBusqueda("");
       setAlumnoEncontrado(null);
@@ -139,7 +141,8 @@ const OperadorDashboard = ({ data }: Props) => {
                 <h3 className="text-2xl font-bold text-textMain">Nuevo Depósito</h3>
               </div>
               {depositoMsg.text && (
-                <span className={`text-sm font-bold px-4 py-2 rounded-xl ${depositoMsg.type === 'success' ? 'bg-green-100 text-green-700' : depositoMsg.type === 'error' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-500'}`}>
+                <span className={`text-sm font-bold px-4 py-2 rounded-xl flex items-center gap-2 ${depositoMsg.type === 'success' ? 'bg-green-100 text-green-700' : depositoMsg.type === 'error' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-500'}`}>
+                  {depositoMsg.type === 'success' && <PartyPopper className="w-4 h-4 animate-bounce" />}
                   {depositoMsg.text}
                 </span>
               )}
