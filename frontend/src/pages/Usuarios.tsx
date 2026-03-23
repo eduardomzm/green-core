@@ -199,7 +199,7 @@ const Usuarios = () => {
             <option value="ALUMNO">Alumno</option>
           </select>
 
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <select
               value={carreraFilter}
               onChange={(e) => { setCarreraFilter(e.target.value); setPage(1); }}
@@ -228,7 +228,7 @@ const Usuarios = () => {
         <div className="bg-red-50 text-red-600 p-6 rounded-2xl font-bold border border-red-200">{error}</div>
       ) : (
         <div className="space-y-6">
-          <div className="bg-white rounded-3xl shadow-sm overflow-hidden border border-gray-100">
+          <div className="bg-white rounded-3xl shadow-sm overflow-x-auto border border-gray-100">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-gray-50/50 border-b border-gray-100 text-xs uppercase tracking-wider text-gray-400">
@@ -280,7 +280,7 @@ const Usuarios = () => {
                     <td className="p-5 text-center">
                       <button
                         onClick={() => handleEdit(u)}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity bg-secondary text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md hover:shadow-lg"
+                        className="md:opacity-0 md:group-hover:opacity-100 transition-opacity bg-secondary text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md hover:shadow-lg"
                       >
                         Editar
                       </button>
