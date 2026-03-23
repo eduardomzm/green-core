@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { User as UserIcon, Mail, Lock, Eye, EyeOff, Save, AlertCircle, CheckCircle, Settings } from "lucide-react";
+import { User as UserIcon, Mail, Lock, Eye, EyeOff, Save, AlertCircle, CheckCircle, Settings, UserRound, GraduationCap } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { updateMe } from "../services/userService";
 
@@ -145,6 +145,40 @@ export default function Perfil() {
         {/* Columna Izquierda: Datos Personales */}
         <div className="lg:col-span-1 space-y-8 h-fit">
           {/* Datos personales (solo lectura) */}
+          {user?.role !== 'ADMIN' && (
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative mb-8">
+              <h3 className="text-lg font-bold text-textMain mb-6 flex items-center gap-2">
+                <UserRound className="w-5 h-5 text-primary" />
+                Información Personal
+              </h3>
+              
+              <div className="space-y-4">
+                <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Nombre Completo</p>
+                  <p className="text-sm font-bold text-textMain first-letter:uppercase">
+                    {user?.first_name} {user?.primer_apellido} {user?.segundo_apellido}
+                  </p>
+                </div>
+
+                {user?.role === 'ALUMNO' && user?.matricula && (
+                  <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                    <div className="flex items-center gap-2 mb-1">
+                      <GraduationCap className="w-3 h-3 text-primary" />
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Matrícula</p>
+                    </div>
+                    <p className="text-sm font-bold text-textMain uppercase">{user?.matricula}</p>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-2 px-2 py-1">
+                  <AlertCircle className="w-4 h-4 text-gray-400" />
+                  <p className="text-[11px] font-medium text-gray-500 italic">
+                    Solo un administrador puede modificar esta información.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Selección de Avatar (NO ALUMNOS) */}
           {user?.role !== 'ALUMNO' && (
