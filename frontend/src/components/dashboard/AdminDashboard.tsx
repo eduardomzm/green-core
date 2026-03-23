@@ -31,7 +31,7 @@ const AdminDashboard = ({ data }: Props) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
         {/* Card 1: Impacto Total */}
-        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
+        <div className="glass-panel p-6 rounded-[2rem] relative overflow-hidden group hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
           <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors"></div>
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-4">
@@ -51,7 +51,7 @@ const AdminDashboard = ({ data }: Props) => {
         </div>
 
         {/* Card 2: Participación */}
-        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-xl hover:shadow-secondary/5 transition-all duration-300">
+        <div className="glass-panel p-6 rounded-[2rem] relative overflow-hidden group hover:shadow-xl hover:shadow-secondary/5 transition-all duration-300">
           <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-secondary/5 rounded-full blur-2xl group-hover:bg-secondary/10 transition-colors"></div>
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-4">
@@ -74,7 +74,7 @@ const AdminDashboard = ({ data }: Props) => {
         </div>
 
         {/* Card 3: Meta Global */}
-        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-xl hover:shadow-accent/5 transition-all duration-300">
+        <div className="glass-panel p-6 rounded-[2rem] relative overflow-hidden group hover:shadow-xl hover:shadow-accent/5 transition-all duration-300">
           <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-accent/5 rounded-full blur-2xl group-hover:bg-accent/10 transition-colors"></div>
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-4">
@@ -98,7 +98,7 @@ const AdminDashboard = ({ data }: Props) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
         {/* Últimos Registrados */}
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="glass-panel rounded-3xl overflow-hidden">
           <div className="p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
             <h3 className="font-bold text-textMain flex items-center gap-2">
               <UserPlus className="w-5 h-5 text-primary" />
@@ -149,7 +149,7 @@ const AdminDashboard = ({ data }: Props) => {
         </div>
 
         {/* Últimos Depósitos */}
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="glass-panel rounded-3xl overflow-hidden">
           <div className="p-6 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
             <h3 className="font-bold text-textMain flex items-center gap-2">
               <History className="w-5 h-5 text-secondary" />

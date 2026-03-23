@@ -103,7 +103,7 @@ const OperadorDashboard = ({ data }: Props) => {
       
       {/* TARJETAS DE ESTADÍSTICAS DEL OPERADOR */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
+        <div className="glass-panel p-6 rounded-2xl flex items-center gap-4">
           <div className="p-4 bg-green-50 rounded-full text-primary">
             <CheckCircle className="w-8 h-8" strokeWidth={1.5} />
           </div>
@@ -114,7 +114,7 @@ const OperadorDashboard = ({ data }: Props) => {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
+        <div className="glass-panel p-6 rounded-2xl flex items-center gap-4">
           <div className="p-4 bg-blue-50 rounded-full text-secondary">
             <Package className="w-8 h-8" strokeWidth={1.5} />
           </div>
@@ -130,7 +130,7 @@ const OperadorDashboard = ({ data }: Props) => {
         
         {/* COLUMNA IZQUIERDA: EL DISEÑO EXACTO DE DEPOSITOS.TSX */}
         <div className="lg:col-span-3 space-y-6">
-          <div className="bg-white p-6 rounded-3xl shadow-sm border-t-4 border-primary relative">
+          <div className="glass-panel p-6 rounded-3xl border-t-4 border-primary relative">
             <div className="absolute -top-10 -right-10 text-9xl opacity-5"></div>
 
             <div className="flex items-center justify-between mb-6 relative z-10">
@@ -216,7 +216,7 @@ const OperadorDashboard = ({ data }: Props) => {
 
         {/* COLUMNA DERECHA: HISTORIAL RECIENTE */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden sticky top-6">
+          <div className="glass-panel rounded-3xl overflow-hidden sticky top-6">
             <div className="p-6 border-b border-gray-50 flex justify-between items-center">
               <div>
                 <h3 className="text-lg font-bold text-textMain flex items-center gap-2">

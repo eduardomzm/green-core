@@ -14,7 +14,7 @@ const TutorDashboard = ({ data }: Props) => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Tarjeta 1: Progreso de la Meta Global */}
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between relative overflow-hidden">
+        <div className="glass-panel p-6 rounded-3xl flex flex-col justify-between relative overflow-hidden">
           <div className="absolute -right-6 -top-6 text-primary opacity-5">
             <Target className="w-40 h-40" />
           </div>
@@ -46,7 +46,7 @@ const TutorDashboard = ({ data }: Props) => {
         </div>
 
         {/* Tarjeta 2: Aportación del Grupo */}
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex flex-col justify-between">
+        <div className="glass-panel p-6 rounded-3xl flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="p-2.5 bg-blue-50 rounded-xl text-secondary">
@@ -91,7 +91,7 @@ const TutorDashboard = ({ data }: Props) => {
       </div>
 
       {/* SECCIÓN: ÚLTIMOS DEPÓSITOS DEL GRUPO */}
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="glass-panel rounded-3xl overflow-hidden">
         <div className="p-6 border-b border-gray-50 flex items-center gap-3">
           <Recycle className="w-5 h-5 text-accent" strokeWidth={2} />
           <div>

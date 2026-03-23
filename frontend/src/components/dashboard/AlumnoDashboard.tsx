@@ -58,7 +58,7 @@ const AlumnoDashboard = ({ data }: Props) => {
     <div className="space-y-8 animate-in fade-in duration-500">
       
       {/* BUSCADOR DE ALUMNOS */}
-      <div className="bg-white p-6 md:p-8 rounded-3xl border border-gray-100 shadow-sm relative z-20">
+      <div className="glass-panel p-6 md:p-8 rounded-3xl relative z-20">
         <h2 className="text-lg font-bold text-textMain mb-4 flex items-center gap-2">
           <Users className="w-5 h-5 text-blue-500" strokeWidth={2} />
           Buscar Estudiantes
@@ -111,7 +111,7 @@ const AlumnoDashboard = ({ data }: Props) => {
 
       {/* TU PROGRESO PERSONAL - Solo se muestra si tiene meta del tutor */}
       {metaAlumno && (
-        <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-8 animate-in fade-in slide-in-from-top-2 duration-500">
+        <div className="glass-panel p-8 rounded-3xl flex flex-col md:flex-row items-center gap-8 animate-in fade-in slide-in-from-top-2 duration-500">
           <div className="flex-shrink-0 p-5 bg-green-50 rounded-2xl">
             <Target className="w-10 h-10 text-primary" strokeWidth={2} />
           </div>
@@ -136,7 +136,7 @@ const AlumnoDashboard = ({ data }: Props) => {
 
       {/* META ASIGNADA POR TUTOR (si existe) */}
       {metaAlumno && (
-        <div className="bg-white p-8 rounded-3xl border border-orange-100 shadow-sm flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
+        <div className="glass-panel p-8 rounded-3xl border-orange-100/50 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
           <div className="absolute -right-6 -top-6 text-accent opacity-5">
             <Target className="w-40 h-40" />
           </div>
@@ -169,7 +169,7 @@ const AlumnoDashboard = ({ data }: Props) => {
 
 
   
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="glass-panel rounded-3xl overflow-hidden">
         
         <div className="p-6 border-b border-gray-50 bg-white space-y-4 md:space-y-0 md:flex md:items-center md:justify-between">
           <div>
