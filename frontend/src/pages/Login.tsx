@@ -4,6 +4,7 @@ import { loginRequest } from "../services/authService";
 import { useAuth } from "../hooks/useAuth";
 import { Button } from "../components/common/Button";
 import Background from "../components/common/Background";
+import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ const Login = () => {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -69,14 +71,25 @@ const Login = () => {
             <label className="block text-sm font-bold text-textMain mb-1.5 ml-1">
               Contraseña
             </label>
-            <input
-              type="password"
-              placeholder=" "
-              className="w-full px-5 py-3.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all bg-background/50 focus:bg-white shadow-inner"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder=" "
+                className="w-full px-5 py-3.5 pr-12 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all bg-background/50 focus:bg-white shadow-inner"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              {password && (
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors focus:outline-none"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="flex justify-end mt-2">

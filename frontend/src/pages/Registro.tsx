@@ -7,7 +7,7 @@ import { Modal } from '../components/common/Modal';
 import { TERMINOS_CONTENT, PRIVACIDAD_CONTENT } from '../constants/legalContent';
 import { parseBackendErrors } from '../utils/errorUtils';
 import type { FieldErrors } from '../utils/errorUtils';
-import { CheckCircle, AlertCircle } from 'lucide-react';
+import { CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react';
 
 
 
@@ -36,6 +36,8 @@ export const Registro = () => {
   const [showTerminos, setShowTerminos] = useState(false);
   const [showPrivacidad, setShowPrivacidad] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [legalError, setLegalError] = useState(false);
 
@@ -213,9 +215,16 @@ export const Registro = () => {
               <label className="block text-xs font-bold text-textMain mb-1.5 ml-1 uppercase tracking-wide opacity-80">
                 Contraseña
               </label>
-              <input type="password" name="password" placeholder=""
-                className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition-all bg-background/50 focus:bg-white shadow-inner text-sm ${errors.password ? 'border-red-500 ring-red-500' : 'border-gray-200 focus:ring-secondary focus:border-transparent'}`}
-                value={formData.password} onChange={handleChange} required />
+              <div className="relative">
+                <input type={showPassword ? "text" : "password"} name="password" placeholder=""
+                  className={`w-full px-4 py-3 pr-10 rounded-xl border focus:outline-none focus:ring-2 transition-all bg-background/50 focus:bg-white shadow-inner text-sm ${errors.password ? 'border-red-500 ring-red-500' : 'border-gray-200 focus:ring-secondary focus:border-transparent'}`}
+                  value={formData.password} onChange={handleChange} required />
+                {formData.password && (
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary focus:outline-none">
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                )}
+              </div>
               {errors.password && <p className="text-red-500 text-[10px] mt-1 ml-1 font-bold">{errors.password[0]}</p>}
             </div>
 
@@ -223,10 +232,17 @@ export const Registro = () => {
               <label className="block text-xs font-bold text-textMain mb-1.5 ml-1 uppercase tracking-wide opacity-80">
                 Repetir Contraseña
               </label>
-              <input type="password" placeholder=""
-                className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition-all shadow-inner text-sm bg-background/50 focus:bg-white 
-                ${(confirmPassword.length > 0 && pwd !== confirmPassword) || errors.confirmPassword ? 'border-red-400 focus:ring-red-500' : 'border-gray-200 focus:ring-secondary focus:border-transparent'}`}
-                value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+              <div className="relative">
+                <input type={showConfirmPassword ? "text" : "password"} placeholder=""
+                  className={`w-full px-4 py-3 pr-10 rounded-xl border focus:outline-none focus:ring-2 transition-all shadow-inner text-sm bg-background/50 focus:bg-white 
+                  ${(confirmPassword.length > 0 && pwd !== confirmPassword) || errors.confirmPassword ? 'border-red-400 focus:ring-red-500' : 'border-gray-200 focus:ring-secondary focus:border-transparent'}`}
+                  value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+                {confirmPassword && (
+                  <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary focus:outline-none">
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                )}
+              </div>
               {errors.confirmPassword && <p className="text-red-500 text-[10px] mt-1 ml-1 font-bold">{errors.confirmPassword[0]}</p>}
             </div>
 
