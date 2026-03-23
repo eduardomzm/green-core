@@ -122,7 +122,7 @@ const Usuarios = () => {
     setModalError("");
 
     if (formData.role === "ALUMNO") {
-      const matriculaRegex = /^\d{5}[A-Z]{4}\d{3}$/;
+      const matriculaRegex = /^\d{4,5}[A-Z]{4}\d{3}$/;
       if (!matriculaRegex.test(formData.matricula)) {
         setModalError("Formato de matrícula inválido.");
         return;

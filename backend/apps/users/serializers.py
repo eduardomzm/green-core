@@ -81,8 +81,8 @@ class RegistroAlumnoSerializer(serializers.Serializer):
         return value
 
     def validate_matricula(self, value):
-        # Validador de formato: 5 números, 4 letras mayúsculas, 3 números
-        matricula_regex = r'^\d{5}[A-Z]{4}\d{3}$'
+        # Validador de formato: 4 o 5 números, 4 letras mayúsculas, 3 números
+        matricula_regex = r'^\d{4,5}[A-Z]{4}\d{3}$'
         if not re.match(matricula_regex, value):
             raise serializers.ValidationError(
                 "Formato de matrícula inválido."
@@ -139,7 +139,7 @@ class AdminUserManagementSerializer(serializers.ModelSerializer):
                 if not self.instance or not hasattr(self.instance, 'alumnoperfil'):
                     raise serializers.ValidationError({"matricula": "La matrícula es obligatoria para cuentas de Alumno."})
             else:
-                matricula_regex = r'^\d{5}[A-Z]{4}\d{3}$'
+                matricula_regex = r'^\d{4,5}[A-Z]{4}\d{3}$'
                 if not re.match(matricula_regex, matricula):
                     raise serializers.ValidationError({
                         "matricula": "Formato de matrícula inválido."
