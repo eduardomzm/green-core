@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 import random
 import string
 
@@ -65,7 +66,7 @@ class Deposito(models.Model):
     )
 
     cantidad = models.PositiveIntegerField()
-    fecha = models.DateTimeField(auto_now_add=True)
+    fecha = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"{self.alumno} - {self.material} ({self.cantidad})"

@@ -18,7 +18,7 @@ def actualizar_racha_y_nivel(sender, instance, created, **kwargs):
         return
 
     # --- Lógica de Rachas ---
-    hoy = timezone.now().date()
+    hoy = instance.fecha.date()
     iso_hoy = hoy.isocalendar() # (year, week, weekday)
     
     ultima_fecha = perfil.ultima_fecha_racha
