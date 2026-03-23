@@ -35,6 +35,8 @@ export interface MetaSistema {
   material_nombre: string;
   cantidad_meta: number;
   activa: boolean;
+  actual: number;
+  porcentaje: number;
 }
 
 export const createMeta = async (data: { nombre: string; material: number; cantidad_meta: number; activa: boolean }) => {

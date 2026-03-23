@@ -37,10 +37,27 @@ class DepositoSerializer(serializers.ModelSerializer):
 
 class MetaSistemaSerializer(serializers.ModelSerializer):
     material_nombre = serializers.CharField(source='material.nombre', read_only=True)
+    actual = serializers.SerializerMethodField()
+    porcentaje = serializers.SerializerMethodField()
 
     class Meta:
         model = MetaSistema
-        fields = ['id', 'nombre', 'material', 'material_nombre', 'cantidad_meta', 'activa']
+        fields = ['id', 'nombre', 'material', 'material_nombre', 'cantidad_meta', 'activa', 'actual', 'porcentaje']
+
+    def get_actual(self, obj):
+        from .models import Deposito
+        from django.db.models import Sum
+        if obj.material:
+            total = Deposito.objects.filter(material=obj.material).aggregate(Sum('cantidad'))['cantidad__sum'] or 0
+        else:
+            total = Deposito.objects.all().aggregate(Sum('cantidad'))['cantidad__sum'] or 0
+        return total
+
+    def get_porcentaje(self, obj):
+        actual = self.get_actual(obj)
+        if obj.cantidad_meta > 0:
+            return min(round((actual / obj.cantidad_meta) * 100, 2), 100)
+        return 0
 
 
 class MetaAlumnoSerializer(serializers.ModelSerializer):

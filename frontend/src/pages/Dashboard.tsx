@@ -91,14 +91,24 @@ const Dashboard = () => {
                     {m.nombre}
                   </h3>
                 </div>
-                <div className="mt-4 flex items-end justify-between">
-                  {/* Todo: Cuando haya progreso global implementado, aquí iría una barra de progreso. Por ahora mostramos la cantidad */}
-                  <span className="text-3xl font-black text-emerald-700 tracking-tighter">
-                    {m.cantidad_meta.toLocaleString()}
-                  </span>
-                  <span className="text-xs font-bold text-emerald-600 bg-emerald-100 px-2 py-1 rounded-md">
-                    Objetivo
-                  </span>
+                <div className="mt-4">
+                  <div className="flex justify-between text-[10px] font-bold text-emerald-600 mb-1.5 uppercase tracking-wider">
+                    <span>{m.actual.toLocaleString()} recolectados</span>
+                    <span>Meta: {m.cantidad_meta.toLocaleString()}</span>
+                  </div>
+                  <div className="w-full bg-emerald-100/50 rounded-full h-2 overflow-hidden border border-emerald-100">
+                    <div 
+                      className="bg-emerald-500 h-2 rounded-full transition-all duration-1000 ease-out relative"
+                      style={{ width: `${m.porcentaje}%` }}
+                    >
+                      <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                    </div>
+                  </div>
+                  <div className="mt-2 text-right">
+                    <span className="text-[10px] font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md">
+                      {m.porcentaje}%
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}
