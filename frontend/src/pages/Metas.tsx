@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Target, CheckCircle, Clock, Calendar, Filter, User, Plus, X, AlertCircle } from "lucide-react";
+import { Target, CheckCircle, Clock, Calendar, Filter, User, Plus, X, AlertCircle, Trash2 } from "lucide-react";
 import api from "../services/api";
 import { getMateriales, createMeta, type Material } from "../services/reciclajeService";
 
@@ -82,6 +82,19 @@ export default function Metas() {
       }
       
       setMetaMsg({ text: errorMsg, type: "error" });
+    }
+  };
+
+  const handleDeleteMeta = async (id: number) => {
+    if (!window.confirm("¿Estás seguro de que deseas cancelar esta meta? Se eliminará permanentemente.")) return;
+    
+    try {
+      const endpoint = tab === "SISTEMA" ? "metas-sistema" : "metas-alumnos";
+      await api.delete(`${endpoint}/${id}/`);
+      fetchMetas();
+    } catch (error) {
+      console.error("Error al eliminar meta:", error);
+      alert("Error al intentar cancelar la meta.");
     }
   };
 
@@ -253,16 +266,28 @@ export default function Metas() {
                 </div>
               )}
 
-              <div className="mb-4">
-                 <div className="flex items-center gap-2 mb-1">
-                   {tab === "ALUMNOS" && <User className="w-4 h-4 text-gray-400" />}
-                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                     {tab === "SISTEMA" ? (meta.nombre || "Meta General") : `@${meta.alumno_username}`}
-                   </p>
+              <div className="mb-4 flex items-start justify-between">
+                 <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    {tab === "ALUMNOS" && <User className="w-4 h-4 text-gray-400" />}
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                      {tab === "SISTEMA" ? (meta.nombre || "Meta General") : `@${meta.alumno_username}`}
+                    </p>
+                  </div>
+                  <h4 className="text-xl font-bold text-textMain capitalize">
+                      {meta.cantidad_meta} {meta.material?.nombre || meta.material_nombre || "Piezas"}
+                  </h4>
                  </div>
-                 <h4 className="text-xl font-bold text-textMain capitalize">
-                    {meta.cantidad_meta} {meta.material?.nombre || meta.material_nombre || "Piezas"}
-                 </h4>
+
+                 {!meta.cumplida && (
+                   <button
+                    onClick={() => handleDeleteMeta(meta.id)}
+                    className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                    title="Cancelar Meta"
+                   >
+                     <Trash2 className="w-4 h-4" />
+                   </button>
+                 )}
               </div>
 
               <div className="space-y-3 mt-6">

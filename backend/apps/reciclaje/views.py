@@ -136,7 +136,7 @@ class MetaSistemaViewSet(viewsets.ModelViewSet):
         serializer.save()    
 
 
-class MetaAlumnoViewSet(viewsets.ReadOnlyModelViewSet):
+class MetaAlumnoViewSet(viewsets.ModelViewSet):
     queryset = MetaAlumno.objects.all()
     serializer_class = MetaAlumnoSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
