@@ -233,9 +233,9 @@ const Usuarios = () => {
               <thead>
                 <tr className="bg-gray-50/50 border-b border-gray-100 text-xs uppercase tracking-wider text-gray-400">
                   <th className="p-5 font-bold">Usuario</th>
-                  <th className="p-5 font-bold">Información</th>
-                  <th className="p-5 font-bold">Rol</th>
-                  <th className="p-5 font-bold">Estado</th>
+                  <th className="p-5 font-bold hidden md:table-cell">Información</th>
+                  <th className="p-5 font-bold hidden md:table-cell">Rol</th>
+                  <th className="p-5 font-bold hidden md:table-cell">Estado</th>
                   <th className="p-5 font-bold text-center">Acciones</th>
                 </tr>
               </thead>
@@ -244,15 +244,38 @@ const Usuarios = () => {
                   <tr key={u.id} className="hover:bg-gray-50/50 transition-colors group">
                     <td className="p-5">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm shrink-0">
                           {u.username.substring(0, 2).toUpperCase()}
                         </div>
-                        <div>
-                          <p className="font-bold text-textMain">{u.username}</p>
+                        <div className="min-w-0">
+                          <p className="font-bold text-textMain truncate">{u.username}</p>
+                          
+                          {/* Información consolidada para Móvil */}
+                          <div className="md:hidden mt-2 space-y-1">
+                            <p className="text-xs font-semibold text-gray-700 truncate">
+                              {u.first_name} {u.primer_apellido}
+                            </p>
+                            <p className="text-[10px] text-secondary font-medium truncate">{u.email}</p>
+                            
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                              <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-tighter ${
+                                u.role === 'ADMIN' ? 'bg-purple-100 text-purple-700' :
+                                u.role === 'OPERADOR' ? 'bg-secondary/10 text-secondary' :
+                                u.role === 'TUTOR' ? 'bg-blue-100 text-blue-700' : 'bg-primary/10 text-primary'
+                              }`}>
+                                {u.role}
+                              </span>
+                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-tighter ${
+                                u.activo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                              }`}>
+                                {u.activo ? 'Activo' : 'Inactivo'}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </td>
-                    <td className="p-5">
+                    <td className="p-5 hidden md:table-cell">
                       <p className="font-semibold text-textMain capitalize">
                         {u.first_name} {u.primer_apellido} {u.segundo_apellido}
                       </p>
@@ -261,7 +284,7 @@ const Usuarios = () => {
                         <p className="text-[10px] text-accent font-bold mt-1 uppercase tracking-tight">Matrícula: {u.matricula}</p>
                       )}
                     </td>
-                    <td className="p-5">
+                    <td className="p-5 hidden md:table-cell">
                       <span className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${u.role === 'ADMIN' ? 'bg-purple-100 text-purple-700' :
                         u.role === 'OPERADOR' ? 'bg-secondary/10 text-secondary' :
                           u.role === 'TUTOR' ? 'bg-blue-100 text-blue-700' : 'bg-primary/10 text-primary'
@@ -269,7 +292,7 @@ const Usuarios = () => {
                         {u.role}
                       </span>
                     </td>
-                    <td className="p-5">
+                    <td className="p-5 hidden md:table-cell">
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${u.activo ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'
                         }`}>
                         <div className={`w-1.5 h-1.5 rounded-full ${u.activo ? 'bg-green-500' : 'bg-red-500'}`}></div>
