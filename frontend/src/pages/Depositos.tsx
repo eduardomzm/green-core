@@ -186,7 +186,7 @@ const Depositos = () => {
           <form className="space-y-8 relative z-10">
             <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
               <label className="block text-xs font-bold text-gray-500 uppercase mb-3 tracking-wider">1. Identificar Alumno</label>
-              <div className="flex gap-3">
+              <div className="flex flex-col md:flex-row gap-3">
                 <div className="relative flex-1">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <Search className="h-5 w-5 text-gray-400" />
@@ -203,7 +203,7 @@ const Depositos = () => {
                 <button 
                   type="button" 
                   onClick={buscarAlumno}
-                  className="bg-primary hover:bg-green-600 text-white font-bold px-8 py-3.5 rounded-xl transition-all shadow-md active:scale-95"
+                  className="bg-primary hover:bg-green-600 text-white font-bold px-8 py-3.5 rounded-xl transition-all shadow-md active:scale-95 w-full md:w-auto"
                 >
                   Buscar
                 </button>
