@@ -8,6 +8,7 @@ from .views import (
     ProgresoView,
     DashboardView,
     MetaSistemaViewSet,
+    MetaAlumnoViewSet,
     RankingsView,
     MisDepositosView,
     UnirseGrupoView,
@@ -31,7 +32,8 @@ router = DefaultRouter()
 router.register(r'depositos', DepositoViewSet, basename='deposito')
 router.register(r'grupos', GrupoViewSet, basename='grupo')
 router.register(r'materiales', MaterialViewSet, basename='material')
-router.register(r'metas', MetaSistemaViewSet, basename='meta')
+router.register(r'metas-sistema', MetaSistemaViewSet, basename='meta-sistema')
+router.register(r'metas-alumnos', MetaAlumnoViewSet, basename='meta-alumno')
 
 urlpatterns = router.urls + [
     path('mis-estadisticas/', EstadisticasView.as_view()),

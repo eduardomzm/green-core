@@ -40,12 +40,17 @@ export interface MetaSistema {
 }
 
 export const createMeta = async (data: { nombre: string; material: number; cantidad_meta: number; activa: boolean }) => {
-  const response = await api.post('metas/', data);
+  const response = await api.post('metas-sistema/', data);
   return response.data;
 };
 
 export const getMetasSistema = async (): Promise<MetaSistema[]> => {
-  const response = await api.get('metas/');
+  const response = await api.get('metas-sistema/');
+  return response.data;
+};
+
+export const getMetasAlumnos = async (): Promise<any[]> => {
+  const response = await api.get('metas-alumnos/');
   return response.data;
 };
 

@@ -77,6 +77,9 @@ class MetaSistema(models.Model):
     material = models.ForeignKey(Material, on_delete=models.CASCADE, related_name='metas_sistema', null=True, blank=True)
     cantidad_meta = models.PositiveIntegerField()
     activa = models.BooleanField(default=True)
+    cumplida = models.BooleanField(default=False)
+    fecha_inicio = models.DateTimeField(auto_now_add=True)
+    fecha_cumplimiento = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.nombre} - {self.material} ({self.cantidad_meta})"
@@ -97,6 +100,8 @@ class MetaAlumno(models.Model):
         related_name='metas_asignadas',
         limit_choices_to={'role': 'TUTOR'}
     )
+    cumplida = models.BooleanField(default=False)
+    fecha_cumplimiento = models.DateTimeField(null=True, blank=True)
     creada_en = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

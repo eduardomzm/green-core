@@ -9,7 +9,8 @@ import {
   GraduationCap,
   Key,
   Settings,
-  UserCircle
+  UserCircle,
+  Target
 } from "lucide-react";
 
 export const NAVIGATION = [
@@ -24,4 +25,5 @@ export const NAVIGATION = [
   { name: 'Rankings', path: '/dashboard/rankings', icon: Trophy, roles: ['ADMIN', 'ALUMNO', 'TUTOR', 'OPERADOR'] },
   { name: 'Reportes', path: '/dashboard/estadisticas', icon: FileText, roles: ['ADMIN', 'TUTOR'] },
   { name: 'Mis Depósitos', path: '/dashboard/historial', icon: History, roles: ['ALUMNO'] },
+  { name: 'Metas', path: '/dashboard/metas', icon: Target, roles: ['ADMIN'] },
 ];

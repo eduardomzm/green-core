@@ -21,6 +21,7 @@ import RestablecerContrasena from "../pages/RestablecerContrasena";
 import Perfil from "../pages/Perfil";
 import MiPerfil from "../pages/MiPerfil.tsx";
 import PerfilPublico from "../pages/PerfilPublico";
+import Metas from "../pages/Metas";
 
 const AppRouter = () => {
   return (
@@ -60,6 +61,7 @@ const AppRouter = () => {
           <Route path="perfil" element={<Perfil />} />
           <Route path="mi-perfil" element={<MiPerfil />} />
           <Route path="perfil/:username" element={<PerfilPublico />} />
+          <Route path="metas" element={<Metas />} />
         </Route>
 
 

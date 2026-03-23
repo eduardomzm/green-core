@@ -42,7 +42,7 @@ class MetaSistemaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MetaSistema
-        fields = ['id', 'nombre', 'material', 'material_nombre', 'cantidad_meta', 'activa', 'actual', 'porcentaje']
+        fields = ['id', 'nombre', 'material', 'material_nombre', 'cantidad_meta', 'activa', 'cumplida', 'fecha_inicio', 'fecha_cumplimiento', 'actual', 'porcentaje']
 
     def get_actual(self, obj):
         from .models import Deposito
@@ -62,11 +62,12 @@ class MetaSistemaSerializer(serializers.ModelSerializer):
 
 class MetaAlumnoSerializer(serializers.ModelSerializer):
     material_nombre = serializers.CharField(source='material.nombre', read_only=True)
+    alumno_username = serializers.CharField(source='alumno.username', read_only=True)
 
     class Meta:
         model = MetaAlumno
-        fields = ['id', 'alumno', 'material', 'material_nombre', 'cantidad_meta', 'asignada_por', 'creada_en']
-        read_only_fields = ['asignada_por', 'creada_en']
+        fields = ['id', 'alumno', 'alumno_username', 'material', 'material_nombre', 'cantidad_meta', 'asignada_por', 'cumplida', 'fecha_cumplimiento', 'creada_en']
+        read_only_fields = ['asignada_por', 'cumplida', 'fecha_cumplimiento', 'creada_en']
 
 class MedallaSerializer(serializers.ModelSerializer):
     class Meta:

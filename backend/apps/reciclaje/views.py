@@ -136,6 +136,15 @@ class MetaSistemaViewSet(viewsets.ModelViewSet):
         serializer.save()    
 
 
+class MetaAlumnoViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = MetaAlumno.objects.all()
+    serializer_class = MetaAlumnoSerializer
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    def get_queryset(self):
+        return MetaAlumno.objects.select_related('alumno', 'material').order_by('-creada_en')
+
+
 class EstadisticasView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -219,7 +228,11 @@ class ProgresoView(APIView):
     def get(self, request):
         user = request.user
 
-        meta_obj = MetaSistema.objects.filter(activa=True).first()
+        meta_obj = MetaSistema.objects.filter(activa=True, cumplida=False).first()
+        # Si no hay una activa sin cumplir, buscamos la última cumplida para mostrar el 100%
+        if not meta_obj:
+            meta_obj = MetaSistema.objects.filter(activa=True, cumplida=True).order_by('-fecha_cumplimiento').first()
+        
         meta = meta_obj.cantidad_meta if meta_obj else 100
 
         if user.role == 'ADMIN':
@@ -262,7 +275,10 @@ class DashboardView(APIView):
     def get(self, request):
         user = request.user
 
-        meta_obj = MetaSistema.objects.filter(activa=True).first()
+        meta_obj = MetaSistema.objects.filter(activa=True, cumplida=False).first()
+        if not meta_obj:
+            meta_obj = MetaSistema.objects.filter(activa=True, cumplida=True).order_by('-fecha_cumplimiento').first()
+            
         meta_actual = meta_obj.cantidad_meta if meta_obj else 100
 
         if user.role == 'ADMIN':
@@ -377,7 +393,13 @@ class DashboardView(APIView):
     def _get_meta_alumno(self, user):
         if user.role != 'ALUMNO':
             return None
-        meta = MetaAlumno.objects.filter(alumno=user).select_related('material').order_by('-creada_en').first()
+        # Primero buscamos una meta activa sin cumplir
+        meta = MetaAlumno.objects.filter(alumno=user, cumplida=False).select_related('material').order_by('creada_en').first()
+        
+        # Si no hay, buscamos la última cumplida (opcional, para visualización de éxito)
+        if not meta:
+            meta = MetaAlumno.objects.filter(alumno=user, cumplida=True).select_related('material').order_by('-fecha_cumplimiento').first()
+            
         if not meta:
             return None
         depositos_material = Deposito.objects.filter(alumno=user, material=meta.material).aggregate(total=Sum('cantidad'))['total'] or 0
