@@ -148,7 +148,7 @@ const AlumnoDashboard = ({ data, user }: Props) => {
               <p className="text-sm font-medium text-gray-500 mt-1">Mantén tu racha activa reciclando cada semana.</p>
             </div>
             <div className="text-right flex flex-col items-end">
-              <span className="text-3xl font-black text-orange-600 leading-none">{user?.racha_actual || 0}</span>
+              <span className="text-3xl font-black text-orange-600 leading-none">{data.racha_actual ?? user?.racha_actual ?? 0}</span>
               <span className="text-[10px] font-black text-orange-400 uppercase tracking-widest mt-1">Semanas Seguidas</span>
             </div>
           </div>

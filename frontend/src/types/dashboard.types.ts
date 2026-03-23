@@ -60,4 +60,5 @@ export interface DashboardResponse {
   ultimos_usuarios?: UsuarioHistorial[];
   meta_alumno?: MetaAlumnoData | null;
   semanas_racha?: SemanaRacha[];
+  racha_actual?: number;
 }

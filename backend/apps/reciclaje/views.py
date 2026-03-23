@@ -15,6 +15,7 @@ from rest_framework import filters
 from apps.users.views import UserPagination
 
 from .models import Deposito, Grupo, Material, MetaSistema, MetaAlumno
+from .utils import calculate_streak
 from .permissions import CanCreateDeposito, IsAdmin
 from .serializers import (
                 DepositoSerializer,
@@ -356,8 +357,22 @@ class DashboardView(APIView):
             "ultimos_depositos": ultimos_depositos,
             "ultimos_usuarios": ultimos_usuarios,
             "meta_alumno": self._get_meta_alumno(user),
-            "semanas_racha": self._get_semanas_racha(user)
+            "semanas_racha": self._get_semanas_racha(user),
+            "racha_actual": self._sync_racha(user) if user.role == 'ALUMNO' else 0
         })
+
+    def _sync_racha(self, user):
+        from apps.users.models import AlumnoPerfil
+        perfil = AlumnoPerfil.objects.filter(usuario=user).first()
+        if not perfil:
+            return 0
+        nueva_racha = calculate_streak(user)
+        if perfil.racha_actual != nueva_racha:
+            perfil.racha_actual = nueva_racha
+            if nueva_racha > perfil.max_racha:
+                perfil.max_racha = nueva_racha
+            perfil.save(update_fields=['racha_actual', 'max_racha'])
+        return perfil.racha_actual
 
     def _get_meta_alumno(self, user):
         if user.role != 'ALUMNO':
