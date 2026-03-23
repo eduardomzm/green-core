@@ -59,6 +59,27 @@ class MetaSistemaSerializer(serializers.ModelSerializer):
             return min(round((actual / obj.cantidad_meta) * 100, 2), 100)
         return 0
 
+    def validate(self, data):
+        material = data.get('material')
+        # Si se está creando o actualizando a 'activa=True' y 'cumplida=False'
+        # Pero el requerimiento es: "no te permita crear una nueva meta si ya existe una actualmente de ese material"
+        # Entendemos "actualmente" como una meta que no ha sido cumplida aún.
+        
+        # Filtramos por material y que no esté cumplida
+        existing_active = MetaSistema.objects.filter(material=material, cumplida=False).exists()
+        
+        if self.instance:
+            # Si estamos editando, excluimos la meta actual de la búsqueda
+            existing_active = MetaSistema.objects.filter(material=material, cumplida=False).exclude(id=self.instance.id).exists()
+
+        if existing_active:
+            nombre_mat = material.nombre if material else "general"
+            raise serializers.ValidationError(
+                f"Ya existe una meta activa para el material '{nombre_mat}'. "
+                "Debe cumplirse o eliminarse la anterior antes de crear una nueva."
+            )
+        return data
+
 
 class MetaAlumnoSerializer(serializers.ModelSerializer):
     material_nombre = serializers.CharField(source='material.nombre', read_only=True)

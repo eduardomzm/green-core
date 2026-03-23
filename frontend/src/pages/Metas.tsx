@@ -66,8 +66,22 @@ export default function Metas() {
         setMetaMsg({ text: "", type: "" });
         setIsFormOpen(false);
       }, 3000);
-    } catch (error) {
-      setMetaMsg({ text: "Error al actualizar la meta.", type: "error" });
+    } catch (error: any) {
+      const data = error.response?.data;
+      let errorMsg = "Error al actualizar la meta.";
+      
+      if (data) {
+        if (typeof data === 'string') errorMsg = data;
+        else if (Array.isArray(data)) errorMsg = data[0];
+        else if (data.non_field_errors) errorMsg = data.non_field_errors[0];
+        else if (typeof data === 'object') {
+          // Capturar el primer error de cualquier campo
+          const firstError = Object.values(data)[0];
+          errorMsg = Array.isArray(firstError) ? firstError[0] : String(firstError);
+        }
+      }
+      
+      setMetaMsg({ text: errorMsg, type: "error" });
     }
   };
 
