@@ -1,6 +1,9 @@
 export interface Estadisticas {
   total_piezas: number;
   total_depositos: number;
+  total_alumnos?: number;
+  alumnos_participantes?: number;
+  material_top?: string;
 }
 
 export interface Progreso {
@@ -32,11 +35,20 @@ export interface MetaAlumnoData {
   porcentaje: number;
 }
 
+export interface UsuarioHistorial {
+  id: number;
+  username: string;
+  first_name: string;
+  primer_apellido: string;
+  role: string;
+  date_joined: string;
+}
+
 export interface DashboardResponse {
   estadisticas: Estadisticas;
   progreso: Progreso;
   por_material: MaterialItem[];
   ultimos_depositos?: DepositoHistorial[];
-  ultimos_usuarios?: any[];
+  ultimos_usuarios?: UsuarioHistorial[];
   meta_alumno?: MetaAlumnoData | null;
 }

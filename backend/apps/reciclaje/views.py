@@ -333,10 +333,18 @@ class DashboardView(APIView):
                 for u in usuarios_recientes
             ]
 
+        # Métricas adicionales para el administrador
+        total_alumnos = User.objects.filter(role='ALUMNO').count() if user.role == 'ADMIN' else 0
+        alumnos_participantes = depositos.values('alumno').distinct().count() if user.role == 'ADMIN' else 0
+        material_top = por_material[0]['material'] if por_material else "N/A"
+
         return Response({
             "estadisticas": {
                 "total_piezas": total_piezas,
-                "total_depositos": total_depositos
+                "total_depositos": total_depositos,
+                "total_alumnos": total_alumnos,
+                "alumnos_participantes": alumnos_participantes,
+                "material_top": material_top
             },
             "progreso": {
                 "meta": meta_actual,  

@@ -1,5 +1,5 @@
 import type { DashboardResponse } from "../../types/dashboard.types";
-import { UserPlus, History, ArrowRight } from "lucide-react";
+import { UserPlus, History, ArrowRight, BarChart3, Users, Target, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface Props {
@@ -7,35 +7,90 @@ interface Props {
 }
 
 const AdminDashboard = ({ data }: Props) => {
+  // Cálculos para las tarjetas
+  const totalAlumnos = data.estadisticas.total_alumnos || 0;
+  const alumnosActivos = data.estadisticas.alumnos_participantes || 0;
+  const porcentajeParticipacion = totalAlumnos > 0 
+    ? Math.round((alumnosActivos / totalAlumnos) * 100) 
+    : 0;
+
   return (
     <div className="p-8 space-y-8">
-      <div>
-        <h2 className="text-3xl font-extrabold text-textMain">Resumen General</h2>
-        <p className="text-gray-500">Vista rápida del estado del reciclaje en la Universidad.</p>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h2 className="text-3xl font-black text-textMain tracking-tight">Resumen General</h2>
+          <p className="text-gray-500 font-medium">Panel de control y métricas de impacto ambiental.</p>
+        </div>
+        <div className="bg-primary/10 px-4 py-2 rounded-2xl flex items-center gap-2 text-primary border border-primary/20">
+          <TrendingUp className="w-4 h-4" />
+          <span className="text-xs font-black uppercase tracking-wider">Actualizado ahora</span>
+        </div>
       </div>
 
-      {/* Tarjetas de Estadísticas */}
+      {/* Tarjetas de Estadísticas Mejoradas */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        <div className="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-primary">
-          <p className="text-sm font-bold text-gray-400 uppercase tracking-wide">Total Piezas</p>
-          <p className="text-4xl font-extrabold text-textMain mt-2">
-            {data.estadisticas.total_piezas} <span className="text-lg text-primary">pz</span>
-          </p>
+        {/* Card 1: Impacto Total */}
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
+          <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors"></div>
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
+                <BarChart3 className="w-5 h-5" />
+              </div>
+              <p className="text-sm font-black text-gray-400 uppercase tracking-widest">Impacto Total</p>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-4xl font-black text-textMain">{data.estadisticas.total_piezas}</span>
+              <span className="text-sm font-bold text-primary uppercase">piezas</span>
+            </div>
+            <p className="text-xs font-bold text-gray-400 mt-4 flex items-center gap-1.5">
+              Material estrella: <span className="text-primary capitalize">{data.estadisticas.material_top || 'N/A'}</span>
+            </p>
+          </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-secondary">
-          <p className="text-sm font-bold text-gray-400 uppercase tracking-wide">Depósitos Realizados</p>
-          <p className="text-4xl font-extrabold text-textMain mt-2">
-            {data.estadisticas.total_depositos}
-          </p>
+        {/* Card 2: Participación */}
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-xl hover:shadow-secondary/5 transition-all duration-300">
+          <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-secondary/5 rounded-full blur-2xl group-hover:bg-secondary/10 transition-colors"></div>
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2.5 bg-secondary/10 text-secondary rounded-xl">
+                <Users className="w-5 h-5" />
+              </div>
+              <p className="text-sm font-black text-gray-400 uppercase tracking-widest">Participación</p>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-4xl font-black text-textMain">{alumnosActivos}</span>
+              <span className="text-sm font-bold text-secondary uppercase">de {totalAlumnos} alumnos</span>
+            </div>
+            <div className="mt-4 flex items-center gap-2">
+              <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-full bg-secondary rounded-full" style={{ width: `${porcentajeParticipacion}%` }}></div>
+              </div>
+              <span className="text-[10px] font-black text-secondary">{porcentajeParticipacion}%</span>
+            </div>
+          </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-accent">
-          <p className="text-sm font-bold text-gray-400 uppercase tracking-wide">Meta Global</p>
-          <p className="text-4xl font-extrabold text-textMain mt-2">
-            {data.progreso.meta} <span className="text-lg text-accent">pz</span>
-          </p>
+        {/* Card 3: Meta Global */}
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-xl hover:shadow-accent/5 transition-all duration-300">
+          <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-accent/5 rounded-full blur-2xl group-hover:bg-accent/10 transition-colors"></div>
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2.5 bg-accent/10 text-accent rounded-xl">
+                <Target className="w-5 h-5" />
+              </div>
+              <p className="text-sm font-black text-gray-400 uppercase tracking-widest">Meta Global</p>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-4xl font-black text-textMain">{data.progreso.porcentaje}%</span>
+              <span className="text-xs font-bold text-accent uppercase">completado</span>
+            </div>
+            <p className="text-xs font-bold text-gray-400 mt-4">
+              Faltan <span className="text-accent">{Math.max(0, data.progreso.meta - data.progreso.actual)}</span> piezas para el objetivo
+            </p>
+          </div>
         </div>
       </div>
 
@@ -63,7 +118,7 @@ const AdminDashboard = ({ data }: Props) => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {data.ultimos_usuarios?.slice(0, 5).map((u) => (
+                {data.ultimos_usuarios?.slice(0, 5).map((u: any) => (
                   <tr key={u.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4">
                       <p className="text-sm font-bold text-textMain">{u.username}</p>
@@ -114,7 +169,7 @@ const AdminDashboard = ({ data }: Props) => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {data.ultimos_depositos?.slice(0, 5).map((d) => (
+                {data.ultimos_depositos?.slice(0, 5).map((d: any) => (
                   <tr key={d.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4">
                       <p className="text-sm font-bold text-textMain">{d.alumno}</p>
