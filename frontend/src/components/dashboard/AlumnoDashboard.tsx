@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
-import { Search, Filter, Calendar, Recycle, User, Target, Users, PartyPopper } from "lucide-react";
+import { motion } from "framer-motion";
+import { Search, Filter, Calendar, Recycle, User, Target, Users, PartyPopper, Flame } from "lucide-react";
 import { triggerConfettiBurst, triggerConfettiPride } from "../../utils/confetti";
 import { Link } from "react-router-dom";
 import { buscarAlumnos } from "../../services/userService";
@@ -7,6 +8,7 @@ import type { DashboardResponse, DepositoHistorial } from "../../types/dashboard
 
 interface Props {
   data: DashboardResponse;
+  user?: any;
 }
 
 const MOCK_DEPOSITOS: DepositoHistorial[] = [
@@ -14,7 +16,7 @@ const MOCK_DEPOSITOS: DepositoHistorial[] = [
   { id: 2, fecha: "2024-10-24", cantidad: 5, material: "Cartón", operador: "operador_maria", alumno: "alumno_mock" },
 ];
 
-const AlumnoDashboard = ({ data }: Props) => {
+const AlumnoDashboard = ({ data, user }: Props) => {
   const [filtroMaterial, setFiltroMaterial] = useState<string>("");
   const [filtroFecha, setFiltroFecha] = useState<string>("");
   
@@ -137,6 +139,22 @@ const AlumnoDashboard = ({ data }: Props) => {
               {data.progreso.porcentaje >= 100 && <PartyPopper className="w-3 h-3" />}
               {data.progreso.porcentaje}% Completado
             </p>
+          </div>
+          
+          {/* Tarjeta de Racha */}
+          <div className="flex flex-col items-center justify-center p-4 bg-orange-50 rounded-2xl border border-orange-100 min-w-[120px] relative overflow-hidden group">
+            <motion.div
+              animate={{ 
+                scale: [1, 1.1, 1],
+                filter: ["drop-shadow(0 0 0px #f97316)", "drop-shadow(0 0 8px #f97316)", "drop-shadow(0 0 0px #f97316)"]
+              }}
+              transition={{ repeat: Infinity, duration: 2 }}
+              className="text-orange-500 mb-1"
+            >
+              <Flame className="w-8 h-8 fill-orange-500" />
+            </motion.div>
+            <span className="text-2xl font-black text-gray-900 leading-none">{user?.racha_actual || 0}</span>
+            <span className="text-[10px] font-bold text-orange-600 uppercase tracking-tight">Racha Semanal</span>
           </div>
         </div>
       )}

@@ -7,6 +7,8 @@ from django.core.validators import RegexValidator
 class UserSerializer(serializers.ModelSerializer):
     # Declaramos la matrícula como un campo calculado
     matricula = serializers.SerializerMethodField()
+    racha_actual = serializers.SerializerMethodField()
+    max_racha = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -24,17 +26,38 @@ class UserSerializer(serializers.ModelSerializer):
             'biografia',
             'instagram',
             'twitter',
-            'facebook'
+            'facebook',
+            'racha_actual',
+            'max_racha'
         )
         read_only_fields = ('id',)
 
     def get_matricula(self, obj):
         if obj.role == 'ALUMNO':
             try:
-                return obj.alumnoperfil.matricula
-            except AlumnoPerfil.DoesNotExist:
-                return None
+                if hasattr(obj, 'alumnoperfil'):
+                    return obj.alumnoperfil.matricula
+            except Exception:
+                pass
         return None
+    
+    def get_racha_actual(self, obj):
+        if obj.role == 'ALUMNO':
+            try:
+                if hasattr(obj, 'alumnoperfil'):
+                    return obj.alumnoperfil.racha_actual
+            except Exception:
+                pass
+        return 0
+
+    def get_max_racha(self, obj):
+        if obj.role == 'ALUMNO':
+            try:
+                if hasattr(obj, 'alumnoperfil'):
+                    return obj.alumnoperfil.max_racha
+            except Exception:
+                pass
+        return 0
 
 
 class CarreraSerializer(serializers.ModelSerializer):

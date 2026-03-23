@@ -38,6 +38,8 @@ export interface User {
   siguiendo_count?: number;
   total_depositos?: number;
   total_piezas?: number;
+  racha_actual?: number;
+  max_racha?: number;
 }
 
 export interface AuthContextType {

@@ -120,7 +120,7 @@ const Dashboard = () => {
       <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
         {user.role === "ADMIN" && <AdminDashboard data={data} />}
         {user.role === "OPERADOR" && <OperadorDashboard data={data} />}
-        {user.role === "ALUMNO" && <AlumnoDashboard data={data} />}
+        {user.role === "ALUMNO" && <AlumnoDashboard data={data} user={user} />}
         {user.role === "TUTOR" && <TutorDashboard data={data} />}
       </div>
 

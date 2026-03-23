@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { User as UserIcon, Save, AlertCircle, CheckCircle, Pencil, Share2, Instagram, Twitter, Facebook, X, Users, Award, Trophy, PartyPopper } from "lucide-react";
+import { User as UserIcon, Save, AlertCircle, CheckCircle, Pencil, Share2, Instagram, Twitter, Facebook, X, Users, Award, Trophy, PartyPopper, Flame } from "lucide-react";
 import { triggerConfettiBurst, triggerConfettiFirecrackers } from "../utils/confetti";
 import * as LucideIcons from "lucide-react";
 import { Link } from "react-router-dom";
@@ -231,6 +231,26 @@ export default function MiPerfil() {
             {user?.total_depositos || 0}
           </span>
           <span className="text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-widest relative z-10">Depósitos Realizados</span>
+        </div>
+
+        {/* Rachas */}
+        <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center group hover:border-orange-300 transition-colors overflow-hidden relative">
+          <div className="absolute inset-0 bg-orange-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="relative z-10 flex items-center gap-2 mb-2">
+            <Flame className="w-8 h-8 text-orange-500 fill-orange-500 group-hover:scale-110 transition-transform" />
+            <span className="text-4xl font-black text-orange-600 drop-shadow-sm">
+              {user?.racha_actual || 0}
+            </span>
+          </div>
+          <span className="text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-widest relative z-10">Racha Actual (Semanas)</span>
+        </div>
+        
+        <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center group hover:border-yellow-300 transition-colors overflow-hidden relative">
+          <div className="absolute inset-0 bg-yellow-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <span className="text-4xl font-black text-yellow-600 mb-2 drop-shadow-sm relative z-10 group-hover:scale-110 transition-transform">
+            {user?.max_racha || 0}
+          </span>
+          <span className="text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-widest relative z-10">Mejor Racha</span>
         </div>
       </div>
 

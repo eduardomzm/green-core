@@ -64,6 +64,11 @@ class AlumnoPerfil(models.Model):
     activo = models.BooleanField(default=True)
     nivel = models.IntegerField(default=1)
 
+    # Rachas (Streaks)
+    racha_actual = models.IntegerField(default=0)
+    max_racha = models.IntegerField(default=0)
+    ultima_fecha_racha = models.DateField(null=True, blank=True)
+
     def __str__(self):
         return self.matricula
 
