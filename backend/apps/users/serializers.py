@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Carrera, AlumnoPerfil, AlumnoGrupo, Notificacion
+from .models import User, Carrera, AlumnoPerfil, AlumnoGrupo, Notificacion, NivelConfig
 from django.db import transaction
 import re
 from django.core.validators import RegexValidator
@@ -200,3 +200,9 @@ class NotificacionSerializer(serializers.ModelSerializer):
         model = Notificacion
         fields = '__all__'
         read_only_fields = ['usuario', 'fecha_creacion']
+
+
+class NivelConfigSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NivelConfig
+        fields = '__all__'

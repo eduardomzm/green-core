@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { User as UserIcon, Save, AlertCircle, CheckCircle, Pencil, Share2, Instagram, Twitter, Facebook, X, Users, Award } from "lucide-react";
+import { User as UserIcon, Save, AlertCircle, CheckCircle, Pencil, Share2, Instagram, Twitter, Facebook, X, Users, Award, Trophy } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -162,6 +162,16 @@ export default function MiPerfil() {
               </div>
             </div>
           </div>
+          
+          {/* Badge de Nivel */}
+          {user?.role === 'ALUMNO' && (
+            <div 
+              className="absolute -bottom-2 -right-2 w-12 h-12 rounded-2xl border-4 border-white shadow-lg flex items-center justify-center text-white font-black text-lg transform -rotate-6 group-hover:rotate-0 transition-all duration-300 z-20 shadow-xl"
+              style={{ backgroundColor: user.nivel_color || '#2D6A4F' }}
+            >
+              L{user.nivel || 1}
+            </div>
+          )}
         </div>
 
         <div className="mt-5 text-center relative z-10">
@@ -213,6 +223,44 @@ export default function MiPerfil() {
           <span className="text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-widest relative z-10">Depósitos Realizados</span>
         </div>
       </div>
+
+      {/* Barra de Progreso de Nivel (Solo Alumnos) */}
+      {user?.role === 'ALUMNO' && (
+        <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 relative z-10 overflow-hidden">
+          <div className="flex justify-between items-end mb-4">
+            <div>
+              <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest block mb-1">Rango Actual</span>
+              <h4 className="text-2xl font-black text-gray-900 flex items-center gap-2">
+                <Trophy className="w-6 h-6" style={{ color: user.nivel_color }} />
+                {user.nivel_nombre || 'Navegante'}
+              </h4>
+            </div>
+            <div className="text-right">
+              <span className="text-sm font-black text-gray-900">{user.porcentaje_nivel || 0}%</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase block">Progreso</span>
+            </div>
+          </div>
+          
+          <div className="w-full h-4 bg-gray-100 rounded-full overflow-hidden mb-4">
+            <div 
+              className="h-full transition-all duration-1000 ease-out rounded-full shadow-[0_0_10px_rgba(0,0,0,0.1)]"
+              style={{ 
+                width: `${user.porcentaje_nivel || 0}%`,
+                backgroundColor: user.nivel_color || '#2D6A4F'
+              }}
+            />
+          </div>
+          
+          <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider">
+            <span className="text-gray-400">Piezas: {user.total_piezas_historico || 0}</span>
+            {(user.porcentaje_nivel || 0) < 100 && user.piezas_proximo_nivel ? (
+              <span className="text-primary">Faltan {(user.piezas_proximo_nivel || 0) - (user.total_piezas_historico || 0)} para el siguiente nivel</span>
+            ) : (
+              <span className="text-primary">¡Nivel Máximo Alcanzado!</span>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Seccion Medallas / Vitrina de Trofeos */}
       {user?.role === 'ALUMNO' && (

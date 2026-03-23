@@ -4,7 +4,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q, Sum, Count
 from apps.reciclaje.models import Deposito
-from .models import User, Carrera, AlumnoPerfil, AlumnoGrupo, Notificacion, ConexionUsuario
+from .models import User, Carrera, AlumnoPerfil, AlumnoGrupo, Notificacion, ConexionUsuario, NivelConfig
 from .serializers import (
     UserSerializer,
     CarreraSerializer,
@@ -12,7 +12,8 @@ from .serializers import (
     AlumnoGrupoSerializer,
     RegistroAlumnoSerializer,
     AdminUserManagementSerializer,
-    NotificacionSerializer)
+    NotificacionSerializer,
+    NivelConfigSerializer)
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -34,6 +35,66 @@ class UserPagination(PageNumberPagination):
             return None
         return super().paginate_queryset(queryset, request, view)
 
+def get_user_level_data(user):
+    """
+    Calcula el nivel actual, nombre del nivel, color y progreso
+    basado en las piezas totales y la configuración de niveles.
+    """
+    total_piezas = Deposito.objects.filter(alumno=user).aggregate(Sum('cantidad'))['cantidad__sum'] or 0
+    configs = NivelConfig.objects.all().order_by('nivel')
+    
+    current_nivel = 1
+    current_nombre = "Navegante"
+    color = "#2D6A4F"
+    
+    # Encontrar el nivel más alto alcanzado
+    for config in configs:
+        if total_piezas >= config.piezas_requeridas:
+            current_nivel = config.nivel
+            current_nombre = config.nombre
+            color = config.color
+        else:
+            break
+            
+    # Calcular porcentaje al próximo nivel
+    next_config = configs.filter(nivel__gt=current_nivel).first()
+    previous_config = configs.filter(nivel=current_nivel).first()
+    
+    base_piezas = previous_config.piezas_requeridas if previous_config else 0
+    
+    if next_config:
+        piezas_proximo = next_config.piezas_requeridas
+        dif_total = piezas_proximo - base_piezas
+        dif_actual = total_piezas - base_piezas
+        # Evitar división por cero si la config está mal
+        if dif_total > 0:
+            porcentaje = min(100, max(0, int((dif_actual / dif_total) * 100)))
+        else:
+            porcentaje = 0
+    else:
+        # Nivel máximo alcanzado
+        piezas_proximo = total_piezas
+        porcentaje = 100
+
+    return {
+        "nivel": current_nivel,
+        "nivel_nombre": current_nombre,
+        "nivel_color": color,
+        "piezas_proximo_nivel": piezas_proximo,
+        "porcentaje_nivel": porcentaje,
+        "total_piezas": total_piezas
+    }
+
+class NivelConfigViewSet(viewsets.ModelViewSet):
+    queryset = NivelConfig.objects.all()
+    serializer_class = NivelConfigSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsAdminUserRole()]
+        return [IsAuthenticated()]
+
 class MeView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -54,6 +115,8 @@ class MeView(APIView):
             except Exception:
                 pass
 
+        nivel_data = get_user_level_data(user)
+
         return Response({
             "id": user.id,
             "username": user.username,
@@ -68,7 +131,12 @@ class MeView(APIView):
             "instagram": user.instagram,
             "twitter": user.twitter,
             "facebook": user.facebook,
-            "nivel": nivel,
+            "nivel": nivel_data['nivel'],
+            "nivel_nombre": nivel_data['nivel_nombre'],
+            "nivel_color": nivel_data['nivel_color'],
+            "piezas_proximo_nivel": nivel_data['piezas_proximo_nivel'],
+            "porcentaje_nivel": nivel_data['porcentaje_nivel'],
+            "total_piezas_historico": nivel_data['total_piezas'],
             "medallas": medallas,
         })
 
@@ -152,6 +220,8 @@ class MeView(APIView):
             except Exception:
                 pass
 
+        nivel_data = get_user_level_data(user)
+
         return Response({
             "id": user.id,
             "username": user.username,
@@ -166,7 +236,12 @@ class MeView(APIView):
             "instagram": user.instagram,
             "twitter": user.twitter,
             "facebook": user.facebook,
-            "nivel": nivel,
+            "nivel": nivel_data['nivel'],
+            "nivel_nombre": nivel_data['nivel_nombre'],
+            "nivel_color": nivel_data['nivel_color'],
+            "piezas_proximo_nivel": nivel_data['piezas_proximo_nivel'],
+            "porcentaje_nivel": nivel_data['porcentaje_nivel'],
+            "total_piezas_historico": nivel_data['total_piezas'],
             "medallas": medallas,
             "seguidores_count": seguidores_count,
             "siguiendo_count": siguiendo_count,
@@ -263,6 +338,8 @@ class PublicProfileView(APIView):
         if request.user.is_authenticated and request.user.role == 'ALUMNO':
             lo_sigo = ConexionUsuario.objects.filter(seguidor=request.user, seguido=user).exists()
 
+        nivel_data = get_user_level_data(user)
+
         return Response({
             "username": user.username,
             "first_name": user.first_name,
@@ -274,10 +351,15 @@ class PublicProfileView(APIView):
             "instagram": user.instagram,
             "twitter": user.twitter,
             "facebook": user.facebook,
-            "nivel": nivel,
+            "nivel": nivel_data['nivel'],
+            "nivel_nombre": nivel_data['nivel_nombre'],
+            "nivel_color": nivel_data['nivel_color'],
+            "piezas_proximo_nivel": nivel_data['piezas_proximo_nivel'],
+            "porcentaje_nivel": nivel_data['porcentaje_nivel'],
+            "total_piezas_historico": nivel_data['total_piezas'],
             "medallas": medallas,
             "total_depositos": total_depositos,
-            "total_piezas": total_piezas,
+            "total_piezas": nivel_data['total_piezas'], # Use total_piezas from nivel_data
             "seguidores_count": seguidores_count,
             "siguiendo_count": siguiendo_count,
             "lo_sigo": lo_sigo,

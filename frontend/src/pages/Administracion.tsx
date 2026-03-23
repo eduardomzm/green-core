@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getMateriales, createMaterial, createMeta, getMetasSistema, type Material, type MetaSistema } from "../services/reciclajeService";
-import { getCarreras, createCarrera, type Carrera } from "../services/userService";
-import { Settings, Plus, Target, BookOpen } from "lucide-react";
+import { getCarreras, createCarrera, type Carrera, getNiveles, updateNivel, type NivelConfig } from "../services/userService";
+import { Settings, Plus, Target, BookOpen, Trophy } from "lucide-react";
 
 const Administracion = () => {
   const [materiales, setMateriales] = useState<Material[]>([]);
@@ -18,18 +18,23 @@ const Administracion = () => {
   const [carreraForm, setCarreraForm] = useState({ nombre: "", abreviatura: "" });
   const [carreraMsg, setCarreraMsg] = useState({ text: "", type: "" });
 
+  const [niveles, setNiveles] = useState<NivelConfig[]>([]);
+  const [nivelMsg, setNivelMsg] = useState({ text: "", type: "" });
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [materialesData, carrerasData, metasData] = await Promise.all([
+        const [materialesData, carrerasData, metasData, nivelesData] = await Promise.all([
           getMateriales(),
           getCarreras(),
-          getMetasSistema()
+          getMetasSistema(),
+          getNiveles()
         ]);
         setMateriales(materialesData);
         setCarreras(carrerasData);
         setMetasSistema(metasData.filter((m: MetaSistema) => m.activa));
+        setNiveles(nivelesData);
       } catch (error) {
         console.error("Error al cargar datos", error);
       } finally {
@@ -38,6 +43,18 @@ const Administracion = () => {
     };
     fetchData();
   }, []);
+
+  const handleNivelUpdate = async (id: number, nombre: string, piezas: number) => {
+    setNivelMsg({ text: "Actualizando...", type: "loading" });
+    try {
+      const updated = await updateNivel(id, { nombre, piezas_requeridas: piezas });
+      setNiveles(niveles.map(n => n.id === id ? updated : n));
+      setNivelMsg({ text: "¡Nivel actualizado!", type: "success" });
+      setTimeout(() => setNivelMsg({ text: "", type: "" }), 3000);
+    } catch (error) {
+      setNivelMsg({ text: "Error al actualizar nivel.", type: "error" });
+    }
+  };
 
   const handleMaterialSubmit = async () => {
     if (!materialForm.nombre) return;
@@ -166,7 +183,7 @@ const Administracion = () => {
           <div className="mt-8 pt-6 border-t border-gray-50">
             <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Materiales Registrados</h4>
             <div className="flex flex-wrap gap-2">
-              {materiales.map(m => (
+              {materiales.map((m: Material) => (
                 <span key={m.id} className="px-3 py-1 bg-gray-50 text-gray-600 text-xs font-bold rounded-lg border border-gray-100 uppercase">
                   {m.nombre} ({m.unidad})
                 </span>
@@ -207,7 +224,7 @@ const Administracion = () => {
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent outline-none text-sm bg-background/50 appearance-none"
               >
                 <option value="">Seleccione un material...</option>
-                {materiales.map(m => (
+                {materiales.map((m: Material) => (
                   <option key={m.id} value={m.id}>{m.nombre} ({m.unidad})</option>
                 ))}
               </select>
@@ -239,7 +256,7 @@ const Administracion = () => {
           <div className="mt-8 pt-6 border-t border-gray-50">
             <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Metas Activas por Material</h4>
             <div className="flex flex-col gap-2">
-              {metasSistema.length > 0 ? metasSistema.map(m => (
+              {metasSistema.length > 0 ? metasSistema.map((m: MetaSistema) => (
                 <div key={m.id} className="p-3 bg-orange-50/50 rounded-xl border border-orange-100 flex justify-between items-center">
                   <div>
                     <span className="text-xs font-bold text-orange-600 uppercase block">{m.material_nombre}</span>
@@ -254,6 +271,63 @@ const Administracion = () => {
               )}
             </div>
           </div>
+        </div>
+
+        {/* Configuración de Niveles */}
+        <div className="bg-white p-6 rounded-3xl shadow-sm border-t-4 border-primary relative h-fit lg:col-span-2 md:col-span-2">
+          <h3 className="text-lg font-bold text-textMain mb-6 flex items-center justify-between">
+            <span className="flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-primary" />
+              Configuración de Niveles
+            </span>
+            {nivelMsg.text && (
+              <span className={`text-xs px-2 py-1 rounded-md ${nivelMsg.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                {nivelMsg.text}
+              </span>
+            )}
+          </h3>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {niveles.map((n: NivelConfig) => (
+              <div key={n.id} className="p-4 rounded-2xl border border-gray-100 bg-gray-50/50 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full" style={{ backgroundColor: `${n.color}20`, color: n.color }}>
+                    Nivel {n.nivel}
+                  </span>
+                </div>
+                
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    defaultValue={n.nombre}
+                    onBlur={(e) => {
+                      if (e.target.value !== n.nombre) {
+                        handleNivelUpdate(n.id, e.target.value, n.piezas_requeridas);
+                      }
+                    }}
+                    className="w-full bg-transparent border-b border-transparent focus:border-primary outline-none text-sm font-bold text-textMain"
+                  />
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase block">Piezas req.</label>
+                    <input
+                      type="number"
+                      defaultValue={n.piezas_requeridas}
+                      onBlur={(e) => {
+                        const val = parseInt(e.target.value);
+                        if (val !== n.piezas_requeridas) {
+                          handleNivelUpdate(n.id, n.nombre, val);
+                        }
+                      }}
+                      className="w-full bg-transparent border-b border-transparent focus:border-primary outline-none text-xs text-gray-600"
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-[10px] text-gray-400 mt-4 italic">
+            * Los cambios se guardan automáticamente al perder el foco del campo. El nivel 1 siempre debe requerir 0 piezas.
+          </p>
         </div>
 
         {/* Nueva Carrera */}
@@ -308,7 +382,7 @@ const Administracion = () => {
             <div className="flex-1 md:border-l md:pl-8 border-gray-50">
               <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Carreras Actuales ({carreras.length})</h4>
               <div className="flex flex-wrap gap-2">
-                {carreras.map(c => (
+                {carreras.map((c: Carrera) => (
                   <span key={c.id} className="px-3 py-1 bg-gray-50 text-gray-600 text-xs font-bold rounded-lg border border-gray-100">
                     {c.nombre} {c.abreviatura && <span className="text-primary font-black ml-1">({c.abreviatura})</span>}
                   </span>

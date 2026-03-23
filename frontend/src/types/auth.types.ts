@@ -27,12 +27,17 @@ export interface User {
   instagram?: string;
   twitter?: string;
   facebook?: string;
-  nivel?: number;
+  nivel: number;
+  nivel_nombre?: string;
+  nivel_color?: string;
+  piezas_proximo_nivel?: number;
+  porcentaje_nivel: number;
+  total_piezas_historico: number;
   medallas?: MedallaAlumno[];
-    seguidores_count?: number;
-    siguiendo_count?: number;
-    total_depositos?: number;
-    total_piezas?: number;
+  seguidores_count?: number;
+  siguiendo_count?: number;
+  total_depositos?: number;
+  total_piezas?: number;
 }
 
 export interface AuthContextType {

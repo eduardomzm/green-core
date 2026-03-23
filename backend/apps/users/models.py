@@ -95,6 +95,22 @@ class AlumnoGrupo(models.Model):
         return f"{self.alumno.username} → {self.grupo.nombre}"
 
 
+class NivelConfig(models.Model):
+    nivel = models.IntegerField(unique=True)
+    nombre = models.CharField(max_length=50)
+    piezas_requeridas = models.IntegerField()
+    color = models.CharField(max_length=20, default="#2D6A4F") 
+
+    class Meta:
+        ordering = ['nivel']
+        verbose_name = "Configuración de Nivel"
+        verbose_name_plural = "Configuraciones de Niveles"
+
+    def __str__(self):
+        return f"Nivel {self.nivel}: {self.nombre} ({self.piezas_requeridas} pzs)"
+
+
+
 
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):

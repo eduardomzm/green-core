@@ -12,7 +12,8 @@ from .views import (
     BuscarAlumnosView,
     ToggleSeguirView,
     MisSeguidoresView,
-    MisSiguiendoView
+    MisSiguiendoView,
+    NivelConfigViewSet
 )
 
 router = DefaultRouter()
@@ -21,6 +22,7 @@ router.register(r'carreras', CarreraViewSet, basename='carrera')
 router.register(r'alumno-perfiles', AlumnoPerfilViewSet, basename='alumno-perfil')
 router.register(r'alumno-grupos', AlumnoGrupoViewSet)
 router.register(r'notificaciones', NotificacionViewSet, basename='notificacion')
+router.register(r'niveles', NivelConfigViewSet, basename='nivel-config')
 
 urlpatterns = [
     path('users/registro/alumno/', RegistroAlumnoView.as_view(), name='registro_alumno'),

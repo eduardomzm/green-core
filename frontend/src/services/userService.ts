@@ -31,6 +31,22 @@ export interface User {
   primer_apellido?: string;
   segundo_apellido?: string;
   matricula?: string;
+  avatar?: string;
+  biografia?: string;
+  instagram?: string;
+  twitter?: string;
+  facebook?: string;
+  nivel?: number;
+  nivel_nombre?: string;
+  nivel_color?: string;
+  piezas_proximo_nivel?: number;
+  porcentaje_nivel?: number;
+  total_piezas_historico?: number;
+  total_depositos?: number;
+  total_piezas?: number;
+  seguidores_count?: number;
+  siguiendo_count?: number;
+  medallas?: any[];
 }
 
 export interface PaginatedUsers {
@@ -122,5 +138,23 @@ export const getMisSeguidores = async () => {
 
 export const getMisSiguiendo = async () => {
   const response = await api.get('users/me/siguiendo/');
+  return response.data;
+};
+
+export interface NivelConfig {
+  id: number;
+  nivel: number;
+  nombre: string;
+  piezas_requeridas: number;
+  color: string;
+}
+
+export const getNiveles = async (): Promise<NivelConfig[]> => {
+  const response = await api.get('niveles/');
+  return response.data;
+};
+
+export const updateNivel = async (id: number, data: Partial<NivelConfig>): Promise<NivelConfig> => {
+  const response = await api.patch(`niveles/${id}/`, data);
   return response.data;
 };
