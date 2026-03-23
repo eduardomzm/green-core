@@ -50,28 +50,28 @@ export const Landing = () => {
 
         {/* Partículas Flotantes Decorativas (Hojas y Destellos) */}
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-          {[...Array(12)].map((_, i) => (
+          {[...Array(30)].map((_, i) => (
             <motion.div
               key={i}
               animate={{
-                y: [0, -150 - Math.random() * 100],
-                x: [0, (Math.random() - 0.5) * 300],
+                y: [0, -200 - Math.random() * 200],
+                x: [0, (Math.random() - 0.5) * 600],
                 rotate: [0, 360],
-                opacity: [0, 0.4, 0]
+                opacity: [0, 0.6, 0]
               }}
               transition={{
-                duration: 8 + Math.random() * 8,
+                duration: 10 + Math.random() * 10,
                 repeat: Infinity,
-                delay: Math.random() * 5,
+                delay: Math.random() * 10,
                 ease: "linear"
               }}
               className="absolute"
               style={{
-                top: `${80 + Math.random() * 20}%`,
+                top: `${85 + Math.random() * 15}%`,
                 left: `${Math.random() * 100}%`,
               }}
             >
-              {i % 2 === 0 ? <Leaf className="w-6 h-6 text-primary/40" /> : <Sparkles className="w-5 h-5 text-yellow-500/50" />}
+              {i % 2 === 0 ? <Leaf className="w-6 h-6 text-primary/50" /> : <Sparkles className="w-5 h-5 text-yellow-500/60" />}
             </motion.div>
           ))}
         </div>
