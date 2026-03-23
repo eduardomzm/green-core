@@ -171,8 +171,8 @@ const Usuarios = () => {
 
       {/* Buscador y Filtros */}
       <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 mb-8 space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="md:col-span-2 relative">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="sm:col-span-2 lg:col-span-2 relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -180,7 +180,7 @@ const Usuarios = () => {
             </span>
             <input
               type="text"
-              placeholder="Buscar por nombre, usuario o matrícula..."
+              placeholder="Buscar por nombre o matrícula..."
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
               className="w-full pl-12 pr-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition-all text-sm"
@@ -190,7 +190,7 @@ const Usuarios = () => {
           <select
             value={roleFilter}
             onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
-            className="px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-secondary outline-none transition-all text-sm font-bold text-primary"
+            className="w-full px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-secondary outline-none transition-all text-sm font-bold text-primary"
           >
             <option value="">Todos los Roles</option>
             <option value="ADMIN">Administrador</option>
@@ -199,24 +199,23 @@ const Usuarios = () => {
             <option value="ALUMNO">Alumno</option>
           </select>
 
-          <div className="flex flex-col sm:flex-row gap-2">
-            <select
-              value={carreraFilter}
-              onChange={(e) => { setCarreraFilter(e.target.value); setPage(1); }}
-              className="flex-1 px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-secondary outline-none transition-all text-sm font-bold text-primary"
-            >
-              <option value="">Todas las Carreras</option>
-              {carreras.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-            </select>
-            <select
-              value={grupoFilter}
-              onChange={(e) => { setGrupoFilter(e.target.value); setPage(1); }}
-              className="flex-1 px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-secondary outline-none transition-all text-sm font-bold text-primary"
-            >
-              <option value="">Todos los Grupos</option>
-              {grupos.map(g => <option key={g.id} value={g.id}>{g.nombre}</option>)}
-            </select>
-          </div>
+          <select
+            value={carreraFilter}
+            onChange={(e) => { setCarreraFilter(e.target.value); setPage(1); }}
+            className="w-full px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-secondary outline-none transition-all text-sm font-bold text-primary"
+          >
+            <option value="">Todas las Carreras</option>
+            {carreras.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+          </select>
+          
+          <select
+            value={grupoFilter}
+            onChange={(e) => { setGrupoFilter(e.target.value); setPage(1); }}
+            className="w-full px-4 py-3 rounded-2xl border border-gray-100 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-secondary outline-none transition-all text-sm font-bold text-primary"
+          >
+            <option value="">Todos los Grupos</option>
+            {grupos.map(g => <option key={g.id} value={g.id}>{g.nombre}</option>)}
+          </select>
         </div>
       </div>
 
