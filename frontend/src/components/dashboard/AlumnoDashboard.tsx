@@ -109,28 +109,30 @@ const AlumnoDashboard = ({ data }: Props) => {
         )}
       </div>
 
-      {/* META GLOBAL */}
-      <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-8">
-        <div className="flex-shrink-0 p-5 bg-green-50 rounded-2xl">
-          <Target className="w-10 h-10 text-primary" strokeWidth={2} />
-        </div>
-        <div className="flex-1 w-full">
-          <h2 className="text-lg font-bold text-textMain mb-2">Tu Progreso de Reciclaje</h2>
-          <div className="flex justify-between text-sm text-gray-500 mb-2 font-medium">
-            <span>{data.progreso.actual} piezas aportadas</span>
-            <span>Meta: {data.progreso.meta}</span>
+      {/* TU PROGRESO PERSONAL - Solo se muestra si tiene meta del tutor */}
+      {metaAlumno && (
+        <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row items-center gap-8 animate-in fade-in slide-in-from-top-2 duration-500">
+          <div className="flex-shrink-0 p-5 bg-green-50 rounded-2xl">
+            <Target className="w-10 h-10 text-primary" strokeWidth={2} />
           </div>
-          <div className="w-full bg-background rounded-full h-3 overflow-hidden border border-gray-100">
-            <div 
-              className="bg-primary h-3 rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
-              style={{ width: `${Math.min(data.progreso.porcentaje, 100)}%` }}
-            >
-              <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+          <div className="flex-1 w-full">
+            <h2 className="text-lg font-bold text-textMain mb-2">Tu Progreso de Reciclaje</h2>
+            <div className="flex justify-between text-sm text-gray-500 mb-2 font-medium">
+              <span>{data.progreso.actual} piezas aportadas</span>
+              <span>Meta: {data.progreso.meta}</span>
             </div>
+            <div className="w-full bg-background rounded-full h-3 overflow-hidden border border-gray-100">
+              <div 
+                className="bg-primary h-3 rounded-full transition-all duration-1000 ease-out relative overflow-hidden"
+                style={{ width: `${Math.min(data.progreso.porcentaje, 100)}%` }}
+              >
+                <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+              </div>
+            </div>
+            <p className="text-right text-xs font-bold text-primary mt-2">{data.progreso.porcentaje}% Completado</p>
           </div>
-          <p className="text-right text-xs font-bold text-primary mt-2">{data.progreso.porcentaje}% Completado</p>
         </div>
-      </div>
+      )}
 
       {/* META ASIGNADA POR TUTOR (si existe) */}
       {metaAlumno && (
