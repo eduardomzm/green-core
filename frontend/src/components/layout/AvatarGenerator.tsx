@@ -1,9 +1,10 @@
 import { useState, useCallback } from "react";
-import { X, RotateCcw, User, Eye, Shirt, Sparkles } from "lucide-react";
+import { RotateCcw, User, Eye, Shirt, Sparkles } from "lucide-react";
 
 interface Props {
     onSave: (url: string) => void;
     onClose: () => void;
+    initialAvatar?: string;
 }
 
 // Opciones extraídas y validadas con DiceBear 7.x schema
@@ -155,9 +156,19 @@ const ACCESSORIES_OPTIONS = [
 
 const getRandomItem = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)].id;
 
-export default function AvatarGenerator({ onSave, onClose }: Props) {
+export default function AvatarGenerator({ onSave, onClose, initialAvatar }: Props) {
     const [tab, setTab] = useState("cabeza");
-    const [seed, setSeed] = useState(() => Math.random().toString());
+    const [seed, setSeed] = useState(() => {
+        if (initialAvatar?.includes("dicebear.com")) {
+            try {
+                const url = new URL(initialAvatar);
+                return url.searchParams.get("seed") || Math.random().toString();
+            } catch (e) {
+                return Math.random().toString();
+            }
+        }
+        return Math.random().toString();
+    });
 
     // Inicializamos con un item aleatorio desde el principio para evitar fallos (400 Bad Request)
     const [top, setTop] = useState(() => getRandomItem(HAIR_OPTIONS));
@@ -485,7 +496,7 @@ export default function AvatarGenerator({ onSave, onClose }: Props) {
                 </div>
             </div>
             
-            <style jsx>{`
+            <style>{`
                 .custom-scrollbar::-webkit-scrollbar {
                     width: 6px;
                 }

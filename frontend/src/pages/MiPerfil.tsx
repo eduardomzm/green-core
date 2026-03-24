@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { User as UserIcon, Save, AlertCircle, CheckCircle, Pencil, Share2, Instagram, Twitter, Facebook, X, Users, Award, Trophy, PartyPopper, Flame } from "lucide-react";
+import { Save, AlertCircle, CheckCircle, Pencil, Share2, Instagram, Twitter, Facebook, X, Users, Award, Trophy, PartyPopper, Flame } from "lucide-react";
 import { triggerConfettiBurst, triggerConfettiFirecrackers } from "../utils/confetti";
 import * as LucideIcons from "lucide-react";
 import { Link } from "react-router-dom";
@@ -43,8 +43,6 @@ export default function MiPerfil() {
 
   const [isAvatarGeneratorOpen, setIsAvatarGeneratorOpen] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState(user?.avatar || 'default');
-  const [tempAvatar, setTempAvatar] = useState(user?.avatar || 'default');
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Estados para Seguidores / Seguiendo
   const [showFollowers, setShowFollowers] = useState(false);
@@ -64,7 +62,6 @@ export default function MiPerfil() {
         facebook: user.facebook || "",
       });
       setSelectedAvatar(user.avatar || 'default');
-      setTempAvatar(user.avatar || 'default');
     }
   }, [user]);
 
@@ -97,28 +94,6 @@ export default function MiPerfil() {
     }
   };
 
-  const handleOpenModal = () => {
-    setTempAvatar(selectedAvatar);
-    setIsModalOpen(true);
-  };
-
-  const handleSaveAvatar = async () => {
-    setSelectedAvatar(tempAvatar);
-    setIsModalOpen(false);
-    
-    // Save immediately to backend for better UX
-    try {
-      setSaving(true);
-      await updateMe({ avatar: tempAvatar });
-      await refreshUser();
-      setMsg({ text: "¡Avatar actualizado correctamente!", type: "success" });
-      setTimeout(() => setMsg({ text: "", type: "" }), 3000);
-    } catch (err) {
-      setMsg({ text: "Error al guardar el avatar.", type: "error" });
-    } finally {
-      setSaving(false);
-    }
-  };
 
   const loadFollowers = async () => {
     try {
@@ -479,76 +454,6 @@ const avatarUrl = selectedAvatar?.startsWith("http")
         </button>
       </div>
 
-      {/* MODAL DE SELECCIÓN DE AVATARES */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-[100] flex justify-center items-center p-4 animate-in fade-in duration-300">
-          <div className="bg-white rounded-[2rem] w-full max-w-lg shadow-2xl relative animate-in zoom-in-95 duration-300">
-            {/* Close Button */}
-            <button 
-              onClick={() => setIsModalOpen(false)}
-              className="absolute right-4 top-4 p-2 text-gray-400 hover:text-gray-800 bg-gray-100/50 hover:bg-gray-100 rounded-full transition-colors z-10"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="p-8">
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4 rotate-3">
-                  <UserIcon className="w-8 h-8" />
-                </div>
-                <h3 className="text-2xl font-black text-gray-900">Elige tu Avatar</h3>
-                <p className="text-gray-500 mt-2 text-sm font-medium">Selecciona el icono que mejor represente tu ciclo con el planeta.</p>
-              </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
-                {AVATARS.map((avatar) => (
-                  <button
-                    key={avatar.id}
-                    onClick={() => setTempAvatar(avatar.id)}
-                    className={`relative aspect-square rounded-[1.5rem] overflow-hidden border-4 transition-all duration-300 group ${tempAvatar === avatar.id
-                      ? 'border-primary shadow-lg shadow-primary/20 scale-[1.02]'
-                      : 'border-transparent hover:border-gray-200 bg-gray-50'
-                      }`}
-                  >
-                    <img
-                      src={avatar.url}
-                      alt={avatar.label}
-                      className={`w-full h-full object-cover transition-transform duration-500 ${tempAvatar === avatar.id ? 'scale-110' : 'group-hover:scale-105'
-                        }`}
-                    />
-                    {tempAvatar === avatar.id && (
-                      <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
-                        <div className="bg-primary text-white p-1.5 rounded-full shadow-lg">
-                          <CheckCircle className="w-5 h-5" />
-                        </div>
-                      </div>
-                    )}
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent pt-8 pb-2 text-[10px] font-black text-white uppercase text-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      {avatar.label}
-                    </div>
-                  </button>
-                ))}
-              </div>
-
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                <button 
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-6 py-3 rounded-xl font-bold text-gray-500 hover:bg-gray-100 transition-colors"
-                >
-                  Cancelar
-                </button>
-                <button 
-                  onClick={handleSaveAvatar}
-                  className="px-8 py-3 rounded-xl font-bold text-white bg-gray-900 hover:bg-black shadow-md shadow-gray-900/20 transition-all flex items-center gap-2"
-                >
-                  <CheckCircle className="w-4 h-4" />
-                  Confirmar Selección
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* MODAL DE SEGUIDORES */}
       {showFollowers && (
