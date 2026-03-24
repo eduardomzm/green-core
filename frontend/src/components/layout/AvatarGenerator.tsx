@@ -221,7 +221,7 @@ export default function AvatarGenerator({ onSave, onClose, initialAvatar }: Prop
         if (clothes) url.searchParams.set("clothing", clothes);
         
         const cColor = CLOTHING_COLORS.find(c => c.id === clothesColor);
-        if (cColor) url.searchParams.set("clothingColor", cColor.hex.replace("#", ""));
+        if (cColor) url.searchParams.set("clothesColor", cColor.hex.replace("#", ""));
         
         return url.toString();
     };
