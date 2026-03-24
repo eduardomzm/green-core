@@ -113,6 +113,7 @@ export default function Rankings() {
         return data.top_alumnos.map((item) => ({
           name: item.alumno__first_name ? `${item.alumno__first_name} ${item.alumno__primer_apellido || ''}`.trim() : item.alumno__username,
           username: item.alumno__username,
+          avatar: item.alumno__avatar,
           value: item.total_piezas
         }));
 

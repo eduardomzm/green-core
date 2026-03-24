@@ -5,6 +5,7 @@ import { getPublicProfile, toggleSeguir } from "../services/userService";
 import { useAuth } from "../hooks/useAuth";
 import { User as UserIcon, Award, Instagram, Twitter, Facebook, ChevronLeft, ShieldCheck } from "lucide-react";
 import * as LucideIcons from "lucide-react";
+import UserAvatar from "../components/common/UserAvatar";
 
 // Helper to dynamically render a Lucide icon by name
 const DynamicIcon = ({ name, className }: { name: string, className?: string }) => {
@@ -13,13 +14,6 @@ const DynamicIcon = ({ name, className }: { name: string, className?: string }) 
   return <IconComponent className={className} />;
 };
 
-const AVATARS = [
-  { id: 'default', url: '/avatars/avatar_bin.png' },
-  { id: 'leaf', url: '/avatars/avatar_leaf.png' },
-  { id: 'earth', url: '/avatars/avatar_earth.png' },
-  { id: 'sprout', url: '/avatars/avatar_sprout.png' },
-  { id: 'water', url: '/avatars/avatar_water.png' },
-];
 
 export default function PerfilPublico() {
   const { username } = useParams<{ username: string }>();
@@ -84,7 +78,6 @@ export default function PerfilPublico() {
     );
   }
 
-  const avatarUrl = AVATARS.find(a => a.id === profile.avatar)?.url || AVATARS[0].url;
   const isAlumno = profile.role === 'ALUMNO';
   const roleKey = profile.role as 'ADMIN' | 'TUTOR' | 'ALUMNO' | 'OPERADOR';
   const roleLabel = { ADMIN: "Administrador", TUTOR: "Tutor", ALUMNO: "Estudiante", OPERADOR: "Operador" }[roleKey] || profile.role;
@@ -112,7 +105,7 @@ export default function PerfilPublico() {
           {/* Avatar Section */}
           <div className="relative group">
             <div className="w-32 h-32 md:w-40 md:h-40 rounded-[2rem] overflow-hidden border-4 border-white shadow-xl rotate-3 group-hover:rotate-0 transition-transform duration-500 bg-gray-50 flex-shrink-0">
-              <img src={avatarUrl} alt={profile.username} className="w-full h-full object-cover" />
+              <UserAvatar avatar={profile.avatar} />
             </div>
             {isAlumno && profile.nivel && (
               <motion.div 

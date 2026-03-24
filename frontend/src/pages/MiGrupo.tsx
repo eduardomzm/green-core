@@ -1,15 +1,9 @@
 import { useState, useEffect } from "react";
-import { Users, Copy, CheckCircle, Target, UserX, UserCheck, X, Activity, ChevronRight, User as UserIcon, ExternalLink, Trash2 } from "lucide-react";
+import { Users, Copy, CheckCircle, Target, UserX, UserCheck, X, Activity, ChevronRight, ExternalLink, Trash2 } from "lucide-react";
+import UserAvatar from "../components/common/UserAvatar";
 import { Link } from "react-router-dom";
 import { autorizarIngresoGrupo, autorizarSalidaGrupo, rechazarIngresoGrupo, rechazarSalidaGrupo, getMiGrupoTutor, getMateriales, asignarMetaAlumno, cancelarMetaAlumno, type Material } from "../services/reciclajeService";
 
-const AVATARS = [
-  { id: 'default', url: '/src/assets/img/logo.jpeg' },
-  { id: 'leaf', url: '/avatars/avatar_leaf.png' },
-  { id: 'earth', url: '/avatars/avatar_earth.png' },
-  { id: 'sprout', url: '/avatars/avatar_sprout.png' },
-  { id: 'water', url: '/avatars/avatar_water.png' },
-];
 
 export default function MiGrupo() {
   const [grupoData, setGrupoData] = useState<any>(null);
@@ -274,11 +268,9 @@ export default function MiGrupo() {
                         onClick={() => openModal(alumno)}
                         className="flex items-center gap-4 p-3 rounded-2xl hover:bg-blue-50/50 transition-colors group cursor-pointer"
                       >
-                        <img 
-                          src={AVATARS.find(a => a.id === alumno.avatar)?.url || AVATARS[0].url} 
-                          alt={alumno.username} 
-                          className="w-12 h-12 rounded-full border border-gray-200 group-hover:border-blue-300 object-cover" 
-                        />
+                        <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-200 group-hover:border-blue-300 flex-shrink-0">
+                          <UserAvatar avatar={alumno.avatar} />
+                        </div>
                         <div className="flex-1">
                           <h4 className="font-bold text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
                             {alumno.nombre}
@@ -337,11 +329,9 @@ export default function MiGrupo() {
                       to={`/dashboard/perfil/${act.alumno_username}`}
                       className="flex items-center gap-4 p-3 rounded-2xl hover:bg-green-50/50 transition-colors group"
                     >
-                      <img 
-                        src={AVATARS.find(a => a.id === act.alumno_avatar)?.url || AVATARS[0].url} 
-                        alt={act.alumno_username} 
-                        className="w-10 h-10 rounded-xl border border-gray-200 group-hover:border-green-300 object-cover" 
-                      />
+                      <div className="w-10 h-10 rounded-xl overflow-hidden border border-gray-200 group-hover:border-green-300 flex-shrink-0">
+                        <UserAvatar avatar={act.alumno_avatar} />
+                      </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-gray-700 truncate">
                           <span className="font-bold text-gray-900 group-hover:text-green-700 transition-colors">{act.alumno_nombre}</span>
@@ -371,12 +361,8 @@ export default function MiGrupo() {
 
             {/* Encabezado: Info Estudiante */}
             <div className="flex flex-col items-center text-center mb-8 pt-4">
-              <div className="w-24 h-24 rounded-[1.5rem] overflow-hidden border-4 border-white shadow-xl bg-gray-50 mb-4 flex items-center justify-center">
-                {selectedAlumno.avatar ? (
-                  <img src={AVATARS.find(a => a.id === selectedAlumno.avatar)?.url || AVATARS[0].url} alt={selectedAlumno.username} className="w-full h-full object-cover" />
-                ) : (
-                  <UserIcon className="w-10 h-10 text-gray-300" />
-                )}
+              <div className="w-24 h-24 rounded-[1.5rem] overflow-hidden border-4 border-white shadow-xl bg-gray-50 mb-4 flex-shrink-0">
+                <UserAvatar avatar={selectedAlumno.avatar} />
               </div>
               <h3 className="text-2xl font-black text-gray-900">{selectedAlumno.nombre}</h3>
               <p className="text-sm text-gray-500 font-medium mb-1">@{selectedAlumno.username} • Matrícula: {selectedAlumno.matricula}</p>

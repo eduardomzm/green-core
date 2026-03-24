@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { updateMe, getMisSeguidores, getMisSiguiendo, toggleSeguir } from "../services/userService";
 import AvatarGenerator from "../components/layout/AvatarGenerator";
+import UserAvatar from "../components/common/UserAvatar";
 
 
 interface FormState {
@@ -23,13 +24,6 @@ const DynamicIcon = ({ name, className }: { name: string, className?: string }) 
   return <IconComponent className={className} />;
 };
 
-const AVATARS = [
-  { id: 'default', url: '/avatars/avatar_bin.png', label: 'Bote' },
-  { id: 'leaf', url: '/avatars/avatar_leaf.png', label: 'Hoja' },
-  { id: 'earth', url: '/avatars/avatar_earth.png', label: 'Tierra' },
-  { id: 'sprout', url: '/avatars/avatar_sprout.png', label: 'Brote' },
-  { id: 'water', url: '/avatars/avatar_water.png', label: 'Gota' },
-];
 
 export default function MiPerfil() {
   const { user, refreshUser } = useAuth();
@@ -125,9 +119,6 @@ export default function MiPerfil() {
     }
   };
 
-const avatarUrl = selectedAvatar?.startsWith("http")
-  ? selectedAvatar
-  : AVATARS.find(a => a.id === selectedAvatar)?.url || AVATARS[0].url;
 
   return (
     <motion.div 
@@ -149,19 +140,15 @@ const avatarUrl = selectedAvatar?.startsWith("http")
 
         {/* Avatar Interactive Element */}
         <div className="relative group cursor-pointer z-10" onClick={() => setIsAvatarGeneratorOpen(true)}>
-          <div className="w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden border-4 border-white shadow-xl bg-gray-50 flex-shrink-0 relative">
-            <img 
-              src={avatarUrl} 
-              alt="Avatar seleccionado" 
-              className="w-full h-full object-cover group-hover:blur-[2px] transition-all duration-300 transform group-hover:scale-105" 
-            />
+            <div className="w-32 h-32 md:w-36 md:h-36 rounded-[2rem] overflow-hidden border-4 border-white shadow-xl rotate-3 group-hover:rotate-0 transition-transform duration-500 bg-gray-50 flex-shrink-0">
+              <UserAvatar avatar={selectedAvatar} />
+            </div>
             {/* Overlay and Pencil Icon on Hover */}
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <div className="bg-white p-3 rounded-full shadow-lg transform -translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                 <Pencil className="w-6 h-6 text-primary" strokeWidth={2.5} />
               </div>
             </div>
-          </div>
           
           {/* Badge de Nivel */}
           {user?.role === 'ALUMNO' && (
@@ -308,9 +295,9 @@ const avatarUrl = selectedAvatar?.startsWith("http")
 
           {!user?.medallas || user.medallas.length === 0 ? (
             <div className="text-center py-12 px-6 bg-gray-50/50 rounded-3xl border border-gray-100 border-dashed relative z-10">
-              <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                <Award className="w-8 h-8 text-gray-300" />
-              </div>
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                    <Award className="w-8 h-8 text-gray-300" />
+                  </div>
               <h4 className="text-lg font-bold text-gray-500 mb-1">Aún no hay medallas</h4>
               <p className="text-sm text-gray-400 max-w-sm mx-auto">
                 Participa en las dinámicas de reciclaje para ganar medallas mensuales y destacar en la comunidad.
@@ -478,7 +465,9 @@ const avatarUrl = selectedAvatar?.startsWith("http")
                   {followersList.map((u) => (
                     <div key={u.username} className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
                       <Link to={`/dashboard/perfil/${u.username}`} className="flex items-center gap-3 group flex-1" onClick={() => setShowFollowers(false)}>
-                        <img src={AVATARS.find(a => a.id === u.avatar)?.url || AVATARS[0].url} alt="avatar" className="w-12 h-12 rounded-full border border-gray-200 group-hover:border-primary transition-colors object-cover" />
+                        <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-200 group-hover:border-primary transition-colors flex-shrink-0">
+                          <UserAvatar avatar={u.avatar} />
+                        </div>
                         <div>
                           <p className="font-bold text-sm text-gray-900 group-hover:text-primary transition-colors leading-tight">
                             {u.first_name || u.username} {u.primer_apellido || ""}
@@ -518,7 +507,9 @@ const avatarUrl = selectedAvatar?.startsWith("http")
                   {followingList.map((u) => (
                     <div key={u.username} className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
                       <Link to={`/dashboard/perfil/${u.username}`} className="flex items-center gap-3 group flex-1" onClick={() => setShowFollowing(false)}>
-                        <img src={AVATARS.find(a => a.id === u.avatar)?.url || AVATARS[0].url} alt="avatar" className="w-12 h-12 rounded-full border border-gray-200 group-hover:border-primary transition-colors object-cover" />
+                        <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-200 group-hover:border-primary transition-colors flex-shrink-0">
+                          <UserAvatar avatar={u.avatar} />
+                        </div>
                         <div>
                           <p className="font-bold text-sm text-gray-900 group-hover:text-primary transition-colors leading-tight">
                             {u.first_name || u.username} {u.primer_apellido || ""}
