@@ -546,4 +546,29 @@ class NotificacionViewSet(viewsets.ModelViewSet):
     def marcar_todas_leidas(self, request):
         notificaciones = self.get_queryset().filter(leida=False)
         notificaciones.update(leida=True)
-        return Response({"status": "Todas las notificaciones marcadas como leídas"})
+        return Response({"status": "Todas las notificaciones marcadas como leídas"})
+
+    @action(detail=False, methods=['post'], permission_classes=[IsAdminUserRole])
+    def enviar_global(self, request):
+        titulo = request.data.get('titulo')
+        mensaje = request.data.get('mensaje')
+        tipo = request.data.get('tipo', 'INFO')
+        enlace = request.data.get('enlace', '')
+
+        if not titulo or not mensaje:
+            return Response({"error": "Título y mensaje son obligatorios."}, status=400)
+
+        usuarios = User.objects.all()
+        notificaciones = [
+            Notificacion(
+                usuario=u,
+                titulo=titulo,
+                mensaje=mensaje,
+                tipo=tipo,
+                enlace=enlace
+            ) for u in usuarios
+        ]
+        
+        Notificacion.objects.bulk_create(notificaciones)
+        
+        return Response({"status": f"Notificación enviada a {len(notificaciones)} usuarios."})

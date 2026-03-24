@@ -22,3 +22,7 @@ export const marcarComoLeida = async (id: number): Promise<void> => {
 export const marcarTodasComoLeidas = async (): Promise<void> => {
     await api.post('notificaciones/marcar_todas_leidas/');
 };
+
+export const enviarNotificacionGlobal = async (data: { titulo: string; mensaje: string; tipo: string; enlace?: string }): Promise<void> => {
+    await api.post('notificaciones/enviar_global/', data);
+};

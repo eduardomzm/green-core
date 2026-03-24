@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { getMateriales, createMaterial, type Material } from "../services/reciclajeService";
 import { getCarreras, createCarrera, type Carrera, getNiveles, updateNivel, type NivelConfig } from "../services/userService";
-import { Settings, Plus, BookOpen, Trophy } from "lucide-react";
+import { enviarNotificacionGlobal } from "../services/notificationService";
+import { Settings, Plus, BookOpen, Trophy, Bell } from "lucide-react";
 
 const Administracion = () => {
   const [materiales, setMateriales] = useState<Material[]>([]);
@@ -16,6 +17,9 @@ const Administracion = () => {
 
   const [niveles, setNiveles] = useState<NivelConfig[]>([]);
   const [nivelMsg, setNivelMsg] = useState({ text: "", type: "" });
+
+  const [notificationForm, setNotificationForm] = useState({ titulo: "", mensaje: "", tipo: "INFO", enlace: "" });
+  const [notificationMsg, setNotificationMsg] = useState({ text: "", type: "" });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -82,6 +86,20 @@ const Administracion = () => {
       setTimeout(() => setCarreraMsg({ text: "", type: "" }), 3000);
     } catch (error) {
       setCarreraMsg({ text: "Error al crear la carrera.", type: "error" });
+    }
+  };
+
+  const handleNotificationSubmit = async () => {
+    if (!notificationForm.titulo || !notificationForm.mensaje) return;
+    setNotificationMsg({ text: "Enviando...", type: "loading" });
+
+    try {
+      await enviarNotificacionGlobal(notificationForm);
+      setNotificationMsg({ text: "¡Notificación enviada a todos!", type: "success" });
+      setNotificationForm({ titulo: "", mensaje: "", tipo: "INFO", enlace: "" });
+      setTimeout(() => setNotificationMsg({ text: "", type: "" }), 3000);
+    } catch (error) {
+      setNotificationMsg({ text: "Error al enviar notificación.", type: "error" });
     }
   };
 
@@ -220,66 +238,143 @@ const Administracion = () => {
           </p>
         </div>
 
-        {/* Nueva Carrera */}
-        <div className="bg-white p-6 rounded-3xl shadow-sm border-t-4 border-primary relative h-fit lg:col-span-2 md:col-span-2">
-          <div className="flex flex-col md:flex-row md:items-start gap-8">
-            <div className="flex-1">
+        {/* Nueva Carrera y Notificaciones */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:col-span-2 md:col-span-2">
+            {/* Nueva Carrera */}
+            <div className="bg-white p-6 rounded-3xl shadow-sm border-t-4 border-primary relative h-fit">
+              <div className="flex flex-col gap-6">
+                  <h3 className="text-lg font-bold text-textMain flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      <BookOpen className="w-5 h-5 text-primary" />
+                      Nueva Carrera
+                    </span>
+                    {carreraMsg.text && (
+                      <span className={`text-xs px-2 py-1 rounded-md ${carreraMsg.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        {carreraMsg.text}
+                      </span>
+                    )}
+                  </h3>
+                  <form className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Nombre de la Carrera</label>
+                        <input
+                          type="text"
+                          placeholder=""
+                          value={carreraForm.nombre}
+                          onChange={(e) => setCarreraForm({ ...carreraForm, nombre: e.target.value })}
+                          className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary outline-none text-sm bg-background/50"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Abreviatura</label>
+                        <input
+                          type="text"
+                          placeholder=""
+                          value={carreraForm.abreviatura}
+                          onChange={(e) => setCarreraForm({ ...carreraForm, abreviatura: e.target.value.toUpperCase() })}
+                          className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary outline-none text-sm bg-background/50"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleCarreraSubmit}
+                      disabled={!carreraForm.nombre || !carreraForm.abreviatura || carreraMsg.type === 'loading'}
+                      className="w-full bg-primary hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl shadow-sm transition-colors text-sm mt-2"
+                    >
+                      Guardar Carrera
+                    </button>
+                  </form>
+
+                  <div className="pt-6 border-t border-gray-50">
+                    <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Carreras Actuales ({carreras.length})</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {carreras.map((c: Carrera) => (
+                        <span key={c.id} className="px-3 py-1 bg-gray-50 text-gray-600 text-xs font-bold rounded-lg border border-gray-100">
+                          {c.nombre} {c.abreviatura && <span className="text-primary font-black ml-1">({c.abreviatura})</span>}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+              </div>
+            </div>
+
+            {/* Notificación Global */}
+            <div className="bg-white p-6 rounded-3xl shadow-sm border-t-4 border-orange-500 relative h-fit">
               <h3 className="text-lg font-bold text-textMain mb-6 flex items-center justify-between">
                 <span className="flex items-center gap-2">
-                  <BookOpen className="w-5 h-5 text-primary" />
-                  Nueva Carrera
+                  <Bell className="w-5 h-5 text-orange-500" />
+                  Notificación Global
                 </span>
-                {carreraMsg.text && (
-                  <span className={`text-xs px-2 py-1 rounded-md ${carreraMsg.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                    {carreraMsg.text}
+                {notificationMsg.text && (
+                  <span className={`text-xs px-2 py-1 rounded-md ${notificationMsg.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
+                    {notificationMsg.text}
                   </span>
                 )}
               </h3>
+              
               <form className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Nombre de la Carrera</label>
+                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Título del Mensaje</label>
                     <input
                       type="text"
-                      placeholder=""
-                      value={carreraForm.nombre}
-                      onChange={(e) => setCarreraForm({ ...carreraForm, nombre: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary outline-none text-sm bg-background/50"
+                      placeholder="Ej: ¡Nuevo Horario de Recolección!"
+                      value={notificationForm.titulo}
+                      onChange={(e) => setNotificationForm({ ...notificationForm, titulo: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none text-sm bg-background/50"
                     />
                   </div>
+                  
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Contenido del Mensaje</label>
+                    <textarea
+                      placeholder="Escribe aquí el aviso que verán todos los usuarios..."
+                      value={notificationForm.mensaje}
+                      onChange={(e) => setNotificationForm({ ...notificationForm, mensaje: e.target.value })}
+                      rows={3}
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none text-sm bg-background/50 resize-none"
+                    />
+                  </div>
+
                   <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Abreviatura</label>
+                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Categoría</label>
+                    <select
+                      value={notificationForm.tipo}
+                      onChange={(e) => setNotificationForm({ ...notificationForm, tipo: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none text-sm bg-background/50 appearance-none"
+                    >
+                      <option value="INFO">Información (Azul)</option>
+                      <option value="SUCCESS">Éxito (Verde)</option>
+                      <option value="WARNING">Advertencia (Amarillo)</option>
+                      <option value="SYSTEM">Sistema (Gris)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Enlace (Opcional)</label>
                     <input
                       type="text"
-                      placeholder=""
-                      value={carreraForm.abreviatura}
-                      onChange={(e) => setCarreraForm({ ...carreraForm, abreviatura: e.target.value.toUpperCase() })}
-                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary outline-none text-sm bg-background/50"
+                      placeholder="/dashboard/..."
+                      value={notificationForm.enlace}
+                      onChange={(e) => setNotificationForm({ ...notificationForm, enlace: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none text-sm bg-background/50"
                     />
                   </div>
                 </div>
+
                 <button
                   type="button"
-                  onClick={handleCarreraSubmit}
-                  disabled={!carreraForm.nombre || !carreraForm.abreviatura || carreraMsg.type === 'loading'}
-                  className="w-full bg-primary hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl shadow-sm transition-colors text-sm mt-2"
+                  onClick={handleNotificationSubmit}
+                  disabled={!notificationForm.titulo || !notificationForm.mensaje || notificationMsg.type === 'loading'}
+                  className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl shadow-sm transition-colors text-sm mt-2 flex items-center justify-center gap-2"
                 >
-                  Guardar Carrera
+                  <Bell className="w-4 h-4" />
+                  Enviar a Todos los Usuarios
                 </button>
               </form>
             </div>
-
-            <div className="flex-1 md:border-l md:pl-8 border-gray-50">
-              <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Carreras Actuales ({carreras.length})</h4>
-              <div className="flex flex-wrap gap-2">
-                {carreras.map((c: Carrera) => (
-                  <span key={c.id} className="px-3 py-1 bg-gray-50 text-gray-600 text-xs font-bold rounded-lg border border-gray-100">
-                    {c.nombre} {c.abreviatura && <span className="text-primary font-black ml-1">({c.abreviatura})</span>}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
 
       </div>
