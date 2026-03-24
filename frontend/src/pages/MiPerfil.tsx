@@ -6,6 +6,8 @@ import * as LucideIcons from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { updateMe, getMisSeguidores, getMisSiguiendo, toggleSeguir } from "../services/userService";
+import AvatarGenerator from "../components/layout/AvatarGenerator";
+
 
 interface FormState {
   biografia: string;
@@ -39,6 +41,7 @@ export default function MiPerfil() {
     facebook: "",
   });
 
+  const [isAvatarGeneratorOpen, setIsAvatarGeneratorOpen] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState(user?.avatar || 'default');
   const [tempAvatar, setTempAvatar] = useState(user?.avatar || 'default');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -147,7 +150,9 @@ export default function MiPerfil() {
     }
   };
 
-  const avatarUrl = AVATARS.find(a => a.id === selectedAvatar)?.url || AVATARS[0].url;
+const avatarUrl = selectedAvatar?.startsWith("http")
+  ? selectedAvatar
+  : AVATARS.find(a => a.id === selectedAvatar)?.url || AVATARS[0].url;
 
   return (
     <motion.div 
@@ -168,7 +173,7 @@ export default function MiPerfil() {
         </h2>
 
         {/* Avatar Interactive Element */}
-        <div className="relative group cursor-pointer z-10" onClick={handleOpenModal}>
+        <div className="relative group cursor-pointer z-10" onClick={() => setIsAvatarGeneratorOpen(true)}>
           <div className="w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden border-4 border-white shadow-xl bg-gray-50 flex-shrink-0 relative">
             <img 
               src={avatarUrl} 
@@ -630,6 +635,40 @@ export default function MiPerfil() {
           </div>
         </div>
       )}
+
+      {isAvatarGeneratorOpen && (
+  <AvatarGenerator
+    initialAvatar={selectedAvatar}
+    onClose={() => setIsAvatarGeneratorOpen(false)}
+    onSave={async (url) => {
+      setIsAvatarGeneratorOpen(false);
+
+      try {
+        setSaving(true);
+
+        await updateMe({ avatar: url });
+
+        await refreshUser();
+
+        setSelectedAvatar(url);
+
+        setMsg({
+          text: "¡Avatar actualizado correctamente!",
+          type: "success"
+        });
+
+      } catch (err) {
+        setMsg({
+          text: "Error al guardar el avatar",
+          type: "error"
+        });
+      } finally {
+        setSaving(false);
+      }
+    }}
+  />
+)}
+
 
     </motion.div>
   );

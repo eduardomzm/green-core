@@ -33,7 +33,8 @@ class User(AbstractUser):
     )
 
     activo = models.BooleanField(default=True)
-    avatar = models.CharField(max_length=50, default='default')
+    avatar = models.TextField(blank=True, null=True)
+
 
     # Campos de perfil público / redes sociales para todos los roles
     biografia = models.TextField(blank=True)

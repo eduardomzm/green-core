@@ -146,7 +146,11 @@ class MeView(APIView):
 
         # Actualizar avatar
         if 'avatar' in data:
-            user.avatar = data['avatar']
+            avatar_url = data['avatar']
+
+            if avatar_url.startswith("https://api.dicebear.com"):
+                user.avatar = avatar_url
+
 
         # Actualizar username
         if 'username' in data:
