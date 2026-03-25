@@ -114,7 +114,9 @@ export default function Rankings() {
           name: item.alumno__first_name ? `${item.alumno__first_name} ${item.alumno__primer_apellido || ''}`.trim() : item.alumno__username,
           username: item.alumno__username,
           avatar: item.alumno__avatar,
-          extraInfo: item.alumno__alumnoperfil__matricula,
+          extraInfo: item.alumno__alumnogrupo__grupo__carrera__abreviatura 
+            ? `${item.alumno__alumnogrupo__grupo__carrera__abreviatura} - ${item.alumno__alumnogrupo__grupo__nombre}`
+            : 'Sin Grupo',
           value: item.total_piezas
         }));
 
