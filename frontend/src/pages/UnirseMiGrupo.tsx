@@ -1,19 +1,12 @@
 import { useEffect, useState } from "react";
-import { AlertCircle, ArrowRight, CheckCircle, Key, Users, Activity, LogOut, ChevronRight, X, User as UserIcon } from "lucide-react";
+import { AlertCircle, ArrowRight, CheckCircle, Key, Users, Activity, LogOut, ChevronRight, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import UserAvatar from "../components/common/UserAvatar";
 import {
   getMiGrupoAlumno,
   solicitarSalidaGrupo,
   unirseGrupo,
 } from "../services/reciclajeService";
-
-const AVATARS = [
-  { id: 'default', url: '/src/assets/img/logo.jpeg' },
-  { id: 'leaf', url: '/avatars/avatar_leaf.png' },
-  { id: 'earth', url: '/avatars/avatar_earth.png' },
-  { id: 'sprout', url: '/avatars/avatar_sprout.png' },
-  { id: 'water', url: '/avatars/avatar_water.png' },
-];
 
 export default function UnirseMiGrupo() {
   const [miGrupoAlumno, setMiGrupoAlumno] = useState<any | null>(null);
@@ -133,15 +126,7 @@ export default function UnirseMiGrupo() {
             
             <div className="flex-shrink-0 relative">
               <div className="w-24 h-24 md:w-32 md:h-32 rounded-[2rem] overflow-hidden border-4 border-white shadow-xl bg-gray-50 flex items-center justify-center">
-                {miGrupoAlumno.grupo?.tutor_info?.avatar ? (
-                  <img 
-                    src={AVATARS.find(a => a.id === miGrupoAlumno.grupo.tutor_info.avatar)?.url || AVATARS[0].url} 
-                    alt="Tutor avatar" 
-                    className="w-full h-full object-cover" 
-                  />
-                ) : (
-                  <UserIcon className="w-10 h-10 text-gray-300" />
-                )}
+                <UserAvatar avatar={miGrupoAlumno.grupo?.tutor_info?.avatar} />
               </div>
               <div className="absolute -bottom-3 -right-3 bg-gradient-to-br from-blue-500 to-indigo-600 text-white p-2 rounded-xl shadow-lg border-2 border-white transform rotate-3">
                 <CheckCircle className="w-5 h-5" />
@@ -192,11 +177,9 @@ export default function UnirseMiGrupo() {
                         to={`/dashboard/perfil/${comp.username}`}
                         className="flex items-center gap-4 p-3 rounded-2xl hover:bg-blue-50/50 transition-colors group"
                       >
-                        <img 
-                          src={AVATARS.find(a => a.id === comp.avatar)?.url || AVATARS[0].url} 
-                          alt={comp.username} 
-                          className="w-12 h-12 rounded-full border border-gray-200 group-hover:border-blue-300 object-cover" 
-                        />
+                        <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-200 group-hover:border-blue-300 flex-shrink-0">
+                          <UserAvatar avatar={comp.avatar} />
+                        </div>
                         <div className="flex-1">
                           <p className="font-bold text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
                             {comp.nombre} {comp.apellidos}
@@ -244,11 +227,9 @@ export default function UnirseMiGrupo() {
                         to={`/dashboard/perfil/${act.alumno_username}`}
                         className="flex items-center gap-4 p-3 rounded-2xl hover:bg-green-50/50 transition-colors group"
                       >
-                        <img 
-                          src={AVATARS.find(a => a.id === act.alumno_avatar)?.url || AVATARS[0].url} 
-                          alt={act.alumno_username} 
-                          className="w-10 h-10 rounded-xl border border-gray-200 group-hover:border-green-300 object-cover" 
-                        />
+                        <div className="w-10 h-10 rounded-xl overflow-hidden border border-gray-200 group-hover:border-green-300 flex-shrink-0">
+                          <UserAvatar avatar={act.alumno_avatar} />
+                        </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm text-gray-700 truncate">
                             <span className="font-bold text-gray-900 group-hover:text-green-700 transition-colors">{act.alumno_nombre}</span>
@@ -442,11 +423,9 @@ export default function UnirseMiGrupo() {
                   onClick={() => setShowCompanerosModal(false)}
                   className="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-50 transition-colors group"
                 >
-                  <img 
-                    src={AVATARS.find(a => a.id === comp.avatar)?.url || AVATARS[0].url} 
-                    alt={comp.username} 
-                    className="w-12 h-12 rounded-full border border-gray-200 group-hover:border-blue-300 object-cover" 
-                  />
+                  <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-200 group-hover:border-blue-300 flex-shrink-0">
+                    <UserAvatar avatar={comp.avatar} />
+                  </div>
                   <div className="flex-1">
                     <p className="font-bold text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
                       {comp.nombre} {comp.apellidos}
@@ -482,11 +461,9 @@ export default function UnirseMiGrupo() {
                   onClick={() => setShowActividadModal(false)}
                   className="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-50 transition-colors group"
                 >
-                  <img 
-                    src={AVATARS.find(a => a.id === act.alumno_avatar)?.url || AVATARS[0].url} 
-                    alt={act.alumno_username} 
-                    className="w-12 h-12 rounded-xl border border-gray-200 group-hover:border-green-300 object-cover" 
-                  />
+                  <div className="w-12 h-12 rounded-xl overflow-hidden border border-gray-200 group-hover:border-green-300 flex-shrink-0">
+                    <UserAvatar avatar={act.alumno_avatar} />
+                  </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-gray-700">
                       <span className="font-bold text-gray-900 group-hover:text-green-700 transition-colors">{act.alumno_nombre}</span>
