@@ -382,7 +382,13 @@ class BuscarAlumnosView(APIView):
             Q(primer_apellido__icontains=query)
         )
         # Excluir al propio usuario
-        alumnos = User.objects.filter(busqueda).exclude(id=request.user.id)[:10]
+        alumnos = User.objects.filter(busqueda).exclude(id=request.user.id)
+
+        # Restricción para Tutores: solo ven alumnos de su grupo
+        if request.user.role == 'TUTOR':
+            alumnos = alumnos.filter(alumnogrupo__grupo__tutor=request.user)
+
+        alumnos = alumnos[:10]
         
         resultados = []
         for al in alumnos:

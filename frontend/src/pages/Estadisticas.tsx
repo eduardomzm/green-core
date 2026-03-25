@@ -298,9 +298,11 @@ export default function Estadisticas() {
         {[
           { id: "mensual", label: "Mensual", icon: Calendar },
           { id: "alumno", label: "Por Alumno", icon: UserIcon },
-          { id: "grupo", label: "Por Grupo", icon: Users },
-          { id: "historial", label: "Todo el Historial", icon: History }
-        ].map(tab => (
+          { id: "grupo", label: "Por Grupo", icon: Users, adminOnly: true },
+          { id: "historial", label: "Todo el Historial", icon: History, adminOnly: true }
+        ]
+        .filter(tab => !tab.adminOnly || user?.role === 'ADMIN')
+        .map(tab => (
           <button
             key={tab.id}
             onClick={() => setReportType(tab.id as ReportType)}
