@@ -114,6 +114,7 @@ export default function Rankings() {
           name: item.alumno__first_name ? `${item.alumno__first_name} ${item.alumno__primer_apellido || ''}`.trim() : item.alumno__username,
           username: item.alumno__username,
           avatar: item.alumno__avatar,
+          extraInfo: item.alumno__alumnoperfil__matricula,
           value: item.total_piezas
         }));
 

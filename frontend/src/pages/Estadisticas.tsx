@@ -71,6 +71,7 @@ const Estadisticas = () => {
 
       const alumnosRows = (data.top_alumnos || []).slice(0, 20).map((a, index) => [
         `#${index + 1}`,
+        a.alumno__alumnoperfil__matricula || "N/A",
         a.alumno__first_name || a.alumno__username,
         a.alumno__primer_apellido || "",
         `${a.total_piezas} piezas`
@@ -78,7 +79,7 @@ const Estadisticas = () => {
 
       autoTable(doc, {
         startY: currentY,
-        head: [['Pos.', 'Nombre', 'Apellido', 'Total']],
+        head: [['Pos.', 'Matrícula', 'Nombre', 'Apellido', 'Total']],
         body: alumnosRows,
         theme: 'striped',
         headStyles: { fillColor: [34, 197, 94] },
@@ -161,6 +162,7 @@ const Estadisticas = () => {
       // Hoja de Alumnos
       const alumnosData = (data.top_alumnos || []).map((a, index) => ({
         Posicion: index + 1,
+        Matricula: a.alumno__alumnoperfil__matricula || "N/A",
         Nombre: a.alumno__first_name || a.alumno__username,
         Apellido: a.alumno__primer_apellido || "",
         Total_Piezas: a.total_piezas

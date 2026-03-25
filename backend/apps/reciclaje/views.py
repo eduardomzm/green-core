@@ -516,7 +516,8 @@ class RankingsView(APIView):
                 'alumno__username',
                 'alumno__first_name',
                 'alumno__primer_apellido',
-                'alumno__avatar'
+                'alumno__avatar',
+                'alumno__alumnoperfil__matricula'
             )
             .annotate(total_piezas=Sum('cantidad'))
             .order_by('-total_piezas')[:20]
