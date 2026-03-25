@@ -322,39 +322,57 @@ export default function MiPerfil() {
               className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-6 relative z-10"
             >
               {misMedallas.map((m: MedallaObtenida) => {
-                let bgGradient = "from-yellow-50/30 to-white";
-                let iconGradient = "from-yellow-400 to-orange-500";
-                let shadowColor = "shadow-orange-500/20";
-                let borderColor = "border-yellow-100/50";
-                let hoverBorder = "hover:border-yellow-300";
-                let hoverShadow = "hover:shadow-yellow-500/10";
-                let placeLabel = "Medalla Especial";
+                const isGlobal = m.categoria?.toLowerCase().includes('global');
+                const isPet = m.categoria?.toLowerCase().includes('pet');
+                const isCarton = m.categoria?.toLowerCase().includes('cartón');
+                const isLatas = m.categoria?.toLowerCase().includes('latas');
 
-                if (m.medalla.posicion === 1) {
-                  bgGradient = "from-amber-50/50 to-white";
-                  iconGradient = "from-amber-400 to-yellow-500";
-                  shadowColor = "shadow-amber-500/20";
-                  borderColor = "border-amber-200/50";
-                  hoverBorder = "hover:border-amber-400";
-                  hoverShadow = "hover:shadow-amber-500/20";
-                  placeLabel = "1er Lugar";
-                } else if (m.medalla.posicion === 2) {
-                  bgGradient = "from-slate-50/50 to-white";
-                  iconGradient = "from-slate-300 to-gray-400";
-                  shadowColor = "shadow-slate-500/20";
-                  borderColor = "border-slate-200/50";
-                  hoverBorder = "hover:border-slate-400";
-                  hoverShadow = "hover:shadow-slate-500/20";
-                  placeLabel = "2do Lugar";
-                } else if (m.medalla.posicion === 3) {
-                  bgGradient = "from-orange-50/50 to-white";
-                  iconGradient = "from-orange-700 to-amber-700";
-                  shadowColor = "shadow-orange-800/20";
-                  borderColor = "border-orange-200/50";
-                  hoverBorder = "hover:border-orange-800";
-                  hoverShadow = "hover:shadow-orange-800/20";
-                  placeLabel = "3er Lugar";
+                let cardBg = "from-gray-50/50 to-white";
+                let accentColor = "text-gray-500";
+                let pillBg = "bg-gray-50 text-gray-700";
+                let borderColor = "border-gray-100";
+
+                if (isGlobal) {
+                  cardBg = "from-indigo-50/50 to-white";
+                  accentColor = "text-indigo-600";
+                  pillBg = "bg-indigo-50 text-indigo-700";
+                  borderColor = "border-indigo-100";
+                } else if (isPet) {
+                  cardBg = "from-blue-50/50 to-white";
+                  accentColor = "text-blue-600";
+                  pillBg = "bg-blue-50 text-blue-700";
+                  borderColor = "border-blue-100";
+                } else if (isCarton) {
+                  cardBg = "from-orange-50/50 to-white";
+                  accentColor = "text-orange-700";
+                  pillBg = "bg-orange-50 text-orange-800";
+                  borderColor = "border-orange-100";
+                } else if (isLatas) {
+                  cardBg = "from-slate-50/50 to-white";
+                  accentColor = "text-slate-600";
+                  pillBg = "bg-slate-50 text-slate-700";
+                  borderColor = "border-slate-100";
                 }
+
+                let iconGradient = "from-gray-400 to-gray-500";
+                let shadowColor = "shadow-gray-500/20";
+                if (m.medalla.posicion === 1) {
+                  iconGradient = "from-amber-400 to-yellow-500";
+                  shadowColor = "shadow-amber-500/40";
+                } else if (m.medalla.posicion === 2) {
+                  iconGradient = "from-slate-300 to-gray-400";
+                  shadowColor = "shadow-slate-500/30";
+                } else if (m.medalla.posicion === 3) {
+                  iconGradient = "from-orange-700 to-amber-700";
+                  shadowColor = "shadow-orange-800/30";
+                }
+
+                const formatMonth = (mesStr: string) => {
+                  if (!mesStr || !mesStr.includes('-')) return mesStr;
+                  const [year, month] = mesStr.split('-');
+                  const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+                  return `${months[parseInt(month) - 1]} ${year}`;
+                };
 
                 return (
                   <motion.div
@@ -369,19 +387,24 @@ export default function MiPerfil() {
                       transition: { duration: 0.2 }
                     }}
                     onClick={() => triggerConfettiBurst()}
-                    className={`group relative flex flex-col items-center p-6 bg-gradient-to-b ${bgGradient} rounded-[2rem] border ${borderColor} ${hoverBorder} hover:shadow-xl ${hoverShadow} transition-all duration-300 cursor-pointer`}
-                    title={`${placeLabel} - ${m.categoria || 'Dinámica'} (${m.mes_obtenida})`}
+                    className={`group relative flex flex-col items-center p-6 bg-gradient-to-b ${cardBg} rounded-[2rem] border ${borderColor} hover:border-primary/50 hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden`}
                   >
-                    {/* Tooltip visible en hover nativamente por title o con un pequeño div */}
-                    <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-[10px] uppercase font-bold px-3 py-1.5 rounded-lg whitespace-nowrap z-50 pointer-events-none">
-                      {placeLabel} | {m.categoria || 'Logro'}
-                    </div>
-
-                    <div className={`w-16 h-16 bg-gradient-to-br ${iconGradient} rounded-2xl flex items-center justify-center text-white shadow-lg ${shadowColor} mb-4 transform group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300`}>
+                    <div className={`w-16 h-16 bg-gradient-to-br ${iconGradient} rounded-2xl flex items-center justify-center text-white shadow-lg ${shadowColor} mb-4 transform group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300 border-2 border-white/50`}>
                       <DynamicIcon name={m.medalla.icono_lucide} className="w-8 h-8 drop-shadow-md" />
                     </div>
-                    <p className="font-extrabold text-sm text-gray-900 text-center leading-tight mb-1">{m.medalla.nombre}</p>
-                    <p className="text-[10px] uppercase font-black tracking-widest text-gray-500">{m.mes_obtenida}</p>
+                    
+                    <h4 className="font-black text-lg text-gray-900 leading-none mb-1">
+                      TOP {m.medalla.posicion}
+                    </h4>
+                    
+                    <div className="flex flex-col items-center gap-1 mt-1 w-full">
+                      <span className={`text-[10px] font-black uppercase tracking-wider ${pillBg} px-3 py-1 rounded-full border border-current/10 truncate max-w-full`}>
+                        {m.categoria?.replace('Material: ', '') || 'Global'}
+                      </span>
+                      <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">
+                        {formatMonth(m.mes_obtenida)}
+                      </p>
+                    </div>
                   </motion.div>
                 )
               })}

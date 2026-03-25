@@ -218,37 +218,96 @@ export default function PerfilPublico() {
                 animate="show"
                 className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
               >
-                {profile.medallas.map((m: any) => (
-                  <motion.div 
-                    key={m.id}
-                    variants={{
-                      hidden: { opacity: 0, scale: 0.8 },
-                      show: { opacity: 1, scale: 1 }
-                    }}
-                    whileHover={{ 
-                      scale: 1.05, 
-                      transition: { duration: 0.2 }
-                    }}
-                    className="group flex flex-col items-center p-6 bg-gradient-to-b from-yellow-50/50 to-white rounded-[2rem] border border-yellow-100 hover:border-yellow-300 hover:shadow-xl hover:shadow-yellow-500/10 transition-all duration-300 cursor-default relative overflow-hidden"
-                  >
-                    <div className="absolute inset-0 bg-yellow-400 opacity-0 group-hover:opacity-[0.03] transition-opacity"></div>
-                    <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-500/30 mb-4 transform group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300">
-                      <DynamicIcon name={m.medalla.icono_lucide} className="w-8 h-8 drop-shadow-md" />
-                    </div>
-                    <p className="font-extrabold text-sm text-gray-900 text-center leading-tight mb-1">{m.medalla.nombre}</p>
-                    <p className="text-[10px] uppercase font-black tracking-widest text-orange-500/80">{m.mes_obtenida}</p>
+                {profile.medallas.map((m: any) => {
+                  const isGlobal = m.categoria?.toLowerCase().includes('global');
+                  const isPet = m.categoria?.toLowerCase().includes('pet');
+                  const isCarton = m.categoria?.toLowerCase().includes('cartón');
+                  const isLatas = m.categoria?.toLowerCase().includes('latas');
 
-                    {/* Tooltip */}
+                  let cardBg = "from-gray-50/50 to-white";
+                  let pillBg = "bg-gray-50 text-gray-700";
+                  let borderColor = "border-gray-100";
+
+                  if (isGlobal) {
+                    cardBg = "from-indigo-50/50 to-white";
+                    pillBg = "bg-indigo-50 text-indigo-700";
+                    borderColor = "border-indigo-100";
+                  } else if (isPet) {
+                    cardBg = "from-blue-50/50 to-white";
+                    pillBg = "bg-blue-50 text-blue-700";
+                    borderColor = "border-blue-100";
+                  } else if (isCarton) {
+                    cardBg = "from-orange-50/50 to-white";
+                    pillBg = "bg-orange-50 text-orange-800";
+                    borderColor = "border-orange-100";
+                  } else if (isLatas) {
+                    cardBg = "from-slate-50/50 to-white";
+                    pillBg = "bg-slate-50 text-slate-700";
+                    borderColor = "border-slate-100";
+                  }
+
+                  let iconGradient = "from-gray-400 to-gray-500";
+                  let shadowColor = "shadow-gray-500/20";
+                  if (m.medalla.posicion === 1) {
+                    iconGradient = "from-amber-400 to-yellow-500";
+                    shadowColor = "shadow-amber-500/40";
+                  } else if (m.medalla.posicion === 2) {
+                    iconGradient = "from-slate-300 to-gray-400";
+                    shadowColor = "shadow-slate-500/30";
+                  } else if (m.medalla.posicion === 3) {
+                    iconGradient = "from-orange-700 to-amber-700";
+                    shadowColor = "shadow-orange-800/30";
+                  }
+
+                  const formatMonth = (mesStr: string) => {
+                    if (!mesStr || !mesStr.includes('-')) return mesStr;
+                    const [year, month] = mesStr.split('-');
+                    const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+                    return `${months[parseInt(month) - 1]} ${year}`;
+                  };
+
+                  return (
                     <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      whileHover={{ opacity: 1, y: 0 }}
-                      className="absolute pointer-events-none z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-gray-900 text-white text-xs rounded-xl p-3 shadow-xl transition-opacity"
+                      key={m.id}
+                      variants={{
+                        hidden: { opacity: 0, scale: 0.8 },
+                        show: { opacity: 1, scale: 1 }
+                      }}
+                      whileHover={{ 
+                        scale: 1.05, 
+                        transition: { duration: 0.2 }
+                      }}
+                      className={`group relative flex flex-col items-center p-6 bg-gradient-to-b ${cardBg} rounded-[2rem] border ${borderColor} hover:border-primary/50 hover:shadow-xl transition-all duration-300 cursor-default overflow-hidden`}
                     >
-                      {m.medalla.descripcion}
-                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                      <div className={`w-16 h-16 bg-gradient-to-br ${iconGradient} rounded-2xl flex items-center justify-center text-white shadow-lg ${shadowColor} mb-4 transform group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300 border-2 border-white/50`}>
+                        <DynamicIcon name={m.medalla.icono_lucide} className="w-8 h-8 drop-shadow-md" />
+                      </div>
+                      
+                      <h4 className="font-black text-lg text-gray-900 leading-none mb-1">
+                        TOP {m.medalla.posicion}
+                      </h4>
+                      
+                      <div className="flex flex-col items-center gap-1 mt-1 w-full text-center">
+                        <span className={`text-[10px] font-black uppercase tracking-wider ${pillBg} px-3 py-1 rounded-full border border-current/10 truncate max-w-full inline-block mx-auto`}>
+                          {m.categoria?.replace('Material: ', '') || 'Global'}
+                        </span>
+                        <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">
+                          {formatMonth(m.mes_obtenida)}
+                        </p>
+                      </div>
+
+                      {/* Tooltip */}
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        whileHover={{ opacity: 1, y: 0 }}
+                        className="absolute pointer-events-none z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-gray-900 text-white text-xs rounded-xl p-3 shadow-xl transition-opacity"
+                      >
+                        {m.medalla.descripcion}
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                      </motion.div>
                     </motion.div>
-                  </motion.div>
-                ))}
+                  )
+                })}
               </motion.div>
             )}
           </div>
