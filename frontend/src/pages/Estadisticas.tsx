@@ -44,105 +44,196 @@ const Estadisticas = () => {
     try {
       const doc = new jsPDF();
       const pageWidth = doc.internal.pageSize.width;
-      const title = user?.role === 'TUTOR' ? "Reporte Mensual de Grupo" : "Reporte Mensual Global";
+      const title = user?.role === 'TUTOR' ? "Reporte de Reciclaje (Grupo)" : "Reporte de Reciclaje Global";
       
-      // -- HEADER --
-      // Logo o Rectángulo de acento
-      doc.setFillColor(34, 197, 94); // Verde primary
-      doc.rect(0, 0, pageWidth, 40, 'F');
-      
-      doc.setTextColor(255, 255, 255);
-      doc.setFontSize(22);
+      // -- MINIMALIST HEADER --
+      doc.setTextColor(17, 24, 39); // Gray-900
+      doc.setFontSize(24);
       doc.setFont("helvetica", "bold");
-      doc.text(`Green Core - ${title}`, 20, 25);
+      doc.text("Green Core", 20, 25);
       
       doc.setFontSize(12);
       doc.setFont("helvetica", "normal");
-      doc.text(`Periodo: ${selectedMonth}`, 20, 33);
+      doc.setTextColor(107, 114, 128); // Gray-500
+      doc.text(title, 20, 32);
+      
+      // Right-aligned period/date
+      doc.setFontSize(9);
+      doc.text(`Periodo: ${selectedMonth}`, pageWidth - 20, 25, { align: "right" });
+      doc.text(`Generado: ${new Date().toLocaleDateString()}`, pageWidth - 20, 31, { align: "right" });
 
+      // Clean separator
+      doc.setDrawColor(243, 244, 246); // Gray-100
+      doc.setLineWidth(0.5);
+      doc.line(20, 40, pageWidth - 20, 40);
+
+      // -- SUMMARY DASHBOARD --
       let currentY = 50;
+      doc.setFillColor(249, 250, 251); // Gray-50
+      doc.roundedRect(20, currentY, 54, 28, 4, 4, 'F');
+      doc.roundedRect(78, currentY, 54, 28, 4, 4, 'F');
+      doc.roundedRect(136, currentY, 54, 28, 4, 4, 'F');
 
-      // -- SECCIÓN 1: TOP ALUMNOS --
-      doc.setTextColor(31, 41, 55); // Gray-800
-      doc.setFontSize(16);
+      const totalPiezas = data.top_alumnos.reduce((acc, item) => acc + item.total_piezas, 0);
+      
+      // Metric 1: Total
+      doc.setFontSize(8);
       doc.setFont("helvetica", "bold");
-      doc.text("1. Ranking de Alumnos", 20, currentY);
-      currentY += 8;
+      doc.setTextColor(75, 85, 99); // Gray-600
+      doc.text("TOTAL PIEZAS", 26, currentY + 10);
+      doc.setFontSize(16);
+      doc.setTextColor(34, 197, 94); // Green-500
+      doc.text(totalPiezas.toLocaleString(), 26, currentY + 20);
+
+      // Metric 2: Alumnos
+      doc.setFontSize(8);
+      doc.setTextColor(75, 85, 99);
+      doc.text("PARTICIPANTES", 84, currentY + 10);
+      doc.setFontSize(16);
+      doc.setTextColor(17, 24, 39);
+      doc.text((data.top_alumnos?.length || 0).toString(), 84, currentY + 20);
+
+      // Metric 3: Mes
+      doc.setFontSize(8);
+      doc.setTextColor(75, 85, 99);
+      doc.text("MES ANALIZADO", 142, currentY + 10);
+      doc.setFontSize(14);
+      doc.setTextColor(17, 24, 39);
+      doc.text(selectedMonth, 142, currentY + 20);
+
+      currentY += 45;
+
+      // -- SECTION: RANKING ALUMNOS --
+      doc.setFontSize(13);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(17, 24, 39);
+      doc.text("Ranking de Alumnos", 20, currentY);
+      currentY += 6;
 
       const alumnosRows = (data.top_alumnos || []).slice(0, 20).map((a, index) => [
         `#${index + 1}`,
         a.alumno__alumnoperfil__matricula || "N/A",
         a.alumno__first_name || a.alumno__username,
         a.alumno__primer_apellido || "",
-        `${a.total_piezas} piezas`
+        `${a.total_piezas.toLocaleString()} pzs`
       ]);
 
       autoTable(doc, {
         startY: currentY,
         head: [['Pos.', 'Matrícula', 'Nombre', 'Apellido', 'Total']],
         body: alumnosRows,
-        theme: 'striped',
-        headStyles: { fillColor: [34, 197, 94] },
-        styles: { fontSize: 10 },
+        theme: 'plain',
+        headStyles: { 
+          fillColor: [249, 250, 251], 
+          textColor: [75, 85, 99], 
+          fontSize: 8, 
+          fontStyle: 'bold' 
+        },
+        styles: { 
+          fontSize: 9, 
+          cellPadding: 4, 
+          textColor: [55, 65, 81],
+          lineWidth: 0,
+          valign: 'middle'
+        },
+        alternateRowStyles: {
+          fillColor: [252, 253, 253]
+        },
         margin: { left: 20, right: 20 }
       });
 
       currentY = (doc as any).lastAutoTable.finalY + 15;
 
-      // -- SECCIÓN 2: TOP GRUPOS (Solo si es Admin o hay datos) --
+      // Checking for page break
+      if (currentY > 230) {
+        doc.addPage();
+        currentY = 20;
+      }
+
+      // -- SECTION: GRUPOS --
       if (user?.role === 'ADMIN' || (data.top_grupos && data.top_grupos.length > 1)) {
-        doc.setFontSize(16);
-        doc.text("2. Ranking de Grupos", 20, currentY);
-        currentY += 8;
+        doc.setFontSize(13);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(17, 24, 39);
+        doc.text("Ranking de Grupos", 20, currentY);
+        currentY += 6;
 
         const gruposRows = (data.top_grupos || []).slice(0, 10).map((g, index) => [
           `#${index + 1}`,
           g.alumno__alumnogrupo__grupo__nombre || "N/A",
-          `${g.total_piezas} piezas`
+          `${g.total_piezas.toLocaleString()} pzs`
         ]);
 
         autoTable(doc, {
           startY: currentY,
           head: [['Pos.', 'Nombre de Grupo', 'Total']],
           body: gruposRows,
-          theme: 'striped',
-          headStyles: { fillColor: [37, 99, 235] }, // Blue secondary
-          styles: { fontSize: 10 },
+          theme: 'plain',
+          headStyles: { 
+            fillColor: [249, 250, 251], 
+            textColor: [75, 85, 99], 
+            fontSize: 8, 
+            fontStyle: 'bold'
+          },
+          styles: { 
+            fontSize: 9, 
+            cellPadding: 4,
+            textColor: [55, 65, 81]
+          },
+          alternateRowStyles: {
+            fillColor: [252, 253, 253]
+          },
           margin: { left: 20, right: 20 }
         });
         currentY = (doc as any).lastAutoTable.finalY + 15;
       }
 
-      // -- SECCIÓN 3: MATERIALES --
-      doc.setFontSize(16);
-      doc.text(user?.role === 'TUTOR' ? "2. Desglose por Material" : "3. Desglose por Material", 20, currentY);
-      currentY += 8;
+      // -- SECTION: MATERIALES --
+      if (currentY > 230) {
+        doc.addPage();
+        currentY = 20;
+      }
+
+      doc.setFontSize(13);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(17, 24, 39);
+      doc.text("Desglose por Material", 20, currentY);
+      currentY += 6;
 
       const materialRows = (data.top_materiales || []).map((m) => [
         m.material__nombre || "N/A",
-        `${m.total_piezas} piezas`
+        `${m.total_piezas.toLocaleString()} pzs`
       ]);
 
       autoTable(doc, {
         startY: currentY,
         head: [['Material', 'Total Recolectado']],
         body: materialRows,
-        theme: 'striped',
-        headStyles: { fillColor: [79, 70, 229] }, // Indigo
-        styles: { fontSize: 10 },
+        theme: 'plain',
+        headStyles: { 
+          fillColor: [249, 250, 251], 
+          textColor: [75, 85, 99], 
+          fontSize: 8, 
+          fontStyle: 'bold'
+        },
+        styles: { 
+          fontSize: 9, 
+          cellPadding: 4,
+          textColor: [55, 65, 81]
+        },
+        alternateRowStyles: {
+          fillColor: [252, 253, 253]
+        },
         margin: { left: 20, right: 20 }
       });
 
       // -- FOOTER --
-      const totalPiezas = data.top_alumnos.reduce((acc, item) => acc + item.total_piezas, 0);
-      currentY = (doc as any).lastAutoTable.finalY + 20;
-      
-      doc.line(20, currentY, pageWidth - 20, currentY);
-      currentY += 10;
-      doc.setFontSize(10);
+      doc.setFontSize(8);
       doc.setFont("helvetica", "italic");
-      doc.text(`Total de piezas recolectadas en este periodo: ${totalPiezas}`, 20, currentY);
-      doc.text(`Generado el: ${new Date().toLocaleString()}`, pageWidth - 20, currentY, { align: "right" });
+      doc.setTextColor(156, 163, 175); // Gray-400
+      const footerY = 285;
+      doc.text("Este es un reporte oficial generado por el sistema Green Core.", 20, footerY);
+      doc.text(`Página 1`, pageWidth - 20, footerY, { align: "right" });
 
       doc.save(`Reporte_GreenCore_${selectedMonth}.pdf`);
     } catch (error) {

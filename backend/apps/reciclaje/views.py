@@ -68,24 +68,23 @@ class DepositoViewSet(viewsets.ModelViewSet):
                 alumno__alumnogrupo__grupo__tutor=user
             )
 
-        # Filtros adicionales para ADMIN (y otros roles si se desea)
-        if user.role == 'ADMIN':
-            fecha = self.request.query_params.get('fecha')
-            alumno_id = self.request.query_params.get('alumno')
-            grupo_id = self.request.query_params.get('grupo')
-            carrera_id = self.request.query_params.get('carrera')
-            material_id = self.request.query_params.get('material')
+        # Filtros adicionales (para todos los roles según su scope arriba)
+        fecha = self.request.query_params.get('fecha')
+        alumno_id = self.request.query_params.get('alumno')
+        grupo_id = self.request.query_params.get('grupo')
+        carrera_id = self.request.query_params.get('carrera')
+        material_id = self.request.query_params.get('material')
 
-            if fecha:
-                queryset = queryset.filter(fecha__date=fecha)
-            if alumno_id:
-                queryset = queryset.filter(alumno_id=alumno_id)
-            if grupo_id:
-                queryset = queryset.filter(alumno__alumnogrupo__grupo_id=grupo_id)
-            if carrera_id:
-                queryset = queryset.filter(alumno__alumnogrupo__grupo__carrera_id=carrera_id)
-            if material_id:
-                queryset = queryset.filter(material_id=material_id)
+        if fecha:
+            queryset = queryset.filter(fecha__date=fecha)
+        if alumno_id:
+            queryset = queryset.filter(alumno_id=alumno_id)
+        if grupo_id:
+            queryset = queryset.filter(alumno__alumnogrupo__grupo_id=grupo_id)
+        if carrera_id:
+            queryset = queryset.filter(alumno__alumnogrupo__grupo__carrera_id=carrera_id)
+        if material_id:
+            queryset = queryset.filter(material_id=material_id)
 
         return queryset
 
@@ -504,6 +503,18 @@ class RankingsView(APIView):
                 fecha_fin = fecha_inicio.replace(month=fecha_inicio.month + 1)
                 
             depositos = depositos.filter(fecha__gte=fecha_inicio, fecha__lt=fecha_fin)
+
+        # Nuevos filtros específicos
+        alumno_id = request.query_params.get('alumno')
+        grupo_id = request.query_params.get('grupo')
+        carrera_id = request.query_params.get('carrera')
+
+        if alumno_id:
+            depositos = depositos.filter(alumno_id=alumno_id)
+        if grupo_id:
+            depositos = depositos.filter(alumno__alumnogrupo__grupo_id=grupo_id)
+        if carrera_id:
+            depositos = depositos.filter(alumno__alumnogrupo__grupo__carrera_id=carrera_id)
 
         # Restricción para Tutores: solo ven datos de su grupo
         if request.user.role == 'TUTOR':
