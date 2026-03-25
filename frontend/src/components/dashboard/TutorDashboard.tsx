@@ -1,5 +1,6 @@
 import { Target, Users, ArrowRight, Recycle, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
+import UserAvatar from "../common/UserAvatar";
 import type { DashboardResponse } from "../../types/dashboard.types";
 
 interface Props {
@@ -119,9 +120,13 @@ const TutorDashboard = ({ data }: Props) => {
                         month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' 
                       })}
                     </td>
-                    <td className="px-6 py-4 text-sm font-bold text-textMain">
-                      {/* Nota: si el backend no manda 'alumno', mostrará un guión temporalmente */}
-                      {(deposito as any).alumno || "Alumno"} 
+                    <td className="px-6 py-4 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-100 flex-shrink-0">
+                        <UserAvatar avatar={(deposito as any).alumno_avatar} />
+                      </div>
+                      <span className="text-sm font-bold text-textMain">
+                        {(deposito as any).alumno || "Alumno"}
+                      </span>
                     </td>
                     <td className="px-6 py-4">
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold uppercase bg-orange-50 text-accent border border-orange-100">

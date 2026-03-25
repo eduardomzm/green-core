@@ -1,6 +1,7 @@
 import type { DashboardResponse } from "../../types/dashboard.types";
 import { UserPlus, History, ArrowRight, BarChart3, Users, Target, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
+import UserAvatar from "../common/UserAvatar";
 
 interface Props {
   data: DashboardResponse;
@@ -120,9 +121,14 @@ const AdminDashboard = ({ data }: Props) => {
               <tbody className="divide-y divide-gray-50">
                 {data.ultimos_usuarios?.slice(0, 5).map((u: any) => (
                   <tr key={u.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <p className="text-sm font-bold text-textMain">{u.username}</p>
-                      <p className="text-[10px] text-gray-400 lowercase">{u.first_name} {u.primer_apellido}</p>
+                    <td className="px-6 py-4 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-100 flex-shrink-0">
+                        <UserAvatar avatar={u.avatar} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-textMain">{u.username}</p>
+                        <p className="text-[10px] text-gray-400 lowercase">{u.first_name} {u.primer_apellido}</p>
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
@@ -171,7 +177,10 @@ const AdminDashboard = ({ data }: Props) => {
               <tbody className="divide-y divide-gray-50">
                 {data.ultimos_depositos?.slice(0, 5).map((d: any) => (
                   <tr key={d.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-100 flex-shrink-0">
+                        <UserAvatar avatar={d.alumno_avatar} />
+                      </div>
                       <p className="text-sm font-bold text-textMain">{d.alumno}</p>
                     </td>
                     <td className="px-6 py-4">

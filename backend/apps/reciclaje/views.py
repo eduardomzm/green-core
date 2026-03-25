@@ -333,7 +333,8 @@ class DashboardView(APIView):
                 "cantidad": dep.cantidad,
                 "material": dep.material.nombre,
                 "operador": dep.operador.username,
-                "alumno": dep.alumno.username
+                "alumno": dep.alumno.username,
+                "alumno_avatar": dep.alumno.avatar
             }
             for dep in depositos_recientes
         ]
@@ -350,6 +351,7 @@ class DashboardView(APIView):
                     "first_name": u.first_name,
                     "primer_apellido": u.primer_apellido,
                     "role": u.role,
+                    "avatar": u.avatar,
                     "date_joined": u.date_joined.isoformat()
                 }
                 for u in usuarios_recientes
@@ -513,7 +515,8 @@ class RankingsView(APIView):
                 'alumno__id',
                 'alumno__username',
                 'alumno__first_name',
-                'alumno__primer_apellido'
+                'alumno__primer_apellido',
+                'alumno__avatar'
             )
             .annotate(total_piezas=Sum('cantidad'))
             .order_by('-total_piezas')[:20]
