@@ -1,16 +1,26 @@
 import { useState, useEffect, useRef } from "react";
-import { LogOut, Bell, Menu, Info, AlertTriangle, CheckCircle, Settings, Award } from "lucide-react";
+import { LogOut, Bell, Menu, Info, AlertTriangle, CheckCircle, Settings, Award, Search, X, User as UserIcon } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { getNotificaciones, marcarComoLeida, marcarTodasComoLeidas } from "../../services/notificationService";
 import type { Notificacion } from "../../services/notificationService";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { buscarAlumnos } from "../../services/userService";
+import UserAvatar from "../common/UserAvatar";
 
 export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
   const { logout } = useAuth();
+  const navigate = useNavigate();
   
   const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Search State
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [showResults, setShowResults] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   const unreadCount = notificaciones.filter(n => !n.leida).length;
 
@@ -25,15 +35,40 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
 
   useEffect(() => {
     fetchNotificaciones();
-    // Optional: Add polling
     const interval = setInterval(fetchNotificaciones, 60000); // 1 minute
     return () => clearInterval(interval);
   }, []);
+
+  // Search Logic
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      if (searchQuery.trim().length >= 2) {
+        setIsSearching(true);
+        try {
+          const results = await buscarAlumnos(searchQuery);
+          setSearchResults(results);
+          setShowResults(true);
+        } catch (error) {
+          console.error("Search error:", error);
+        } finally {
+          setIsSearching(false);
+        }
+      } else {
+        setSearchResults([]);
+        setShowResults(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setShowDropdown(false);
+      }
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowResults(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -71,8 +106,14 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
     }
   };
 
+  const handleResultClick = (username: string) => {
+    navigate(`/dashboard/perfil/${username}`);
+    setSearchQuery("");
+    setShowResults(false);
+  };
+
   return (
-    <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-4 md:px-8">
+    <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-4 md:px-8 relative z-50">
       
       <div className="flex items-center gap-3">
         <button 
@@ -84,6 +125,82 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
         <h2 className="hidden sm:block text-xs font-bold text-gray-300 tracking-[0.2em] uppercase">
           Panel de Control
         </h2>
+      </div>
+
+      {/* Search Bar - Center/Left Desktop */}
+      <div className="flex-1 max-w-md mx-4 hidden md:block relative px-4" ref={searchRef}>
+        <div className="relative group">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className={`w-4 h-4 transition-colors ${searchQuery ? 'text-primary' : 'text-gray-400 group-focus-within:text-primary'}`} />
+          </div>
+          <input
+            type="text"
+            className="block w-full pl-10 pr-10 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200"
+            placeholder="Buscar alumnos por nombre o usuario..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => searchQuery.trim().length >= 2 && setShowResults(true)}
+          />
+          {searchQuery && (
+            <button 
+              onClick={() => setSearchQuery("")}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
+        {/* Search Results Dropdown */}
+        {showResults && (
+          <div className="absolute top-full left-4 right-4 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-[100]">
+            {isSearching ? (
+              <div className="p-4 flex items-center justify-center gap-3 text-gray-500 text-sm italic">
+                <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                Buscando...
+              </div>
+            ) : searchResults.length > 0 ? (
+              <div className="max-h-80 overflow-y-auto">
+                <div className="p-2 border-b border-gray-50 bg-gray-50/50">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-2">Alumnos encontrados</span>
+                </div>
+                {searchResults.map((al) => (
+                  <button
+                    key={al.username}
+                    onClick={() => handleResultClick(al.username)}
+                    className="w-full flex items-center gap-3 p-3 hover:bg-primary/5 transition-colors text-left group"
+                  >
+                    <div className="w-10 h-10 rounded-xl overflow-hidden shadow-sm border border-white group-hover:scale-110 transition-transform">
+                      <UserAvatar avatar={al.avatar} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-gray-900 truncate">
+                        {al.first_name} {al.primer_apellido}
+                      </p>
+                      <p className="text-xs text-gray-400 truncate flex items-center gap-1">
+                        @{al.username} 
+                        {al.carrera && (
+                          <>
+                            <span className="w-1 h-1 bg-gray-300 rounded-full mx-1"></span>
+                            <span className="text-primary/70 font-medium">{al.carrera}</span>
+                          </>
+                        )}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="p-8 text-center">
+                <div className="bg-gray-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <UserIcon className="w-6 h-6 text-gray-300" />
+                </div>
+                <p className="text-sm font-medium text-gray-500">No se encontraron alumnos</p>
+                <p className="text-xs text-gray-400 mt-1">Intenta con otro nombre o usuario</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-4">
