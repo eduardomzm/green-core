@@ -9,9 +9,18 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const { user } = useAuth();
   const location = useLocation();
 
-  const menuItems = NAVIGATION.filter(item => 
-    !item.roles || (user?.role && item.roles.includes(user.role))
-  );
+  const menuItems = NAVIGATION.filter(item => {
+    // 1. Verificar si el rol tiene permiso para ver el ítem
+    const isRoleAllowed = !item.roles || (user?.role && item.roles.includes(user.role));
+    if (!isRoleAllowed) return false;
+
+    // 2. Si es alumno y no está activo, solo mostrar "Mi Grupo"
+    if (user?.role === 'ALUMNO' && user.grupo_estado !== 'ACTIVO') {
+      return item.path === '/dashboard/mi-grupo/unirse';
+    }
+
+    return true;
+  });
 
   return (
     <aside className="w-64 bg-white border-r border-gray-100 flex flex-col h-full shadow-2xl lg:shadow-none">

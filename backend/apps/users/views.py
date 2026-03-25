@@ -103,6 +103,7 @@ class MeView(APIView):
         matricula = None
         nivel = 1
         medallas = []
+        grupo_estado = None
 
         if user.role == 'ALUMNO':
             try:
@@ -112,6 +113,12 @@ class MeView(APIView):
                 
                 user_medallas = MedallaAlumno.objects.filter(alumno=user).select_related('medalla').order_by('-fecha_otorgada')
                 medallas = MedallaAlumnoSerializer(user_medallas, many=True).data
+
+                # Obtener estado del grupo
+                from .models import AlumnoGrupo
+                alumno_grupo = AlumnoGrupo.objects.filter(alumno=user).first()
+                if alumno_grupo:
+                    grupo_estado = alumno_grupo.estado
             except Exception:
                 pass
 
@@ -138,6 +145,7 @@ class MeView(APIView):
             "porcentaje_nivel": nivel_data['porcentaje_nivel'],
             "total_piezas_historico": nivel_data['total_piezas'],
             "medallas": medallas,
+            "grupo_estado": grupo_estado,
         })
 
     def patch(self, request):

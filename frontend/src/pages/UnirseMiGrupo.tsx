@@ -322,29 +322,46 @@ export default function UnirseMiGrupo() {
           </div>
         </div>
       ) : miGrupoAlumno && estado === "PENDIENTE_INGRESO" && !showJoinForm ? (
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="p-6 md:p-8 flex flex-col md:flex-row gap-6 md:items-center md:justify-between">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-green-50 border border-green-100 flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-primary" strokeWidth={2} />
+        <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden animate-in zoom-in-95 duration-500">
+          <div className="p-8 md:p-12 flex flex-col items-center text-center max-w-2xl mx-auto">
+            <div className="w-20 h-20 bg-primary/10 text-primary rounded-[2rem] flex items-center justify-center mb-6 shadow-xl shadow-primary/10 border-4 border-white">
+              <Key className="w-10 h-10" />
+            </div>
+            
+            <h2 className="text-2xl md:text-3xl font-black text-gray-900 mb-4 tracking-tight">
+              ¡Casi listo! Solicitud enviada
+            </h2>
+            
+            <p className="text-gray-500 font-medium mb-8 leading-relaxed">
+              Ya registraste el código <span className="text-primary font-black bg-primary/5 px-2 py-0.5 rounded-lg border border-primary/10">{codigoInvitacion}</span>. 
+              <br className="hidden md:block" />
+              Para proteger la privacidad de la comunidad, el acceso al dashboard y rankings se habilitará tan pronto como tu tutor apruebe tu ingreso.
+            </p>
+
+            <div className="w-full bg-blue-50/50 border border-blue-100 rounded-3xl p-6 flex flex-col sm:flex-row items-center gap-4 mb-8">
+              <div className="w-12 h-12 bg-blue-500 text-white rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/20">
+                <Users className="w-6 h-6" />
               </div>
-              <div>
-                <h2 className="text-xl font-extrabold text-textMain">
-                  Solicitud enviada
-                </h2>
-                <p className="text-gray-500 mt-1">
-                  Ya registraste el código{" "}
-                  <span className="font-bold">{codigoInvitacion}</span>. Espera a que tu tutor lo revise y te confirme.
-                </p>
+              <div className="text-left">
+                <p className="text-sm font-black text-blue-900 uppercase tracking-wide">Paso Siguiente</p>
+                <p className="text-xs font-bold text-blue-700/70">Tu tutor recibirá una notificación para confirmarte en el grupo.</p>
               </div>
             </div>
 
-            <button
-              onClick={handleIngresarOtroCodigo}
-              className="bg-accent hover:bg-orange-500 text-white font-bold py-3 px-5 rounded-xl transition-colors shadow-md"
-            >
-              Ingresar otro código
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <button
+                onClick={handleIngresarOtroCodigo}
+                className="px-6 py-3 bg-white hover:bg-gray-50 text-gray-400 hover:text-gray-600 font-bold rounded-xl transition-all border border-gray-100 text-sm"
+              >
+                Ingresar otro código
+              </button>
+              <Link
+                to="/dashboard/mi-perfil"
+                className="px-6 py-3 bg-gray-900 text-white font-bold rounded-xl transition-all hover:bg-black shadow-lg shadow-gray-900/20 text-sm"
+              >
+                Completar mi Perfil
+              </Link>
+            </div>
           </div>
         </div>
       ) : (

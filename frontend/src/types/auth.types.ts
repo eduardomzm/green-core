@@ -40,6 +40,7 @@ export interface User {
   total_piezas?: number;
   racha_actual?: number;
   max_racha?: number;
+  grupo_estado?: "PENDIENTE_INGRESO" | "ACTIVO" | "PENDIENTE_SALIDA" | null;
 }
 
 export interface AuthContextType {

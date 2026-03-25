@@ -22,6 +22,7 @@ import Perfil from "../pages/Perfil";
 import MiPerfil from "../pages/MiPerfil.tsx";
 import PerfilPublico from "../pages/PerfilPublico";
 import Metas from "../pages/Metas";
+import StudentActiveGuard from "./StudentActiveGuard";
 
 const AppRouter = () => {
   return (
@@ -47,21 +48,21 @@ const AppRouter = () => {
           }
         >
       
-          <Route index element={<Dashboard />} />
+          <Route index element={<StudentActiveGuard><Dashboard /></StudentActiveGuard>} />
           
           <Route path="usuarios" element={<Usuarios />} />
           <Route path="depositos" element={<Depositos />} />
-          <Route path="historial" element={<Historial />} />
-          <Route path="rankings" element={<Rankings />} />
+          <Route path="historial" element={<StudentActiveGuard><Historial /></StudentActiveGuard>} />
+          <Route path="rankings" element={<StudentActiveGuard><Rankings /></StudentActiveGuard>} />
           <Route path="grupos-carreras" element={<GruposCarreras />} />
           <Route path="administracion" element={<Administracion />} />
-          <Route path="estadisticas" element={<Estadisticas />} />
+          <Route path="estadisticas" element={<StudentActiveGuard><Estadisticas /></StudentActiveGuard>} />
           <Route path="mi-grupo" element={<MiGrupo />} />
           <Route path="mi-grupo/unirse" element={<UnirseMiGrupo />} />
           <Route path="perfil" element={<Perfil />} />
           <Route path="mi-perfil" element={<MiPerfil />} />
-          <Route path="perfil/:username" element={<PerfilPublico />} />
-          <Route path="metas" element={<Metas />} />
+          <Route path="perfil/:username" element={<StudentActiveGuard><PerfilPublico /></StudentActiveGuard>} />
+          <Route path="metas" element={<StudentActiveGuard><Metas /></StudentActiveGuard>} />
         </Route>
 
 
