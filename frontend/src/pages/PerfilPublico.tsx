@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { getPublicProfile, toggleSeguir } from "../services/userService";
 import { useAuth } from "../hooks/useAuth";
 import { User as UserIcon, Award, Instagram, Twitter, Facebook, ChevronLeft, ShieldCheck } from "lucide-react";
@@ -18,6 +18,7 @@ const DynamicIcon = ({ name, className }: { name: string, className?: string }) 
 export default function PerfilPublico() {
   const { username } = useParams<{ username: string }>();
   const { user: currentUser } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null); // Use any to bypass strict User type for new fields
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -73,7 +74,12 @@ export default function PerfilPublico() {
         </div>
         <h2 className="text-2xl font-bold text-gray-800">Perfil no encontrado</h2>
         <p className="text-gray-500">{error}</p>
-        <Link to="/" className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition-colors"> Volver al inicio </Link>
+        <button 
+          onClick={() => navigate(-1)} 
+          className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition-colors"
+        > 
+          Volver 
+        </button>
       </div>
     );
   }
@@ -87,7 +93,12 @@ export default function PerfilPublico() {
         </div>
         <h2 className="text-2xl font-bold text-gray-800">Acceso Restringido</h2>
         <p className="text-gray-500">Los operadores no tienen permiso para ver perfiles de usuarios.</p>
-        <Link to="/" className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition-colors"> Volver al inicio </Link>
+        <button 
+          onClick={() => navigate(-1)} 
+          className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition-colors"
+        > 
+          Volver 
+        </button>
       </div>
     );
   }

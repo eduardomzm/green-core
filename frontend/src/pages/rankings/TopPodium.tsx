@@ -13,9 +13,10 @@ type PodiumItem = {
 
 type Props = {
     data: PodiumItem[];
+    disableLinks?: boolean;
 };
 
-export default function TopPodium({ data }: Props) {
+export default function TopPodium({ data, disableLinks = false }: Props) {
     if (!data || data.length === 0) return null;
 
     // data array is [1st, 2nd, 3rd]
@@ -115,9 +116,9 @@ export default function TopPodium({ data }: Props) {
                 <div className={`
                     relative w-full rounded-t-2xl sm:rounded-t-3xl border-t-4 border-l border-r flex justify-center pb-6 sm:pb-8 pt-2 sm:pt-4
                     ${heightClass} ${bgClass} ${shadowClass}
-                    transition-transform hover:-translate-y-2 cursor-default
+                    transition-all ${!disableLinks ? 'hover:-translate-y-2 cursor-pointer' : 'cursor-default'}
                 `}>
-                    {item.username ? (
+                    {item.username && !disableLinks ? (
                         <Link to={`/dashboard/perfil/${item.username}`} className="w-full h-full absolute inset-0 flex flex-col items-center">
                             {innerContent}
                         </Link>

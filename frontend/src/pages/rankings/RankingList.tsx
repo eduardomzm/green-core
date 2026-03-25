@@ -13,9 +13,10 @@ type RankingItem = {
 type Props = {
     data: RankingItem[];
     startIndex?: number;
+    disableLinks?: boolean;
 };
 
-export default function RankingList({ data, startIndex = 4 }: Props) {
+export default function RankingList({ data, startIndex = 4, disableLinks = false }: Props) {
     if (!data || data.length === 0) return null;
 
     return (
@@ -56,18 +57,19 @@ export default function RankingList({ data, startIndex = 4 }: Props) {
                     </>
                 );
 
-                const baseClasses = "flex items-center justify-between p-3 sm:p-4 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow animate-in slide-in-from-bottom-4 fade-in duration-500";
+                const baseClasses = "flex items-center justify-between p-3 sm:p-4 bg-white rounded-2xl shadow-sm border border-gray-100 transition-all animate-in slide-in-from-bottom-4 fade-in duration-500";
+                const hoverClasses = !disableLinks ? "hover:shadow-md cursor-pointer" : "cursor-default";
 
-                if (item.username) {
+                if (item.username && !disableLinks) {
                     return (
-                        <Link key={index} to={`/dashboard/perfil/${item.username}`} className={baseClasses}>
+                        <Link key={index} to={`/dashboard/perfil/${item.username}`} className={`${baseClasses} ${hoverClasses}`}>
                             {innerContent}
                         </Link>
                     );
                 }
 
                 return (
-                    <div key={index} className={baseClasses}>
+                    <div key={index} className={`${baseClasses} ${hoverClasses}`}>
                         {innerContent}
                     </div>
                 );

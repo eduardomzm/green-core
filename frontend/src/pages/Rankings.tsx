@@ -192,10 +192,10 @@ export default function Rankings() {
         </div>
 
         {/* TOP 3 RECICLADORES (PODIO DINÁMICO) */}
-        <TopPodium data={chartData.slice(0, 3)} />
+        <TopPodium data={chartData.slice(0, 3)} disableLinks={user?.role === 'OPERADOR'} />
 
         {/* LISTA DEL 4 AL 10 */}
-        <RankingList data={chartData.slice(3, 10)} startIndex={4} />
+        <RankingList data={chartData.slice(3, 10)} startIndex={4} disableLinks={user?.role === 'OPERADOR'} />
 
       </div>
 
