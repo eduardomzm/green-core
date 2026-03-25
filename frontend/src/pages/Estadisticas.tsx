@@ -355,7 +355,7 @@ export default function Estadisticas() {
                         <Search className="w-5 h-5 text-primary" />
                         <input 
                           type="text" 
-                          placeholder="Ej: 12345678"
+                          placeholder="Matrícula"
                           value={matriculaSearch}
                           onChange={(e) => setMatriculaSearch(e.target.value)}
                           className="bg-transparent border-none focus:ring-0 text-sm font-bold text-gray-700 w-full"

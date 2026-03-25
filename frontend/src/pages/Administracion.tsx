@@ -320,7 +320,7 @@ const Administracion = () => {
                     <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Título del Mensaje</label>
                     <input
                       type="text"
-                      placeholder="Ej: ¡Nuevo Horario de Recolección!"
+                      placeholder="Título del Mensaje"
                       value={notificationForm.titulo}
                       onChange={(e) => setNotificationForm({ ...notificationForm, titulo: e.target.value })}
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-500 outline-none text-sm bg-background/50"

@@ -157,7 +157,7 @@ export default function Metas() {
                   type="text"
                   value={metaForm.nombre}
                   onChange={(e) => setMetaForm({ ...metaForm, nombre: e.target.value })}
-                  placeholder="Ej: Gran Recolecta"
+                  placeholder="Nombre de Campaña"
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-100 focus:ring-2 focus:ring-primary/20 outline-none text-sm bg-gray-50/50"
                 />
               </div>
