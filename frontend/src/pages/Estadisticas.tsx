@@ -45,6 +45,8 @@ export default function Estadisticas() {
   const [grupos, setGrupos] = useState<Grupo[]>([]);
   const [selectedCarrera, setSelectedCarrera] = useState<string>("");
   const [selectedGrupo, setSelectedGrupo] = useState<string>("");
+  const [searchError, setSearchError] = useState<string | null>(null);
+
 
   useEffect(() => {
     if (reportType === "mensual") {
@@ -82,14 +84,16 @@ export default function Estadisticas() {
   const handleSearchAlumno = async () => {
     if (!matriculaSearch.trim()) return;
     setSearchingAlumno(true);
+    setSearchError(null);
     try {
       const results = await buscarAlumnos(matriculaSearch);
       if (results && results.length > 0) {
         setSelectedAlumno(results[0]);
       } else {
-        alert("Alumno no encontrado");
+        setSearchError("No se encontró ningún alumno con esa matrícula o nombre.");
         setSelectedAlumno(null);
       }
+
     } catch (e) {
       console.error(e);
     } finally {
@@ -373,15 +377,28 @@ export default function Estadisticas() {
                       </button>
                     </div>
                   </div>
+                  
+                  {searchError && (
+                    <div className="p-4 bg-red-50 rounded-2xl border border-red-100 animate-in fade-in slide-in-from-top-2 duration-300">
+                      <p className="text-xs font-bold text-red-600 flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse" />
+                        {searchError}
+                      </p>
+                    </div>
+                  )}
 
                   {selectedAlumno && (
+
                     <div className="p-4 bg-green-50 rounded-2xl border border-green-100 flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-600">
                         <UserIcon className="w-5 h-5" />
                       </div>
                       <div>
                         <p className="text-sm font-black text-gray-800">{selectedAlumno.first_name} {selectedAlumno.primer_apellido}</p>
-                        <p className="text-[10px] font-bold text-green-600 uppercase tracking-widest">{selectedAlumno.carrera || 'Alumno Encontrado'}</p>
+                        <p className="text-[10px] font-bold text-green-600 uppercase tracking-widest">
+                          {selectedAlumno.matricula ? `${selectedAlumno.matricula} • ` : ''}
+                          {selectedAlumno.carrera || 'Alumno Encontrado'}
+                        </p>
                       </div>
                     </div>
                   )}

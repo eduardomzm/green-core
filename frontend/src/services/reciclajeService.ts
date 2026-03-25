@@ -114,8 +114,10 @@ export interface Grupo {
   id: number;
   nombre: string;
   codigo_invitacion?: string;
-  carrera: number | any;
-  tutor: number | any;
+  carrera: number;
+  carrera_nombre?: string;
+  tutor: number;
+  tutor_nombre?: string;
 }
 
 export const getGrupos = async () => {
