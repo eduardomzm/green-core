@@ -78,119 +78,122 @@ export default function PerfilPublico() {
     );
   }
 
-  const isAlumno = profile.role === 'ALUMNO';
-  const roleKey = profile.role as 'ADMIN' | 'TUTOR' | 'ALUMNO' | 'OPERADOR';
-  const roleLabel = { ADMIN: "Administrador", TUTOR: "Tutor", ALUMNO: "Estudiante", OPERADOR: "Operador" }[roleKey] || profile.role;
-
-  return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="max-w-4xl mx-auto space-y-6 pb-20"
-    >
-
-      {/* Header Info */}
-      <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 relative overflow-hidden">
-        {/* Abstract background blobs */}
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl mix-blend-multiply"></div>
-        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl mix-blend-multiply"></div>
-
-        <Link to={-1 as any} className="inline-flex items-center text-sm font-bold text-gray-400 hover:text-gray-700 transition-colors mb-6 group relative z-10">
-          <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />
-          Volver
-        </Link>
-
-        <div className="flex flex-col md:flex-row gap-8 items-center md:items-start relative z-10">
-          {/* Avatar Section */}
-          <div className="relative group">
-            <div className="w-32 h-32 md:w-40 md:h-40 rounded-[2rem] overflow-hidden border-4 border-white shadow-xl rotate-3 group-hover:rotate-0 transition-transform duration-500 bg-gray-50 flex-shrink-0">
-              <UserAvatar avatar={profile.avatar} />
-            </div>
-            {isAlumno && profile.nivel && (
-              <motion.div 
-                initial={{ scale: 0, rotate: -30 }}
-                animate={{ scale: 1, rotate: -6 }}
-                whileHover={{ scale: 1.1, rotate: 0 }}
-                className="absolute -bottom-3 -right-3 bg-gradient-to-br from-primary to-green-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center font-black text-lg shadow-lg border-4 border-white z-10"
-              >
-                L{profile.nivel}
-              </motion.div>
-            )}
-          </div>
-
-          {/* User Details */}
-          <div className="flex-1 text-center md:text-left space-y-4">
-            <div>
-              <div className="flex items-center justify-center md:justify-start gap-3 mb-1">
-                <h1 className="text-3xl font-black text-gray-900 tracking-tight">
-                  {profile.first_name} {profile.primer_apellido}
-                </h1>
-                {profile.role === 'ADMIN' && <ShieldCheck className="w-6 h-6 text-blue-500" />}
+    const isAlumno = profile.role === 'ALUMNO';
+    const roleKey = profile.role as 'ADMIN' | 'TUTOR' | 'ALUMNO' | 'OPERADOR';
+    const roleLabel = { ADMIN: "Administrador", TUTOR: "Tutor", ALUMNO: "Estudiante", OPERADOR: "Operador" }[roleKey] || profile.role;
+  
+    // Restricciones para Admin y Tutor cuando ven el perfil de un alumno
+    const isRestrictedView = isAlumno && (currentUser?.role === 'ADMIN' || currentUser?.role === 'TUTOR');
+  
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-4xl mx-auto space-y-6 pb-20"
+      >
+  
+        {/* Header Info */}
+        <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 relative overflow-hidden">
+          {/* Abstract background blobs */}
+          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl mix-blend-multiply"></div>
+          <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl mix-blend-multiply"></div>
+  
+          <Link to={-1 as any} className="inline-flex items-center text-sm font-bold text-gray-400 hover:text-gray-700 transition-colors mb-6 group relative z-10">
+            <ChevronLeft className="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />
+            Volver
+          </Link>
+  
+          <div className="flex flex-col md:flex-row gap-8 items-center md:items-start relative z-10">
+            {/* Avatar Section */}
+            <div className="relative group">
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-[2rem] overflow-hidden border-4 border-white shadow-xl rotate-3 group-hover:rotate-0 transition-transform duration-500 bg-gray-50 flex-shrink-0">
+                <UserAvatar avatar={profile.avatar} />
               </div>
-              <p className="text-lg font-medium text-gray-500">@{profile.username}</p>
-            </div>
-
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-              <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-bold tracking-wider uppercase">
-                {roleLabel}
-              </span>
-
-              {isAlumno && (
-                <>
-                  <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold tracking-wider">
-                    {profile.seguidores_count || 0} Seguidores
-                  </span>
-                  <span className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-bold tracking-wider">
-                    {profile.siguiendo_count || 0} Seguidos
-                  </span>
-                </>
+              {isAlumno && profile.nivel && (
+                <motion.div 
+                  initial={{ scale: 0, rotate: -30 }}
+                  animate={{ scale: 1, rotate: -6 }}
+                  whileHover={{ scale: 1.1, rotate: 0 }}
+                  className="absolute -bottom-3 -right-3 bg-gradient-to-br from-primary to-green-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center font-black text-lg shadow-lg border-4 border-white z-10"
+                >
+                  L{profile.nivel}
+                </motion.div>
               )}
             </div>
-
-            {isAlumno && currentUser?.username !== profile.username && currentUser?.role === 'ALUMNO' && (
-              <div className="flex justify-center md:justify-start pt-2">
-                <button
-                  onClick={handleToggleSeguir}
-                  className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${profile.lo_sigo
-                    ? 'bg-gray-100 hover:bg-red-50 text-gray-700 hover:text-red-600'
-                    : 'bg-primary hover:bg-primary/90 text-white shadow-md shadow-primary/20 hover:shadow-primary/40'
-                    }`}
-                >
-                  {profile.lo_sigo ? 'Dejar de seguir' : 'Seguir'}
-                </button>
+  
+            {/* User Details */}
+            <div className="flex-1 text-center md:text-left space-y-4">
+              <div>
+                <div className="flex items-center justify-center md:justify-start gap-3 mb-1">
+                  <h1 className="text-3xl font-black text-gray-900 tracking-tight">
+                    {profile.first_name} {profile.primer_apellido}
+                  </h1>
+                  {profile.role === 'ADMIN' && <ShieldCheck className="w-6 h-6 text-blue-500" />}
+                </div>
+                <p className="text-lg font-medium text-gray-500">@{profile.username}</p>
               </div>
-            )}
-
-            {isAlumno && profile.biografia && (
-              <p className="text-gray-600 text-sm leading-relaxed max-w-2xl bg-gray-50/50 p-4 rounded-2xl border border-gray-100/50">
-                "{profile.biografia}"
-              </p>
-            )}
-
-            {/* Social Links */}
-            {isAlumno && (profile.instagram || profile.twitter || profile.facebook) && (
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 pt-2">
-                {profile.instagram && (
-                  <a href={`https://instagram.com/${profile.instagram.replace('@', '')}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-pink-50 hover:bg-pink-100 text-pink-600 rounded-xl text-sm font-bold transition-colors">
-                    <Instagram className="w-4 h-4" /> Instagram
-                  </a>
-                )}
-                {profile.twitter && (
-                  <a href={`https://twitter.com/${profile.twitter.replace('@', '')}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-500 rounded-xl text-sm font-bold transition-colors">
-                    <Twitter className="w-4 h-4" /> Twitter
-                  </a>
-                )}
-                {profile.facebook && (
-                  <a href={profile.facebook} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl text-sm font-bold transition-colors">
-                    <Facebook className="w-4 h-4" /> Facebook
-                  </a>
+  
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
+                <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-bold tracking-wider uppercase">
+                  {roleLabel}
+                </span>
+  
+                {isAlumno && !isRestrictedView && (
+                  <>
+                    <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-xs font-bold tracking-wider">
+                      {profile.seguidores_count || 0} Seguidores
+                    </span>
+                    <span className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-bold tracking-wider">
+                      {profile.siguiendo_count || 0} Seguidos
+                    </span>
+                  </>
                 )}
               </div>
-            )}
+  
+              {isAlumno && currentUser?.username !== profile.username && currentUser?.role === 'ALUMNO' && (
+                <div className="flex justify-center md:justify-start pt-2">
+                  <button
+                    onClick={handleToggleSeguir}
+                    className={`px-6 py-2 rounded-xl text-sm font-bold transition-all ${profile.lo_sigo
+                      ? 'bg-gray-100 hover:bg-red-50 text-gray-700 hover:text-red-600'
+                      : 'bg-primary hover:bg-primary/90 text-white shadow-md shadow-primary/20 hover:shadow-primary/40'
+                      }`}
+                  >
+                    {profile.lo_sigo ? 'Dejar de seguir' : 'Seguir'}
+                  </button>
+                </div>
+              )}
+  
+              {isAlumno && profile.biografia && !isRestrictedView && (
+                <p className="text-gray-600 text-sm leading-relaxed max-w-2xl bg-gray-50/50 p-4 rounded-2xl border border-gray-100/50">
+                  "{profile.biografia}"
+                </p>
+              )}
+  
+              {/* Social Links */}
+              {isAlumno && (profile.instagram || profile.twitter || profile.facebook) && !isRestrictedView && (
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 pt-2">
+                  {profile.instagram && (
+                    <a href={`https://instagram.com/${profile.instagram.replace('@', '')}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-pink-50 hover:bg-pink-100 text-pink-600 rounded-xl text-sm font-bold transition-colors">
+                      <Instagram className="w-4 h-4" /> Instagram
+                    </a>
+                  )}
+                  {profile.twitter && (
+                    <a href={`https://twitter.com/${profile.twitter.replace('@', '')}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-500 rounded-xl text-sm font-bold transition-colors">
+                      <Twitter className="w-4 h-4" /> Twitter
+                    </a>
+                  )}
+                  {profile.facebook && (
+                    <a href={profile.facebook} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl text-sm font-bold transition-colors">
+                      <Facebook className="w-4 h-4" /> Facebook
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
       {/* Gamification Section (Only for Alumnos) */}
       {isAlumno && (
