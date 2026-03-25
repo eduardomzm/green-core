@@ -4,6 +4,7 @@ import { Search, Filter, Calendar, Recycle, User, Target, Users, PartyPopper, Fl
 import { triggerConfettiBurst } from "../../utils/confetti";
 import { Link } from "react-router-dom";
 import { buscarAlumnos } from "../../services/userService";
+import UserAvatar from "../common/UserAvatar";
 import type { DashboardResponse, DepositoHistorial } from "../../types/dashboard.types";
 
 interface Props {
@@ -118,9 +119,8 @@ const AlumnoDashboard = ({ data, user }: Props) => {
                     to={`/dashboard/perfil/${res.username}`}
                     className="flex items-center gap-4 p-4 hover:bg-blue-50/50 transition-colors group"
                   >
-                    <div className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform border border-gray-200">
-                      {/* Aquí idealmente renderizas dinámicamente si tienes AVATARS exportado, sino un placeholder */}
-                      <User className="w-full h-full p-2 text-gray-400" />
+                    <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 group-hover:scale-105 transition-transform border border-gray-200">
+                      <UserAvatar avatar={res.avatar} />
                     </div>
                     <div>
                       <h4 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">

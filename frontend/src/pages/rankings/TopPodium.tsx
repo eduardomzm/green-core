@@ -1,9 +1,11 @@
 import { Medal, Crown } from "lucide-react";
 import { Link } from "react-router-dom";
+import UserAvatar from "../../components/common/UserAvatar";
 
 type PodiumItem = {
     name: string;
     username?: string;
+    avatar?: string;
     value: number;
 };
 
@@ -58,8 +60,11 @@ export default function TopPodium({ data }: Props) {
 
         const innerContent = (
             <div className="flex flex-col items-center justify-center p-2 sm:p-4 h-full w-full">
-                <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center bg-white shadow-sm mb-2 sm:mb-4 ${iconColor}`}>
-                    <MedalIcon className="w-6 h-6 sm:w-8 sm:h-8" />
+                <div className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white shadow-lg mb-2 sm:mb-4 overflow-hidden bg-gray-50 flex-shrink-0`}>
+                    <UserAvatar avatar={item.avatar} />
+                    <div className={`absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center bg-white shadow-sm ${iconColor}`}>
+                        <MedalIcon className="w-4 h-4 sm:w-5 h-5" />
+                    </div>
                 </div>
                 <h3 className="font-extrabold text-gray-800 text-center line-clamp-2 text-xs sm:text-base leading-tight max-w-[90%]">
                     {item.name}

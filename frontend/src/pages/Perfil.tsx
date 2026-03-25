@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
-import { User as UserIcon, Mail, Lock, Eye, EyeOff, Save, AlertCircle, CheckCircle, Settings, UserRound, GraduationCap } from "lucide-react";
+import { User as UserIcon, Mail, Lock, Eye, EyeOff, Save, AlertCircle, CheckCircle, Settings, UserRound, GraduationCap, Pencil } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { updateMe } from "../services/userService";
+import AvatarGenerator from "../components/layout/AvatarGenerator";
+import UserAvatar from "../components/common/UserAvatar";
 
 interface FormState {
   username: string;
@@ -18,13 +20,6 @@ const ROLE_LABELS: Record<string, string> = {
   OPERADOR: "Operador",
 };
 
-const AVATARS = [
-  { id: 'default', url: '/src/assets/img/logo.jpeg', label: 'Bote' },
-  { id: 'leaf', url: '/avatars/avatar_leaf.png', label: 'Hoja' },
-  { id: 'earth', url: '/avatars/avatar_earth.png', label: 'Tierra' },
-  { id: 'sprout', url: '/avatars/avatar_sprout.png', label: 'Brote' },
-  { id: 'water', url: '/avatars/avatar_water.png', label: 'Gota' },
-];
 
 export default function Perfil() {
   const { user, refreshUser } = useAuth();
@@ -38,6 +33,7 @@ export default function Perfil() {
   });
 
   const [selectedAvatar, setSelectedAvatar] = useState(user?.avatar || 'default');
+  const [isAvatarGeneratorOpen, setIsAvatarGeneratorOpen] = useState(false);
 
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
@@ -59,22 +55,6 @@ export default function Perfil() {
     }
   }, [user]);
 
-  const handleAvatarSelect = async (avatarId: string) => {
-    setSelectedAvatar(avatarId);
-    setMsg({ text: "", type: "" });
-    
-    try {
-      setSaving(true);
-      await updateMe({ avatar: avatarId });
-      await refreshUser();
-      setMsg({ text: "¡Avatar actualizado correctamente!", type: "success" });
-      setTimeout(() => setMsg({ text: "", type: "" }), 3000);
-    } catch (err: any) {
-      setMsg({ text: "Error al guardar el avatar.", type: "error" });
-    } finally {
-      setSaving(false);
-    }
-  };
 
   const handleSubmit = async () => {
     setSaving(true);
@@ -142,11 +122,7 @@ export default function Perfil() {
 
         <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-2xl border border-gray-100 shadow-sm w-fit">
           <div className="w-10 h-10 rounded-xl overflow-hidden border border-primary/20 flex-shrink-0">
-            <img
-              src={AVATARS.find(a => a.id === selectedAvatar)?.url || AVATARS[0].url}
-              alt="Avatar"
-              className="w-full h-full object-cover"
-            />
+            <UserAvatar avatar={selectedAvatar} />
           </div>
           <div>
             <p className="text-sm font-bold text-textMain leading-tight">{user?.username}</p>
@@ -197,46 +173,29 @@ export default function Perfil() {
             </div>
           )}
 
-          {/* Selección de Avatar (NO ALUMNOS) */}
-          {user?.role !== 'ALUMNO' && (
-            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative">
-              <h3 className="text-lg font-bold text-textMain mb-6 flex items-center gap-2">
-                <UserIcon className="w-5 h-5 text-secondary" />
-                Foto de Perfil
-              </h3>
-              <p className="text-xs text-gray-400 mb-6">Elige un avatar que te represente en el sistema.</p>
+          {/* Sección de Foto de Perfil (Para todos los roles) */}
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative">
+            <h3 className="text-lg font-bold text-textMain mb-6 flex items-center gap-2">
+              <UserIcon className="w-5 h-5 text-secondary" />
+              Foto de Perfil
+            </h3>
+            <p className="text-xs text-gray-400 mb-6">Personaliza tu avatar para identificarte en el sistema.</p>
 
-              <div className="grid grid-cols-3 gap-4">
-                {AVATARS.map((avatar) => (
-                  <button
-                    key={avatar.id}
-                    onClick={() => handleAvatarSelect(avatar.id)}
-                    className={`relative aspect-square rounded-2xl overflow-hidden border-2 transition-all group ${selectedAvatar === avatar.id
-                      ? 'border-primary ring-4 ring-primary/10 shadow-lg'
-                      : 'border-transparent hover:border-gray-200 bg-gray-50'
-                      }`}
-                  >
-                    <img
-                      src={avatar.url}
-                      alt={avatar.label}
-                      className={`w-full h-full object-cover transition-transform duration-500 ${selectedAvatar === avatar.id ? 'scale-110' : 'group-hover:scale-105'
-                        }`}
-                    />
-                    {selectedAvatar === avatar.id && (
-                      <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
-                        <div className="bg-primary text-white p-1 rounded-full shadow-lg">
-                          <CheckCircle className="w-4 h-4" />
-                        </div>
-                      </div>
-                    )}
-                    <div className="absolute inset-x-0 bottom-0 bg-black/40 py-1 text-[8px] font-black text-white uppercase text-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      {avatar.label}
-                    </div>
-                  </button>
-                ))}
+            <div className="flex flex-col items-center">
+              <div className="relative group">
+                <div className="w-32 h-32 rounded-[2rem] overflow-hidden border-4 border-white shadow-xl bg-gray-50 flex-shrink-0">
+                  <UserAvatar avatar={selectedAvatar} />
+                </div>
+                <button
+                  onClick={() => setIsAvatarGeneratorOpen(true)}
+                  className="absolute -bottom-2 -right-2 bg-primary text-white p-3 rounded-2xl shadow-lg hover:scale-110 transition-transform border-4 border-white"
+                >
+                  <Pencil className="w-4 h-4" />
+                </button>
               </div>
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-4">Avatar Actual</p>
             </div>
-          )}
+          </div>
         </div>
 
 
@@ -379,6 +338,27 @@ export default function Perfil() {
 
         </div>
       </div>
+      {isAvatarGeneratorOpen && (
+        <AvatarGenerator
+          initialAvatar={selectedAvatar}
+          onClose={() => setIsAvatarGeneratorOpen(false)}
+          onSave={async (url) => {
+            setIsAvatarGeneratorOpen(false);
+            setSelectedAvatar(url);
+            try {
+              setSaving(true);
+              await updateMe({ avatar: url });
+              await refreshUser();
+              setMsg({ text: "¡Avatar actualizado correctamente!", type: "success" });
+              setTimeout(() => setMsg({ text: "", type: "" }), 3000);
+            } catch (err) {
+              setMsg({ text: "Error al guardar el avatar.", type: "error" });
+            } finally {
+              setSaving(false);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

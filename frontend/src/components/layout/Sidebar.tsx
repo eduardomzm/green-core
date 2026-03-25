@@ -2,14 +2,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { NAVIGATION } from '../../config/navigation';
 import { Leaf, X, Settings } from 'lucide-react';
+import UserAvatar from '../common/UserAvatar';
 
-const AVATARS: Record<string, string> = {
-  default: '/avatars/avatar_bin.png',
-  leaf: '/avatars/avatar_leaf.png',
-  earth: '/avatars/avatar_earth.png',
-  sprout: '/avatars/avatar_sprout.png',
-  water: '/avatars/avatar_water.png',
-};
 
 export default function Sidebar({ onClose }: { onClose?: () => void }) {
   const { user } = useAuth();
@@ -66,11 +60,7 @@ export default function Sidebar({ onClose }: { onClose?: () => void }) {
           }`}
         >
           <div className="w-8 h-8 rounded-full overflow-hidden border border-primary/20 flex-shrink-0 transition-all group-hover:ring-4 group-hover:ring-primary/10">
-            <img 
-              src={AVATARS[user?.avatar || 'default']} 
-              alt="Avatar"
-              className="w-full h-full object-cover"
-            />
+            <UserAvatar avatar={user?.avatar} />
           </div>
           <div className="flex flex-col min-w-0 flex-1">
             <span className={`text-sm font-semibold truncate transition-colors ${

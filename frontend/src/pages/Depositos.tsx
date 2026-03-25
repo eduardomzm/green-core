@@ -113,6 +113,11 @@ const Depositos = () => {
     setDepositoMsg({ text: "Registrando...", type: "loading" });
 
     try {
+      if (parseInt(depositoForm.cantidad) > 200) {
+        setDepositoMsg({ text: "La cantidad no puede exceder las 200 piezas.", type: "error" });
+        return;
+      }
+
       await createDeposito({
         alumno: alumnoEncontrado.id,
         material: parseInt(depositoForm.material_id),
@@ -246,7 +251,7 @@ const Depositos = () => {
               <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-2 tracking-wider">3. Cantidad</label>
                 <input 
-                  type="number" min="1" placeholder="Cantidad de piezas"
+                  type="number" min="1" max="200" placeholder="Cantidad de piezas"
                   value={depositoForm.cantidad}
                   onChange={(e) => setDepositoForm({...depositoForm, cantidad: e.target.value})}
                   className="w-full px-5 py-3.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-secondary outline-none text-sm bg-background/50 hover:bg-white transition-colors" 

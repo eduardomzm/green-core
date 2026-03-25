@@ -70,6 +70,11 @@ const OperadorDashboard = ({ data }: Props) => {
     setDepositoMsg({ text: "Registrando...", type: "loading" });
 
     try {
+      if (parseInt(depositoForm.cantidad) > 200) {
+        setDepositoMsg({ text: "La cantidad no puede exceder las 200 piezas.", type: "error" });
+        return;
+      }
+
       await createDeposito({
         alumno: alumnoEncontrado.id,
         material: parseInt(depositoForm.material_id),
@@ -197,7 +202,7 @@ const OperadorDashboard = ({ data }: Props) => {
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">3. Cantidad (En enteros)</label>
                   <input 
-                    type="number" min="1" placeholder=""
+                    type="number" min="1" max="200" placeholder=""
                     value={depositoForm.cantidad}
                     onChange={(e) => setDepositoForm({...depositoForm, cantidad: e.target.value})}
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-secondary outline-none text-sm bg-background/50" 

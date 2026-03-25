@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
+import UserAvatar from "../../components/common/UserAvatar";
 
 type RankingItem = {
     name: string;
     username?: string;
+    avatar?: string;
     value: number;
 };
 
@@ -25,8 +27,8 @@ export default function RankingList({ data, startIndex = 4 }: Props) {
                             <span className="w-8 sm:w-12 text-center text-lg sm:text-xl font-black text-gray-400">
                                 #{position}
                             </span>
-                            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 font-bold uppercase text-xs sm:text-sm">
-                                {item.name.charAt(0)}
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border border-gray-100 flex-shrink-0">
+                                <UserAvatar avatar={item.avatar} />
                             </div>
                             <span className="font-bold text-gray-800 text-sm sm:text-lg">
                                 {item.name}

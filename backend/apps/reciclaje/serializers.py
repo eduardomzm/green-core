@@ -34,6 +34,13 @@ class DepositoSerializer(serializers.ModelSerializer):
             'fecha'
         ]
         read_only_fields = ['operador']
+    
+    def validate_cantidad(self, value):
+        if value > 200:
+            raise serializers.ValidationError("La cantidad de un solo depósito no puede exceder las 200 piezas.")
+        if value <= 0:
+            raise serializers.ValidationError("La cantidad debe ser mayor a 0.")
+        return value
 
 class MetaSistemaSerializer(serializers.ModelSerializer):
     material_nombre = serializers.CharField(source='material.nombre', read_only=True)

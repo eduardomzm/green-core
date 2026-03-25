@@ -1,0 +1,10 @@
+
+> frontend@0.0.0 build
+> tsc -b && vite build
+
+src/components/layout/AvatarGenerator.tsx(2,10): error TS6133: 'X' is declared but its value is never read.
+src/components/layout/AvatarGenerator.tsx(488,20): error TS2322: Type '{ children: string; jsx: true; }' is not assignable to type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+  Property 'jsx' does not exist on type 'DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>'.
+src/pages/MiPerfil.tsx(100,9): error TS6133: 'handleOpenModal' is declared but its value is never read.
+src/pages/MiPerfil.tsx(641,5): error TS2322: Type '{ initialAvatar: string; onClose: () => void; onSave: (url: string) => Promise<void>; }' is not assignable to type 'IntrinsicAttributes & Props'.
+  Property 'initialAvatar' does not exist on type 'IntrinsicAttributes & Props'.
