@@ -272,11 +272,11 @@ class DashboardView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        # 1. Ejecutar procesos automáticos (medallas, etc.)
         from .services import comprobar_asignaciones_pendientes
         comprobar_asignaciones_pendientes()
 
-
-    def get(self, request):
+        # 2. Obtener datos del dashboard
         user = request.user
 
         meta_obj = MetaSistema.objects.filter(activa=True, cumplida=False).first()
