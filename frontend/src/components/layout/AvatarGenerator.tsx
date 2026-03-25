@@ -235,10 +235,10 @@ export default function AvatarGenerator({ onSave, onClose, initialAvatar }: Prop
 
                 {/* IZQUIERDA PREVIEW */}
                 <div className="w-[38%] flex flex-col items-center justify-center bg-white border-r border-[#e2e8f0] p-10 relative">
-                    <div className="w-[320px] h-[320px] rounded-full overflow-hidden border-[12px] border-[#f1f5f9] bg-[#eafdff] flex items-center justify-center relative shadow-inner">
+                    <div className="w-[380px] h-[380px] rounded-full overflow-hidden border-[12px] border-[#f1f5f9] bg-[#eafdff] flex items-center justify-center relative shadow-inner transition-all duration-500">
                         <img
                             src={avatarUrl}
-                            className="w-[115%] h-[115%] object-cover absolute top-6 transition-transform duration-300 transform hover:scale-105"
+                            className="w-[110%] h-[110%] object-cover absolute top-2 transition-transform duration-300 transform hover:scale-105"
                             alt="Avatar SVG"
                         />
                     </div>
