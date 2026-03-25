@@ -1,4 +1,4 @@
-import { Medal, Crown } from "lucide-react";
+import { Medal, Crown, Users, Award, Recycle } from "lucide-react";
 import { Link } from "react-router-dom";
 import UserAvatar from "../../components/common/UserAvatar";
 
@@ -6,6 +6,8 @@ type PodiumItem = {
     name: string;
     username?: string;
     avatar?: string;
+    subtitle?: string;
+    extraInfo?: string;
     value: number;
 };
 
@@ -60,15 +62,43 @@ export default function TopPodium({ data }: Props) {
 
         const innerContent = (
             <div className="flex flex-col items-center justify-center p-2 sm:p-4 h-full w-full">
-                <div className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white shadow-lg mb-2 sm:mb-4 overflow-hidden bg-gray-50 flex-shrink-0`}>
-                    <UserAvatar avatar={item.avatar} />
+                <div className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white shadow-lg mb-2 sm:mb-4 overflow-hidden bg-gray-50 flex-shrink-0 flex items-center justify-center`}>
+                    {item.avatar ? (
+                        <UserAvatar avatar={item.avatar} />
+                    ) : (
+                        item.subtitle?.includes("Tutor") ? (
+                            <div className="bg-primary/10 w-full h-full flex items-center justify-center">
+                                <Users className={`w-10 h-10 ${iconColor}`} />
+                            </div>
+                        ) : item.subtitle ? (
+                            <div className="bg-primary/10 w-full h-full flex items-center justify-center">
+                                <Award className={`w-10 h-10 ${iconColor}`} />
+                            </div>
+                        ) : (
+                            <div className="bg-primary/10 w-full h-full flex items-center justify-center">
+                                <Recycle className={`w-10 h-10 ${iconColor}`} />
+                            </div>
+                        )
+                    )}
                     <div className={`absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center bg-white shadow-sm ${iconColor}`}>
                         <MedalIcon className="w-4 h-4 sm:w-5 h-5" />
                     </div>
                 </div>
-                <h3 className="font-extrabold text-gray-800 text-center line-clamp-2 text-xs sm:text-base leading-tight max-w-[90%]">
-                    {item.name}
-                </h3>
+                <div className="flex flex-col items-center">
+                    <h3 className="font-extrabold text-gray-800 text-center line-clamp-2 text-xs sm:text-base leading-tight max-w-[90%] uppercase tracking-tight">
+                        {item.name}
+                    </h3>
+                    {item.subtitle && (
+                        <p className="text-[9px] sm:text-[10px] text-gray-500 font-bold text-center mt-1 line-clamp-1">
+                            {item.subtitle}
+                        </p>
+                    )}
+                    {item.extraInfo && (
+                        <p className="text-[8px] sm:text-[9px] text-primary font-black uppercase tracking-widest mt-0.5">
+                            {item.extraInfo}
+                        </p>
+                    )}
+                </div>
                 <p className={`mt-2 font-black text-sm sm:text-xl ${iconColor}`}>
                     {item.value.toLocaleString()} <span className="text-[10px] sm:text-xs font-bold text-gray-500 lowercase">pzs</span>
                 </p>

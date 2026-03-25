@@ -527,7 +527,10 @@ class RankingsView(APIView):
             .filter(alumno__alumnogrupo__isnull=False)
             .values(
                 'alumno__alumnogrupo__grupo__id',
-                'alumno__alumnogrupo__grupo__nombre'
+                'alumno__alumnogrupo__grupo__nombre',
+                'alumno__alumnogrupo__grupo__tutor__first_name',
+                'alumno__alumnogrupo__grupo__tutor__primer_apellido',
+                'alumno__alumnogrupo__grupo__carrera__abreviatura'
             )
             .annotate(total_piezas=Sum('cantidad'))
             .order_by('-total_piezas')[:20]
@@ -538,7 +541,8 @@ class RankingsView(APIView):
             .filter(alumno__alumnogrupo__isnull=False)
             .values(
                 'alumno__alumnogrupo__grupo__carrera__id',
-                'alumno__alumnogrupo__grupo__carrera__nombre'
+                'alumno__alumnogrupo__grupo__carrera__nombre',
+                'alumno__alumnogrupo__grupo__carrera__abreviatura'
             )
             .annotate(total_piezas=Sum('cantidad'))
             .order_by('-total_piezas')[:20]

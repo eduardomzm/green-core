@@ -120,12 +120,15 @@ export default function Rankings() {
       case "grupos":
         return data.top_grupos.map((item) => ({
           name: item.alumno__alumnogrupo__grupo__nombre,
+          subtitle: `Tutor: ${item.alumno__alumnogrupo__grupo__tutor__first_name} ${item.alumno__alumnogrupo__grupo__tutor__primer_apellido}`,
+          extraInfo: item.alumno__alumnogrupo__grupo__carrera__abreviatura,
           value: item.total_piezas
         }));
 
       case "carreras":
         return data.top_carreras.map((item) => ({
-          name: item.alumno__alumnogrupo__grupo__carrera__nombre,
+          name: item.alumno__alumnogrupo__grupo__carrera__abreviatura || 'S/A',
+          subtitle: item.alumno__alumnogrupo__grupo__carrera__nombre,
           value: item.total_piezas
         }));
 
