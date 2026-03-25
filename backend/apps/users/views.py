@@ -387,7 +387,8 @@ class BuscarAlumnosView(APIView):
         busqueda = Q(role='ALUMNO') & (
             Q(username__icontains=query) |
             Q(first_name__icontains=query) |
-            Q(primer_apellido__icontains=query)
+            Q(primer_apellido__icontains=query) |
+            Q(alumnoperfil__matricula__icontains=query)
         )
         # Excluir al propio usuario
         alumnos = User.objects.filter(busqueda).exclude(id=request.user.id)
@@ -401,18 +402,25 @@ class BuscarAlumnosView(APIView):
         resultados = []
         for al in alumnos:
             carrera_nombre = ""
+            matricula = ""
             try:
+                perfil = getattr(al, 'alumnoperfil', None)
+                if perfil:
+                    matricula = perfil.matricula
+                
                 if hasattr(al, 'alumnogrupo') and al.alumnogrupo is not None:
                     carrera_nombre = al.alumnogrupo.grupo.carrera.nombre
             except Exception:
                 pass
 
             resultados.append({
+                "id": al.id,
                 "username": al.username,
                 "first_name": al.first_name,
                 "primer_apellido": al.primer_apellido,
                 "avatar": al.avatar,
-                "carrera": carrera_nombre
+                "carrera": carrera_nombre,
+                "matricula": matricula
             })
             
         return Response(resultados)
