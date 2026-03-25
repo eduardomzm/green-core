@@ -34,6 +34,7 @@ class Command(BaseCommand):
         AlumnoPerfil.objects.all().delete()
         Grupo.objects.all().delete()
         Carrera.objects.all().delete()
+        Material.objects.all().delete()
         
         # Misceláneos
         Notificacion.objects.all().delete()
