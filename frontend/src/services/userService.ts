@@ -163,3 +163,12 @@ export const updateNivel = async (id: number, data: Partial<NivelConfig>): Promi
   const response = await api.patch(`niveles/${id}/`, data);
   return response.data;
 };
+
+export const createNivel = async (data: { nivel: number, nombre: string, piezas_requeridas: number, color: string }): Promise<NivelConfig> => {
+  const response = await api.post('niveles/', data);
+  return response.data;
+};
+
+export const deleteNivel = async (id: number): Promise<void> => {
+  await api.delete(`niveles/${id}/`);
+};

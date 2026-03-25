@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { getMateriales, createMaterial, type Material } from "../services/reciclajeService";
-import { getCarreras, createCarrera, type Carrera, getNiveles, updateNivel, type NivelConfig } from "../services/userService";
+import { getCarreras, createCarrera, type Carrera, getNiveles, updateNivel, createNivel, deleteNivel, type NivelConfig } from "../services/userService";
 import { enviarNotificacionGlobal } from "../services/notificationService";
-import { Settings, Plus, BookOpen, Trophy, Bell } from "lucide-react";
+import { Settings, Plus, BookOpen, Trophy, Bell, Trash2 } from "lucide-react";
 
 const Administracion = () => {
   const [materiales, setMateriales] = useState<Material[]>([]);
@@ -51,6 +51,42 @@ const Administracion = () => {
       setTimeout(() => setNivelMsg({ text: "", type: "" }), 3000);
     } catch (error) {
       setNivelMsg({ text: "Error al actualizar nivel.", type: "error" });
+    }
+  };
+
+  const handleCreateNivel = async () => {
+    const nextNivel = niveles.length > 0 ? Math.max(...niveles.map(n => n.nivel)) + 1 : 1;
+    setNivelMsg({ text: "Creando...", type: "loading" });
+    try {
+      const nuevo = await createNivel({
+        nivel: nextNivel,
+        nombre: `Nivel ${nextNivel}`,
+        piezas_requeridas: nextNivel === 1 ? 0 : 500 * (nextNivel - 1),
+        color: "#2D6A4F"
+      });
+      setNiveles([...niveles, nuevo].sort((a, b) => a.nivel - b.nivel));
+      setNivelMsg({ text: "¡Nuevo nivel creado!", type: "success" });
+      setTimeout(() => setNivelMsg({ text: "", type: "" }), 3000);
+    } catch (error) {
+      setNivelMsg({ text: "Error al crear nivel.", type: "error" });
+    }
+  };
+
+  const handleDeleteNivel = async (id: number, nivel: number) => {
+    if (nivel === 1) {
+      alert("No se puede eliminar el nivel inicial.");
+      return;
+    }
+    if (!window.confirm(`¿Seguro que deseas eliminar el Nivel ${nivel}?`)) return;
+
+    setNivelMsg({ text: "Eliminando...", type: "loading" });
+    try {
+      await deleteNivel(id);
+      setNiveles(niveles.filter(n => n.id !== id));
+      setNivelMsg({ text: "¡Nivel eliminado!", type: "success" });
+      setTimeout(() => setNivelMsg({ text: "", type: "" }), 3000);
+    } catch (error) {
+      setNivelMsg({ text: "Error al eliminar nivel.", type: "error" });
     }
   };
 
@@ -187,9 +223,16 @@ const Administracion = () => {
             <span className="flex items-center gap-2">
               <Trophy className="w-5 h-5 text-primary" />
               Configuración de Niveles
+              <button 
+                onClick={handleCreateNivel}
+                className="ml-4 p-1.5 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg transition-all"
+                title="Añadir nuevo nivel"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
             </span>
             {nivelMsg.text && (
-              <span className={`text-xs px-2 py-1 rounded-md ${nivelMsg.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+              <span className={`text-xs px-2 py-1 rounded-md ${nivelMsg.type === 'success' ? 'bg-green-100 text-green-700' : nivelMsg.type === 'loading' ? 'bg-blue-50 text-blue-700' : 'bg-red-100 text-red-700'}`}>
                 {nivelMsg.text}
               </span>
             )}
@@ -202,6 +245,15 @@ const Administracion = () => {
                   <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full" style={{ backgroundColor: `${n.color}20`, color: n.color }}>
                     Nivel {n.nivel}
                   </span>
+                  {n.nivel !== 1 && (
+                    <button 
+                      onClick={() => handleDeleteNivel(n.id, n.nivel)}
+                      className="text-gray-300 hover:text-red-500 transition-colors"
+                      title="Eliminar nivel"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
                 
                 <div className="space-y-2">

@@ -57,5 +57,25 @@ class Command(BaseCommand):
             role='ADMIN'
         )
         self.stdout.write(self.style.SUCCESS(f'¡Listo! Usuario "{admin.username}" creado con contraseña "admin".'))
+        
+        # Sembrar niveles por defecto
+        self.stdout.write('Sembrando niveles de alumno por defecto...')
+        niveles_defecto = [
+            (1, "Navegante", 0, "#2D6A4F"),
+            (2, "Explorador", 100, "#40916C"),
+            (3, "Protector", 250, "#52B788"),
+            (4, "Guardián", 500, "#74C69D"),
+            (5, "Héroe Verde", 1000, "#95D5B2"),
+            (6, "Maestro del Reciclaje", 2000, "#B7E4C7"),
+        ]
+        for v_nivel, v_nombre, v_piezas, v_color in niveles_defecto:
+            NivelConfig.objects.create(
+                nivel=v_nivel,
+                nombre=v_nombre,
+                piezas_requeridas=v_piezas,
+                color=v_color
+            )
+        self.stdout.write(self.style.SUCCESS(f'Se crearon {len(niveles_defecto)} niveles de configuración.'))
+
         self.stdout.write(self.style.WARNING('IMPORTANTE: Cambia la contraseña inmediatamente tras iniciar sesión.'))
         self.stdout.write('Ahora puedes proceder a registrar Materiales, Carreras y Grupos desde la interfaz.')
