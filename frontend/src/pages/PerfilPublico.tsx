@@ -78,6 +78,20 @@ export default function PerfilPublico() {
     );
   }
 
+  // Bloqueo total para Operadores
+  if (currentUser?.role === 'OPERADOR') {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
+        <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center text-orange-500 mb-2 shadow-sm">
+          <LucideIcons.AlertTriangle className="w-8 h-8" />
+        </div>
+        <h2 className="text-2xl font-bold text-gray-800">Acceso Restringido</h2>
+        <p className="text-gray-500">Los operadores no tienen permiso para ver perfiles de usuarios.</p>
+        <Link to="/" className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition-colors"> Volver al inicio </Link>
+      </div>
+    );
+  }
+
     const isAlumno = profile.role === 'ALUMNO';
     const roleKey = profile.role as 'ADMIN' | 'TUTOR' | 'ALUMNO' | 'OPERADOR';
     const roleLabel = { ADMIN: "Administrador", TUTOR: "Tutor", ALUMNO: "Estudiante", OPERADOR: "Operador" }[roleKey] || profile.role;
