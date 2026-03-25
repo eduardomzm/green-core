@@ -4,9 +4,17 @@ from apps.users.serializers import UserSimpleSerializer
 
 
 class GrupoSerializer(serializers.ModelSerializer):
+    carrera_nombre = serializers.CharField(source='carrera.nombre', read_only=True)
+    tutor_nombre = serializers.SerializerMethodField()
+
     class Meta:
         model = Grupo
-        fields = '__all__'
+        fields = ['id', 'nombre', 'descripcion', 'carrera', 'carrera_nombre', 'tutor', 'tutor_nombre', 'activo', 'codigo_invitacion']
+
+    def get_tutor_nombre(self, obj):
+        if obj.tutor:
+            return f"{obj.tutor.first_name} {obj.tutor.primer_apellido}"
+        return "Sin tutor"
 
 
 class MaterialSerializer(serializers.ModelSerializer):

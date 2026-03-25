@@ -155,12 +155,26 @@ export default function GruposCarreras() {
         </div>
 
         <div className="relative z-10 mt-8 pt-6 border-t border-gray-100">
-            <p className="text-xs font-bold text-gray-500 uppercase mb-3">Grupos Actuales ({grupos.length})</p>
-            <div className="flex flex-wrap gap-2">
+            <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6">Grupos Actuales ({grupos.length})</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {grupos.map(g => (
-                <span key={g.id} className="px-3 py-1 bg-blue-50 text-secondary text-xs font-bold rounded-lg border border-blue-100 flex items-center gap-1">
-                  {g.nombre}
-                </span>
+                <div key={g.id} className="p-4 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all group border-l-4 border-l-secondary">
+                  <div className="flex flex-col gap-1">
+                    <p className="text-base font-black text-textMain group-hover:text-secondary transition-colors">
+                      {g.nombre}
+                    </p>
+                    <div className="space-y-1 mt-1">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase flex items-center gap-1.5">
+                        <GraduationCap className="w-3 h-3 text-secondary" />
+                        {g.carrera_nombre || 'Sin Carrera'}
+                      </p>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase flex items-center gap-1.5">
+                        <Users className="w-3 h-3 text-primary" />
+                        Tutor: <span className="text-textMain">{g.tutor_nombre || 'Sin asignar'}</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
