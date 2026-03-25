@@ -328,28 +328,23 @@ export default function MiPerfil() {
                 const isLatas = m.categoria?.toLowerCase().includes('latas');
 
                 let cardBg = "from-gray-50/50 to-white";
-                let accentColor = "text-gray-500";
                 let pillBg = "bg-gray-50 text-gray-700";
                 let borderColor = "border-gray-100";
 
                 if (isGlobal) {
                   cardBg = "from-indigo-50/50 to-white";
-                  accentColor = "text-indigo-600";
                   pillBg = "bg-indigo-50 text-indigo-700";
                   borderColor = "border-indigo-100";
                 } else if (isPet) {
-                  cardBg = "from-blue-50/50 to-white";
-                  accentColor = "text-blue-600";
-                  pillBg = "bg-blue-50 text-blue-700";
-                  borderColor = "border-blue-100";
+                  cardBg = "from-green-50/50 to-white";
+                  pillBg = "bg-green-50 text-green-700";
+                  borderColor = "border-green-100";
                 } else if (isCarton) {
                   cardBg = "from-orange-50/50 to-white";
-                  accentColor = "text-orange-700";
                   pillBg = "bg-orange-50 text-orange-800";
                   borderColor = "border-orange-100";
                 } else if (isLatas) {
                   cardBg = "from-slate-50/50 to-white";
-                  accentColor = "text-slate-600";
                   pillBg = "bg-slate-50 text-slate-700";
                   borderColor = "border-slate-100";
                 }

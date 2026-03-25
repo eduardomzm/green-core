@@ -2,11 +2,4 @@
 > frontend@0.0.0 build
 > tsc -b && vite build
 
-src/pages/MiGrupo.tsx(3,10): error TS2305: Module '"../services/reciclajeService"' has no exported member 'autorizarIngresoGrupo'.
-src/pages/MiGrupo.tsx(3,33): error TS2305: Module '"../services/reciclajeService"' has no exported member 'autorizarSalidaGrupo'.
-src/pages/MiGrupo.tsx(3,55): error TS2305: Module '"../services/reciclajeService"' has no exported member 'getMiGrupoTutor'.
-src/pages/MiGrupo.tsx(25,44): error TS7006: Parameter 'm' implicitly has an 'any' type.
-src/pages/rankings/RankingTable.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
-src/pages/rankings/TimeframeSelector.tsx(1,10): error TS1484: 'ChangeEvent' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
-src/pages/UnirseMiGrupo.tsx(4,3): error TS2305: Module '"../services/reciclajeService"' has no exported member 'getMiGrupoAlumno'.
-src/pages/UnirseMiGrupo.tsx(5,3): error TS2305: Module '"../services/reciclajeService"' has no exported member 'solicitarSalidaGrupo'.
+src/pages/MiPerfil.tsx(331,21): error TS6133: 'accentColor' is declared but its value is never read.

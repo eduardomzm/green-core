@@ -1,14 +1,12 @@
 import { useState, useEffect } from "react";
 import { 
   FileText, Download, Calendar, Loader2, Trophy, Users, 
-  GraduationCap, FileSpreadsheet, Search, User as UserIcon, 
+  FileSpreadsheet, Search, User as UserIcon, 
   History 
 } from "lucide-react";
 import { 
-  getRankings, 
   type RankingsResponse, 
-  getRankingHistorial, 
-  getDepositos 
+  getRankingHistorial
 } from "../services/reciclajeService";
 import { useAuth } from "../hooks/useAuth";
 import jsPDF from "jspdf";
@@ -113,20 +111,21 @@ export default function Estadisticas() {
       if (reportType === "alumno" && selectedAlumno) {
         reportTitle = `Reporte Individual: ${selectedAlumno.first_name} ${selectedAlumno.primer_apellido}`;
         subtitle = `Matrícula: ${matriculaSearch}`;
-        const res = await getRankings('historial', undefined); // All time for this user
-        // We need the backend to support the alumno filter in RankingsView
-        // Since I just updated the backend, I can pass the aluno_id
-        const resFiltered = await (await import("../services/api")).default.get('rankings/', { params: { timeframe: 'historial', alumno: selectedAlumno.id } });
+        const resFiltered = await (await import("../services/api")).default.get('rankings/', { 
+          params: { timeframe: 'historial', alumno: selectedAlumno.id } 
+        });
         reportData = resFiltered.data;
       } else if (reportType === "grupo" && selectedGrupo) {
         const grupo = grupos.find(g => g.id === parseInt(selectedGrupo));
         reportTitle = `Reporte de Grupo: ${grupo?.nombre}`;
         subtitle = `Carrera: ${carreras.find(c => c.id === parseInt(selectedCarrera))?.nombre}`;
-        const resFiltered = await (await import("../services/api")).default.get('rankings/', { params: { timeframe: 'historial', grupo: selectedGrupo } });
+        const resFiltered = await (await import("../services/api")).default.get('rankings/', { 
+          params: { timeframe: 'historial', grupo: selectedGrupo } 
+        });
         reportData = resFiltered.data;
       } else if (reportType === "historial") {
           reportTitle = "Historial Completo de Depósitos";
-          const res = await getRankingHistorial(0, 0); // Backend should handle 0 or timeframe=historial
+          const res = await getRankingHistorial(0, 0); 
           reportData = res;
       }
 
@@ -243,11 +242,15 @@ export default function Estadisticas() {
       // Similar logic to PDF for data fetching
       let reportData = data;
       if (reportType === "alumno" && selectedAlumno) {
-          const res = await (await import("../services/api")).default.get('rankings/', { params: { timeframe: 'historial', alumno: selectedAlumno.id } });
-          reportData = res.data;
+          const resFiltered = await (await import("../services/api")).default.get('rankings/', { 
+            params: { timeframe: 'historial', alumno: selectedAlumno.id } 
+          });
+          reportData = resFiltered.data;
       } else if (reportType === "grupo" && selectedGrupo) {
-          const res = await (await import("../services/api")).default.get('rankings/', { params: { timeframe: 'historial', grupo: selectedGrupo } });
-          reportData = res.data;
+          const resFiltered = await (await import("../services/api")).default.get('rankings/', { 
+            params: { timeframe: 'historial', grupo: selectedGrupo } 
+          });
+          reportData = resFiltered.data;
       } else if (reportType === "historial") {
           const res = await getRankingHistorial(0, 0);
           reportData = res;
