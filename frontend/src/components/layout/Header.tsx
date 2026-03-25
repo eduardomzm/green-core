@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { LogOut, Bell, Menu, Info, AlertTriangle, CheckCircle, Settings, Award, Check } from "lucide-react";
+import { LogOut, Bell, Menu, Info, AlertTriangle, CheckCircle, Settings, Award } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { getNotificaciones, marcarComoLeida, marcarTodasComoLeidas } from "../../services/notificationService";
 import type { Notificacion } from "../../services/notificationService";
@@ -124,7 +124,10 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
                   <div className="divide-y divide-gray-50">
                     {notificaciones.map(n => {
                       const Content = (
-                        <div className={`p-4 transition-colors hover:bg-gray-50 flex items-start gap-3 relative group ${!n.leida ? 'bg-blue-50/30' : ''}`}>
+                        <div 
+                          onClick={(e) => !n.leida && handleMarcarLeida(e, n.id)}
+                          className={`p-4 transition-colors hover:bg-gray-50 flex items-start gap-3 relative group cursor-pointer ${!n.leida ? 'bg-blue-50/30' : ''}`}
+                        >
                           <div className={`mt-0.5 flex-shrink-0 ${!n.leida ? 'animate-bounce-slow' : ''}`}>
                             {getIconForType(n.tipo)}
                           </div>
@@ -139,15 +142,6 @@ export default function Header({ onMenuClick }: { onMenuClick: () => void }) {
                               {new Date(n.fecha_creacion).toLocaleDateString()} {new Date(n.fecha_creacion).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </p>
                           </div>
-                          {!n.leida && (
-                            <button 
-                              onClick={(e) => handleMarcarLeida(e, n.id)}
-                              className="absolute top-4 right-4 p-1.5 text-gray-300 hover:text-primary hover:bg-primary/10 rounded-full transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
-                              title="Marcar como leída"
-                            >
-                              <Check className="w-3.5 h-3.5" />
-                            </button>
-                          )}
                           {!n.leida && (
                             <div className="absolute top-6 right-5 w-1.5 h-1.5 bg-primary rounded-full group-hover:hidden"></div>
                           )}

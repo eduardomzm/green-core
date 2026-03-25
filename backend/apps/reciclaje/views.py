@@ -271,6 +271,10 @@ class ProgresoView(APIView):
 class DashboardView(APIView):
     permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+        from .services import comprobar_asignaciones_pendientes
+        comprobar_asignaciones_pendientes()
+
 
     def get(self, request):
         user = request.user
@@ -1107,3 +1111,49 @@ class MedallasDisponiblesView(APIView):
         from .serializers import MedallaSerializer
         medallas = Medalla.objects.all()
         return Response(MedallaSerializer(medallas, many=True).data)
+
+class MisMedallasView(APIView):
+    """
+    Retorna la lista de medallas que el usuario autenticado (ALUMNO) ha obtenido.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        if user.role != 'ALUMNO':
+            return Response({"error": "Solo los alumnos tienen medallas."}, status=403)
+        
+        from .models import MedallaAlumno
+        from .serializers import MedallaAlumnoSerializer
+        
+        medallas = MedallaAlumno.objects.filter(alumno=user).order_by('-fecha_otorgada')
+        serializer = MedallaAlumnoSerializer(medallas, many=True)
+        return Response(serializer.data, status=200)
+
+class AsignarMedallasMensualesView(APIView):
+    """
+    Endpoint para uso de un Administrador u Operador para disparar
+    el cálculo automático de medallas temáticas de un mes.
+    Requiere `mes` (int 1-12) y `año` (int) en el body.
+    """
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    def post(self, request):
+        year = request.data.get('año')
+        month = request.data.get('mes')
+
+        if not year or not month:
+            return Response({'error': 'año y mes son parámetros requeridos.'}, status=400)
+        
+        try:
+            year = int(year)
+            month = int(month)
+        except ValueError:
+            return Response({'error': 'año y mes deben ser numéricos.'}, status=400)
+            
+        from .services import asignar_medallas_mes
+        try:
+            cantidad_asignada = asignar_medallas_mes(year, month)
+            return Response({'mensaje': f'Asignación completada. Se entregaron {cantidad_asignada} medallas.'}, status=200)
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)

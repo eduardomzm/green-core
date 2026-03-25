@@ -198,31 +198,31 @@ export default function AvatarGenerator({ onSave, onClose, initialAvatar }: Prop
     const buildAvatarUrl = () => {
         const url = new URL("https://api.dicebear.com/7.x/avataaars/svg");
         url.searchParams.set("seed", seed);
-        
+
         if (top) url.searchParams.set("top", top);
-        
+
         const hColor = HAIR_COLORS.find(c => c.id === topColor);
         if (hColor) url.searchParams.set("hairColor", hColor.hex.replace("#", ""));
-        
+
         if (accessories && accessories !== "blank") {
             url.searchParams.set("accessories", accessories);
             url.searchParams.set("accessoriesProbability", "100");
         } else {
             url.searchParams.set("accessoriesProbability", "0");
         }
-        
+
         if (eyes) url.searchParams.set("eyes", eyes);
         if (eyebrows) url.searchParams.set("eyebrows", eyebrows);
         if (mouth) url.searchParams.set("mouth", mouth);
-        
+
         const sColor = SKIN_COLORS.find(c => c.id === skin);
         if (sColor) url.searchParams.set("skinColor", sColor.hex.replace("#", ""));
-        
+
         if (clothes) url.searchParams.set("clothing", clothes);
-        
+
         const cColor = CLOTHING_COLORS.find(c => c.id === clothesColor);
         if (cColor) url.searchParams.set("clothesColor", cColor.hex.replace("#", ""));
-        
+
         return url.toString();
     };
 
@@ -232,14 +232,14 @@ export default function AvatarGenerator({ onSave, onClose, initialAvatar }: Prop
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-md overflow-hidden text-[#475569]">
             {/* MODAL GRANDE */}
             <div className="bg-[#f8fafc] w-[1150px] h-[750px] rounded-[32px] flex overflow-hidden shadow-2xl relative font-sans border border-[#e2e8f0]">
-                
+
                 {/* IZQUIERDA PREVIEW */}
                 <div className="w-[38%] flex flex-col items-center justify-center bg-white border-r border-[#e2e8f0] p-10 relative">
                     <div className="w-[320px] h-[320px] rounded-full overflow-hidden border-[12px] border-[#f1f5f9] bg-[#eafdff] flex items-center justify-center relative shadow-inner">
-                        <img 
-                            src={avatarUrl} 
-                            className="w-[115%] h-[115%] object-cover absolute top-6 transition-transform duration-300 transform hover:scale-105" 
-                            alt="Avatar SVG" 
+                        <img
+                            src={avatarUrl}
+                            className="w-[115%] h-[115%] object-cover absolute top-6 transition-transform duration-300 transform hover:scale-105"
+                            alt="Avatar SVG"
                         />
                     </div>
 
@@ -264,19 +264,18 @@ export default function AvatarGenerator({ onSave, onClose, initialAvatar }: Prop
                     {/* TABS */}
                     <div className="flex border-b border-[#e2e8f0] mb-8 gap-10 text-[#64748b]">
                         {[
-                            { id: "cabeza", label: "Cabeza", icon: <User size={18}/> },
-                            { id: "rostro", label: "Rostro", icon: <Eye size={18}/> },
-                            { id: "ropa", label: "Ropa", icon: <Shirt size={18}/> },
-                            { id: "accesorios", label: "Accesorios", icon: <Sparkles size={18}/> }
+                            { id: "cabeza", label: "Cabeza", icon: <User size={18} /> },
+                            { id: "rostro", label: "Rostro", icon: <Eye size={18} /> },
+                            { id: "ropa", label: "Ropa", icon: <Shirt size={18} /> },
+                            { id: "accesorios", label: "Accesorios", icon: <Sparkles size={18} /> }
                         ].map((t) => (
                             <button
                                 key={t.id}
                                 onClick={() => setTab(t.id)}
-                                className={`flex items-center gap-2 pb-4 text-[15px] font-bold border-b-[3px] transition-all px-2 ${
-                                    tab === t.id 
-                                        ? "text-[#45b29d] border-[#45b29d]" 
-                                        : "border-transparent hover:text-[#334155] hover:border-[#cbd5e1]"
-                                }`}
+                                className={`flex items-center gap-2 pb-4 text-[15px] font-bold border-b-[3px] transition-all px-2 ${tab === t.id
+                                    ? "text-[#45b29d] border-[#45b29d]"
+                                    : "border-transparent hover:text-[#334155] hover:border-[#cbd5e1]"
+                                    }`}
                             >
                                 {t.icon}
                                 {t.label}
@@ -299,11 +298,10 @@ export default function AvatarGenerator({ onSave, onClose, initialAvatar }: Prop
                                             <button
                                                 key={h.id}
                                                 onClick={() => setTop(h.id)}
-                                                className={`text-[12px] font-semibold text-center px-2 py-3 transition-all outline-none rounded-[16px] border-2 ${
-                                                    top === h.id 
-                                                        ? "text-[#45b29d] border-[#45b29d] bg-[#f0f9fa] shadow-sm transform scale-[1.02]" 
-                                                        : "text-[#64748b] border-[#f1f5f9] bg-white hover:border-[#cbd5e1] hover:text-[#45b29d]"
-                                                }`}
+                                                className={`text-[12px] font-semibold text-center px-2 py-3 transition-all outline-none rounded-[16px] border-2 ${top === h.id
+                                                    ? "text-[#45b29d] border-[#45b29d] bg-[#f0f9fa] shadow-sm transform scale-[1.02]"
+                                                    : "text-[#64748b] border-[#f1f5f9] bg-white hover:border-[#cbd5e1] hover:text-[#45b29d]"
+                                                    }`}
                                             >
                                                 {h.label}
                                             </button>
@@ -319,11 +317,10 @@ export default function AvatarGenerator({ onSave, onClose, initialAvatar }: Prop
                                                 key={c.id}
                                                 onClick={() => setTopColor(c.id)}
                                                 title={c.id}
-                                                className={`h-11 rounded-2xl transition-all border border-black/10 shadow-sm ${
-                                                    topColor === c.id 
-                                                        ? "scale-110 ring-[3px] ring-offset-[3px] ring-[#45b29d] z-10" 
-                                                        : "hover:scale-105 opacity-90 hover:opacity-100"
-                                                }`}
+                                                className={`h-11 rounded-2xl transition-all border border-black/10 shadow-sm ${topColor === c.id
+                                                    ? "scale-110 ring-[3px] ring-offset-[3px] ring-[#45b29d] z-10"
+                                                    : "hover:scale-105 opacity-90 hover:opacity-100"
+                                                    }`}
                                                 style={{ backgroundColor: c.hex }}
                                             />
                                         ))}
@@ -342,11 +339,10 @@ export default function AvatarGenerator({ onSave, onClose, initialAvatar }: Prop
                                             <button
                                                 key={e.id}
                                                 onClick={() => setEyes(e.id)}
-                                                className={`text-[13px] font-semibold px-4 py-3 transition-all rounded-[16px] border-2 ${
-                                                    eyes === e.id 
-                                                        ? "text-[#45b29d] border-[#45b29d] bg-[#f0f9fa] shadow-sm" 
-                                                        : "text-[#64748b] border-[#f1f5f9] bg-white hover:border-[#cbd5e1] hover:text-[#45b29d]"
-                                                }`}
+                                                className={`text-[13px] font-semibold px-4 py-3 transition-all rounded-[16px] border-2 ${eyes === e.id
+                                                    ? "text-[#45b29d] border-[#45b29d] bg-[#f0f9fa] shadow-sm"
+                                                    : "text-[#64748b] border-[#f1f5f9] bg-white hover:border-[#cbd5e1] hover:text-[#45b29d]"
+                                                    }`}
                                             >
                                                 {e.label}
                                             </button>
@@ -361,11 +357,10 @@ export default function AvatarGenerator({ onSave, onClose, initialAvatar }: Prop
                                             <button
                                                 key={eb.id}
                                                 onClick={() => setEyebrows(eb.id)}
-                                                className={`text-[11px] font-semibold px-2 py-3 transition-all rounded-[16px] border-2 text-center ${
-                                                    eyebrows === eb.id 
-                                                        ? "text-[#45b29d] border-[#45b29d] bg-[#f0f9fa] shadow-sm transform scale-[1.02]" 
-                                                        : "text-[#64748b] border-[#f1f5f9] bg-white hover:border-[#cbd5e1] hover:text-[#45b29d]"
-                                                }`}
+                                                className={`text-[11px] font-semibold px-2 py-3 transition-all rounded-[16px] border-2 text-center ${eyebrows === eb.id
+                                                    ? "text-[#45b29d] border-[#45b29d] bg-[#f0f9fa] shadow-sm transform scale-[1.02]"
+                                                    : "text-[#64748b] border-[#f1f5f9] bg-white hover:border-[#cbd5e1] hover:text-[#45b29d]"
+                                                    }`}
                                             >
                                                 {eb.label}
                                             </button>
@@ -380,11 +375,10 @@ export default function AvatarGenerator({ onSave, onClose, initialAvatar }: Prop
                                             <button
                                                 key={m.id}
                                                 onClick={() => setMouth(m.id)}
-                                                className={`text-[13px] font-semibold px-4 py-3 transition-all rounded-[16px] border-2 ${
-                                                    mouth === m.id 
-                                                        ? "text-[#45b29d] border-[#45b29d] bg-[#f0f9fa] shadow-sm" 
-                                                        : "text-[#64748b] border-[#f1f5f9] bg-white hover:border-[#cbd5e1] hover:text-[#45b29d]"
-                                                }`}
+                                                className={`text-[13px] font-semibold px-4 py-3 transition-all rounded-[16px] border-2 ${mouth === m.id
+                                                    ? "text-[#45b29d] border-[#45b29d] bg-[#f0f9fa] shadow-sm"
+                                                    : "text-[#64748b] border-[#f1f5f9] bg-white hover:border-[#cbd5e1] hover:text-[#45b29d]"
+                                                    }`}
                                             >
                                                 {m.label}
                                             </button>
@@ -399,11 +393,10 @@ export default function AvatarGenerator({ onSave, onClose, initialAvatar }: Prop
                                             <button
                                                 key={c.id}
                                                 onClick={() => setSkin(c.id)}
-                                                className={`w-[52px] h-[52px] rounded-full transition-all border border-black/10 shadow-sm ${
-                                                    skin === c.id 
-                                                        ? "scale-110 ring-[3px] ring-offset-[3px] ring-[#45b29d] z-10" 
-                                                        : "hover:scale-105 opacity-90 hover:opacity-100"
-                                                }`}
+                                                className={`w-[52px] h-[52px] rounded-full transition-all border border-black/10 shadow-sm ${skin === c.id
+                                                    ? "scale-110 ring-[3px] ring-offset-[3px] ring-[#45b29d] z-10"
+                                                    : "hover:scale-105 opacity-90 hover:opacity-100"
+                                                    }`}
                                                 style={{ backgroundColor: c.hex }}
                                             />
                                         ))}
@@ -422,11 +415,10 @@ export default function AvatarGenerator({ onSave, onClose, initialAvatar }: Prop
                                             <button
                                                 key={c.id}
                                                 onClick={() => setClothes(c.id)}
-                                                className={`text-[13px] font-semibold px-4 py-3 transition-all rounded-[16px] border-2 ${
-                                                    clothes === c.id 
-                                                        ? "text-[#45b29d] border-[#45b29d] bg-[#f0f9fa] shadow-sm" 
-                                                        : "text-[#64748b] border-[#f1f5f9] bg-white hover:border-[#cbd5e1] hover:text-[#45b29d]"
-                                                }`}
+                                                className={`text-[13px] font-semibold px-4 py-3 transition-all rounded-[16px] border-2 ${clothes === c.id
+                                                    ? "text-[#45b29d] border-[#45b29d] bg-[#f0f9fa] shadow-sm"
+                                                    : "text-[#64748b] border-[#f1f5f9] bg-white hover:border-[#cbd5e1] hover:text-[#45b29d]"
+                                                    }`}
                                             >
                                                 {c.label}
                                             </button>
@@ -441,11 +433,10 @@ export default function AvatarGenerator({ onSave, onClose, initialAvatar }: Prop
                                             <button
                                                 key={c.id}
                                                 onClick={() => setClothesColor(c.id)}
-                                                className={`w-11 h-11 rounded-[14px] transition-all border border-black/10 shadow-sm ${
-                                                    clothesColor === c.id 
-                                                        ? "scale-110 ring-[3px] ring-offset-[3px] ring-[#45b29d] z-10" 
-                                                        : "hover:scale-105 opacity-90 hover:opacity-100"
-                                                }`}
+                                                className={`w-11 h-11 rounded-[14px] transition-all border border-black/10 shadow-sm ${clothesColor === c.id
+                                                    ? "scale-110 ring-[3px] ring-offset-[3px] ring-[#45b29d] z-10"
+                                                    : "hover:scale-105 opacity-90 hover:opacity-100"
+                                                    }`}
                                                 style={{ backgroundColor: c.hex }}
                                             />
                                         ))}
@@ -463,11 +454,10 @@ export default function AvatarGenerator({ onSave, onClose, initialAvatar }: Prop
                                         <button
                                             key={a.id}
                                             onClick={() => setAccessories(a.id)}
-                                            className={`text-[13px] font-semibold px-4 py-3 transition-all rounded-[16px] border-2 ${
-                                                accessories === a.id 
-                                                    ? "text-[#45b29d] border-[#45b29d] bg-[#f0f9fa] shadow-sm" 
-                                                    : "text-[#64748b] border-[#f1f5f9] bg-white hover:border-[#cbd5e1] hover:text-[#45b29d]"
-                                            }`}
+                                            className={`text-[13px] font-semibold px-4 py-3 transition-all rounded-[16px] border-2 ${accessories === a.id
+                                                ? "text-[#45b29d] border-[#45b29d] bg-[#f0f9fa] shadow-sm"
+                                                : "text-[#64748b] border-[#f1f5f9] bg-white hover:border-[#cbd5e1] hover:text-[#45b29d]"
+                                                }`}
                                         >
                                             {a.label}
                                         </button>
@@ -479,7 +469,7 @@ export default function AvatarGenerator({ onSave, onClose, initialAvatar }: Prop
 
                     {/* FOOTER BOTONES */}
                     <div className="absolute bottom-0 right-0 w-[62%] bg-gradient-to-t from-white via-white to-transparent pt-14 pb-8 px-12 flex justify-end gap-5 items-center z-10">
-                        <button 
+                        <button
                             onClick={onClose}
                             className="text-[#64748b] hover:text-[#0f172a] font-bold transition-colors text-[15px] px-4 py-3"
                         >
@@ -495,7 +485,7 @@ export default function AvatarGenerator({ onSave, onClose, initialAvatar }: Prop
 
                 </div>
             </div>
-            
+
             <style>{`
                 .custom-scrollbar::-webkit-scrollbar {
                     width: 6px;

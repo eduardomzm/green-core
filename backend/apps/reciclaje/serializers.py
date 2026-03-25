@@ -107,5 +107,5 @@ class MedallaAlumnoSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = MedallaAlumno
-        fields = ['id', 'alumno', 'medalla', 'mes_obtenida', 'fecha_otorgada']
-        read_only_fields = ['alumno', 'medalla', 'mes_obtenida', 'fecha_otorgada']
+        fields = ['id', 'alumno', 'medalla', 'categoria', 'mes_obtenida', 'fecha_otorgada']
+        read_only_fields = ['alumno', 'medalla', 'categoria', 'mes_obtenida', 'fecha_otorgada']

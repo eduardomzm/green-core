@@ -23,6 +23,8 @@ from .views import (
     CancelarMetaAlumnoView,
     CorteMensualView,
     MedallasDisponiblesView,
+    MisMedallasView,
+    AsignarMedallasMensualesView,
 )
     
 from django.urls import path
@@ -54,5 +56,6 @@ urlpatterns = router.urls + [
     path('cancelar-meta-alumno/<int:meta_id>/', CancelarMetaAlumnoView.as_view(), name='cancelar-meta-alumno'),
     path('corte-mensual/', CorteMensualView.as_view(), name='corte-mensual'),
     path('medallas-disponibles/', MedallasDisponiblesView.as_view(), name='medallas-disponibles'),
-
+    path('mis-medallas/', MisMedallasView.as_view(), name='mis-medallas'),
+    path('asignar-medallas/', AsignarMedallasMensualesView.as_view(), name='asignar-medallas'),
 ]
