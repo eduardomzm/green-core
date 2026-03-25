@@ -62,26 +62,28 @@ export default function TopPodium({ data }: Props) {
 
         const innerContent = (
             <div className="flex flex-col items-center justify-center p-2 sm:p-4 h-full w-full">
-                <div className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white shadow-lg mb-2 sm:mb-4 overflow-hidden bg-gray-50 flex-shrink-0 flex items-center justify-center`}>
-                    {item.avatar ? (
-                        <UserAvatar avatar={item.avatar} />
-                    ) : (
-                        item.subtitle?.includes("Tutor") ? (
-                            <div className="bg-primary/10 w-full h-full flex items-center justify-center">
-                                <Users className={`w-10 h-10 ${iconColor}`} />
-                            </div>
-                        ) : item.subtitle ? (
-                            <div className="bg-primary/10 w-full h-full flex items-center justify-center">
-                                <Award className={`w-10 h-10 ${iconColor}`} />
-                            </div>
+                <div className="relative mb-2 sm:mb-4">
+                    <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-50 flex-shrink-0 flex items-center justify-center`}>
+                        {item.avatar ? (
+                            <UserAvatar avatar={item.avatar} />
                         ) : (
-                            <div className="bg-primary/10 w-full h-full flex items-center justify-center">
-                                <Recycle className={`w-10 h-10 ${iconColor}`} />
-                            </div>
-                        )
-                    )}
-                    <div className={`absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center bg-white shadow-sm ${iconColor}`}>
-                        <MedalIcon className="w-4 h-4 sm:w-5 h-5" />
+                            item.subtitle?.includes("Tutor") ? (
+                                <div className="bg-primary/10 w-full h-full flex items-center justify-center">
+                                    <Users className={`w-10 h-10 ${iconColor}`} />
+                                </div>
+                            ) : item.subtitle ? (
+                                <div className="bg-primary/10 w-full h-full flex items-center justify-center">
+                                    <Award className={`w-10 h-10 ${iconColor}`} />
+                                </div>
+                            ) : (
+                                <div className="bg-primary/10 w-full h-full flex items-center justify-center">
+                                    <Recycle className={`w-10 h-10 ${iconColor}`} />
+                                </div>
+                            )
+                        )}
+                    </div>
+                    <div className={`absolute -bottom-1 -right-1 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center bg-white shadow-lg z-20 ${iconColor} border-2 border-gray-50`}>
+                        <MedalIcon className="w-4 h-4 sm:w-6 h-6" />
                     </div>
                 </div>
                 <div className="flex flex-col items-center">
