@@ -179,3 +179,30 @@ export const hacerCorteMensual = async (medalla_id: number, mes: string) => {
   const response = await api.post('corte-mensual/', { medalla_id, mes });
   return response.data;
 };
+
+export interface MedallaObtenida {
+  id: number;
+  alumno: number;
+  medalla: {
+    id: number;
+    nombre: string;
+    descripcion: string;
+    icono_lucide: string;
+    tipo: 'RANKING' | 'META';
+    mes: number;
+    posicion: number;
+  };
+  categoria: string;
+  mes_obtenida: string;
+  fecha_otorgada: string;
+}
+
+export const getMisMedallas = async (): Promise<MedallaObtenida[]> => {
+  const response = await api.get('mis-medallas/');
+  return response.data;
+};
+
+export const asignarMedallasMensuales = async (año: number, mes: number) => {
+  const response = await api.post('asignar-medallas/', { año, mes });
+  return response.data;
+};

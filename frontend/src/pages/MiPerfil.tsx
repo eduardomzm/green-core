@@ -6,6 +6,7 @@ import * as LucideIcons from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { updateMe, getMisSeguidores, getMisSiguiendo, toggleSeguir } from "../services/userService";
+import { getMisMedallas, type MedallaObtenida } from "../services/reciclajeService";
 import AvatarGenerator from "../components/layout/AvatarGenerator";
 
 
@@ -55,6 +56,8 @@ export default function MiPerfil() {
   const [msg, setMsg] = useState<{ text: string; type: "success" | "error" | "" }>({ text: "", type: "" });
   const [saving, setSaving] = useState(false);
 
+  const [misMedallas, setMisMedallas] = useState<MedallaObtenida[]>([]);
+
   useEffect(() => {
     if (user) {
       setForm({
@@ -65,6 +68,10 @@ export default function MiPerfil() {
       });
       setSelectedAvatar(user.avatar || 'default');
       setTempAvatar(user.avatar || 'default');
+      
+      if (user.role === 'ALUMNO') {
+        getMisMedallas().then(data => setMisMedallas(data)).catch(console.error);
+      }
     }
   }, [user]);
 
@@ -97,10 +104,7 @@ export default function MiPerfil() {
     }
   };
 
-  const handleOpenModal = () => {
-    setTempAvatar(selectedAvatar);
-    setIsModalOpen(true);
-  };
+
 
   const handleSaveAvatar = async () => {
     setSelectedAvatar(tempAvatar);
@@ -331,7 +335,7 @@ const avatarUrl = selectedAvatar?.startsWith("http")
             Vitrina de Trofeos
           </h3>
 
-          {!user?.medallas || user.medallas.length === 0 ? (
+          {!misMedallas || misMedallas.length === 0 ? (
             <div className="text-center py-12 px-6 bg-gray-50/50 rounded-3xl border border-gray-100 border-dashed relative z-10">
               <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
                 <Award className="w-8 h-8 text-gray-300" />
@@ -348,9 +352,44 @@ const avatarUrl = selectedAvatar?.startsWith("http")
               }}
               initial="hidden"
               animate="show"
-              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-4 relative z-10"
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-6 relative z-10"
             >
-              {user.medallas.map((m: any) => (
+              {misMedallas.map((m: MedallaObtenida) => {
+                let bgGradient = "from-yellow-50/30 to-white";
+                let iconGradient = "from-yellow-400 to-orange-500";
+                let shadowColor = "shadow-orange-500/20";
+                let borderColor = "border-yellow-100/50";
+                let hoverBorder = "hover:border-yellow-300";
+                let hoverShadow = "hover:shadow-yellow-500/10";
+                let placeLabel = "Medalla Especial";
+
+                if (m.medalla.posicion === 1) {
+                   bgGradient = "from-amber-50/50 to-white";
+                   iconGradient = "from-amber-400 to-yellow-500";
+                   shadowColor = "shadow-amber-500/20";
+                   borderColor = "border-amber-200/50";
+                   hoverBorder = "hover:border-amber-400";
+                   hoverShadow = "hover:shadow-amber-500/20";
+                   placeLabel = "1er Lugar";
+                } else if (m.medalla.posicion === 2) {
+                   bgGradient = "from-slate-50/50 to-white";
+                   iconGradient = "from-slate-300 to-gray-400";
+                   shadowColor = "shadow-slate-500/20";
+                   borderColor = "border-slate-200/50";
+                   hoverBorder = "hover:border-slate-400";
+                   hoverShadow = "hover:shadow-slate-500/20";
+                   placeLabel = "2do Lugar";
+                } else if (m.medalla.posicion === 3) {
+                   bgGradient = "from-orange-50/50 to-white";
+                   iconGradient = "from-orange-700 to-amber-700";
+                   shadowColor = "shadow-orange-800/20";
+                   borderColor = "border-orange-200/50";
+                   hoverBorder = "hover:border-orange-800";
+                   hoverShadow = "hover:shadow-orange-800/20";
+                   placeLabel = "3er Lugar";
+                }
+
+                return (
                 <motion.div 
                   key={m.id}
                   variants={{
@@ -363,15 +402,21 @@ const avatarUrl = selectedAvatar?.startsWith("http")
                     transition: { duration: 0.2 }
                   }}
                   onClick={() => triggerConfettiBurst()}
-                  className="group relative flex flex-col items-center p-6 bg-gradient-to-b from-yellow-50/30 to-white rounded-[2rem] border border-yellow-100/50 hover:border-yellow-300 hover:shadow-xl hover:shadow-yellow-500/10 transition-all duration-300 cursor-pointer"
+                  className={`group relative flex flex-col items-center p-6 bg-gradient-to-b ${bgGradient} rounded-[2rem] border ${borderColor} ${hoverBorder} hover:shadow-xl ${hoverShadow} transition-all duration-300 cursor-pointer`}
+                  title={`${placeLabel} - ${m.categoria || 'Dinámica'} (${m.mes_obtenida})`}
                 >
-                  <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-orange-500/20 mb-4 transform group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
+                  {/* Tooltip visible en hover nativamente por title o con un pequeño div */}
+                  <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gray-900 text-white text-[10px] uppercase font-bold px-3 py-1.5 rounded-lg whitespace-nowrap z-50 pointer-events-none">
+                     {placeLabel} | {m.categoria || 'Logro'}
+                  </div>
+
+                  <div className={`w-16 h-16 bg-gradient-to-br ${iconGradient} rounded-2xl flex items-center justify-center text-white shadow-lg ${shadowColor} mb-4 transform group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300`}>
                     <DynamicIcon name={m.medalla.icono_lucide} className="w-8 h-8 drop-shadow-md" />
                   </div>
                   <p className="font-extrabold text-sm text-gray-900 text-center leading-tight mb-1">{m.medalla.nombre}</p>
-                  <p className="text-[10px] uppercase font-black tracking-widest text-orange-500/70">{m.mes_obtenida}</p>
+                  <p className="text-[10px] uppercase font-black tracking-widest text-gray-500">{m.mes_obtenida}</p>
                 </motion.div>
-              ))}
+              )})}
             </motion.div>
           )}
         </div>
@@ -638,7 +683,6 @@ const avatarUrl = selectedAvatar?.startsWith("http")
 
       {isAvatarGeneratorOpen && (
   <AvatarGenerator
-    initialAvatar={selectedAvatar}
     onClose={() => setIsAvatarGeneratorOpen(false)}
     onSave={async (url) => {
       setIsAvatarGeneratorOpen(false);

@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { X, RotateCcw, User, Eye, Shirt, Sparkles } from "lucide-react";
+import { RotateCcw, User, Eye, Shirt, Sparkles } from "lucide-react";
 
 interface Props {
     onSave: (url: string) => void;
@@ -485,21 +485,6 @@ export default function AvatarGenerator({ onSave, onClose }: Props) {
                 </div>
             </div>
             
-            <style jsx>{`
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 6px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: transparent;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background-color: #cbd5e1;
-                    border-radius: 20px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background-color: #94a3b8;
-                }
-            `}</style>
         </div>
     );
 }

@@ -109,9 +109,17 @@ class MetaAlumno(models.Model):
 
 
 class Medalla(models.Model):
+    TIPO_CHOICES = [
+        ('RANKING', 'Ranking Mensual'),
+        ('META', 'Meta/Objetivo'),
+    ]
+
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField()
     icono_lucide = models.CharField(max_length=50, default='Award', help_text="Nombre del icono de Lucide (ej: Award, Star, Crown)")
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES, default='RANKING')
+    mes = models.IntegerField(null=True, blank=True, help_text="1=Ene, 2=Feb, etc. (Para temáticas mensuales)")
+    posicion = models.IntegerField(null=True, blank=True, help_text="1, 2, o 3 para medallas de ranking")
 
     def __str__(self):
         return self.nombre
@@ -125,8 +133,25 @@ class MedallaAlumno(models.Model):
         limit_choices_to={'role': 'ALUMNO'}
     )
     medalla = models.ForeignKey(Medalla, on_delete=models.CASCADE)
+    categoria = models.CharField(max_length=100, blank=True, help_text="Ej: 'Global', 'Botellas', 'Quizzes'")
     mes_obtenida = models.CharField(max_length=20, help_text="Formato YYYY-MM o Nombre del Mes")
     fecha_otorgada = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.alumno} - {self.medalla.nombre} ({self.mes_obtenida})"
+
+
+class AsignacionMedallaMes(models.Model):
+    """
+    Registra en qué meses ya se ejecutó el cálculo automático de medallas,
+    para garantizar que solo ocurra una vez por mes al entrar algún usuario.
+    """
+    año = models.IntegerField()
+    mes = models.IntegerField()
+    fecha_ejecucion = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('año', 'mes')
+
+    def __str__(self):
+        return f"Evaluación de Medallas {self.año}-{self.mes:02d}"
