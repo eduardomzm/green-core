@@ -1,0 +1,91 @@
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Found 4 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: anymail, corsheaders, django_extensions, messages, rest_framework, staticfiles
+  Apply all migrations: admin, auth, contenttypes, django_rest_passwordreset, reciclaje, sessions, users
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0001_initial... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying users.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying django_rest_passwordreset.0001_initial... OK
+  Applying django_rest_passwordreset.0002_pk_migration... OK
+  Applying django_rest_passwordreset.0003_allow_blank_and_null_fields... OK
+  Applying django_rest_passwordreset.0004_alter_resetpasswordtoken_user_agent... OK
+  Applying users.0002_carrera_alumnoperfil... OK
+  Applying reciclaje.0001_initial... OK
+  Applying reciclaje.0002_material_deposito... OK
+  Applying reciclaje.0003_metasistema... OK
+  Applying reciclaje.0004_grupo_codigo_invitacion... OK
+  Applying reciclaje.0005_metaalumno... OK
+  Applying reciclaje.0006_medalla_medallaalumno... OK
+  Applying reciclaje.0007_metasistema_material... OK
+  Applying reciclaje.0008_alter_deposito_fecha... OK
+  Applying reciclaje.0009_metaalumno_cumplida_metaalumno_fecha_cumplimiento_and_more... OK
+  Applying reciclaje.0010_medalla_mes_medalla_posicion_medalla_tipo_and_more... OK
+  Applying sessions.0001_initial... OK
+  Applying users.0003_alumnogrupo... OK
+  Applying users.0004_alter_user_role... OK
+  Applying users.0005_alumnogrupo_estado... OK
+  Applying users.0006_carrera_abreviatura... OK
+  Applying users.0007_user_avatar... OK
+  Applying users.0008_alumnoperfil_biografia_alumnoperfil_facebook_and_more... OK
+  Applying users.0009_notificacion... OK
+  Applying users.0010_conexionusuario... OK
+  Applying users.0011_remove_alumnoperfil_biografia_and_more... OK
+  Applying users.0012_nivelconfig... OK
+  Applying users.0013_alumnoperfil_max_racha_alumnoperfil_racha_actual_and_more... OK
+  Applying users.0014_alter_user_avatar...test_matricula_validation (apps.users.tests.UserModuleTest.test_matricula_validation)
+Prueba la validación del formato de matrícula. ... ok
+test_me_view_student_status (apps.users.tests.UserModuleTest.test_me_view_student_status)
+Prueba que MeView devuelva el grupo_estado correcto. ... C:\Users\eduar\AppData\Roaming\Python\Python313\site-packages\django\core\handlers\base.py:62: UserWarning: No directory at: C:\green-core\backend\staticfiles\
+  mw_instance = middleware(adapted_handler)
+ok
+test_user_creation_roles (apps.users.tests.UserModuleTest.test_user_creation_roles)
+Prueba que el usuario se cree con el rol correcto. ... ok
+test_rankings_with_group_info (apps.reciclaje.tests.ReciclajeModuleTest.test_rankings_with_group_info)
+Prueba que el ranking incluya info de carrera (abreviatura) y grupo. ... ERROR
+
+======================================================================
+ERROR: test_rankings_with_group_info (apps.reciclaje.tests.ReciclajeModuleTest.test_rankings_with_group_info)
+Prueba que el ranking incluya info de carrera (abreviatura) y grupo.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\green-core\backend\apps\reciclaje\tests.py", line 21, in setUp
+    self.material = Material.objects.create(nombre="PET", puntos_por_unidad=10)
+                    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\eduar\AppData\Roaming\Python\Python313\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\eduar\AppData\Roaming\Python\Python313\site-packages\django\db\models\query.py", line 667, in create
+    obj = self.model(**kwargs)
+  File "C:\Users\eduar\AppData\Roaming\Python\Python313\site-packages\django\db\models\base.py", line 590, in __init__
+    raise TypeError(
+    ...<2 lines>...
+    )
+TypeError: Material() got unexpected keyword arguments: 'puntos_por_unidad'
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.714s
+
+FAILED (errors=1)
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+ OK
+System check identified no issues (0 silenced).
